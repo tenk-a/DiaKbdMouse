@@ -74,6 +74,7 @@ public:
 		MD_2ST_Q	= 5,			///< 2ストロークキーのトリガー(Q)
 		MD_EX_SHIFT = 6,			//x 廃止(カーソル移動でシフト併用モード(範囲選択を想定))
 		MD_MOUSE	= 7,			///< マウス
+		MD_DIRECT	= 8,			///< 単体キー
 	};
 	class COne {
 	public:

@@ -44,6 +44,7 @@ private:
 		F_SHIFT = 2,
 		F_ALT	= 4,
 		F_WIN	= 8,
+		F_DIRECT= 0x10,
 	};
 private:
 	enum { FNAME_SZ = 2048 };

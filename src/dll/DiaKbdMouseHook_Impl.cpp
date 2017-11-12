@@ -318,6 +318,8 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
             makeMouseButton(sw, rOne.u8VkCode_);
             break;
         }
+        //[[fallthourgh]]
+    case CConvKey::MD_DIRECT:
         if (sw) {                       // キーDOWN
             sendKey(rOne.u8Mode_, 0, rOne.u8VkCode_);
         } else {                        // キーUP

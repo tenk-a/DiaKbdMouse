@@ -65,7 +65,8 @@ void 	CConfigFileReader::set1Data(bool qmode, const char* s) {
 	unsigned flags = 0;
 	s = skip_spc(s);
 	while (*s) {
-		if      (*s == '^') flags |= F_CTRL;
+		if      (*s == ':') flags |= F_DIRECT;
+		else if (*s == '^') flags |= F_CTRL;
 		else if (*s == '!') flags |= F_SHIFT;
 	 #if 0 //あとで
 		else if (*s == '@') flags |= F_ALT;
@@ -84,7 +85,8 @@ void 	CConfigFileReader::set1Data(bool qmode, const char* s) {
 		errPuts("マウス化キーに修飾キーを設定することはできない\n");
 		return;
 	}
-	if      (flags == F_CTRL )			tgtMode = CDiaKbdMouseHook_ConvKey::MD_CTRL;
+	if      (flags == F_DIRECT)			tgtMode = CDiaKbdMouseHook_ConvKey::MD_DIRECT;
+	else if (flags == F_CTRL )			tgtMode = CDiaKbdMouseHook_ConvKey::MD_CTRL;
 	else if (flags == F_SHIFT)			tgtMode = CDiaKbdMouseHook_ConvKey::MD_SHIFT;
 	else if (flags == (F_SHIFT|F_CTRL))	tgtMode = CDiaKbdMouseHook_ConvKey::MD_CTRLSHIFT;
 	else if (tgtMode == 0)				tgtMode = CDiaKbdMouseHook_ConvKey::MD_USE;
