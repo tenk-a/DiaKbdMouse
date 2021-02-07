@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiaKbdMouse", "DiaKbdMouse.vcproj", "{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3} = {86F259A1-932C-4947-AEA0-A61E5A7B32B3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiaKbdMouseHook", "DiaKbdMouseHook.vcproj", "{86F259A1-932C-4947-AEA0-A61E5A7B32B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Debug|Win32.Build.0 = Debug|Win32
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Debug|x64.ActiveCfg = Debug|x64
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Debug|x64.Build.0 = Debug|x64
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Release|Win32.ActiveCfg = Release|Win32
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Release|Win32.Build.0 = Release|Win32
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Release|x64.ActiveCfg = Release|x64
+		{699B2FA0-C8F7-4C81-9CB5-0DDEF586B0CD}.Release|x64.Build.0 = Release|x64
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Debug|Win32.Build.0 = Debug|Win32
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Debug|x64.ActiveCfg = Debug|x64
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Debug|x64.Build.0 = Debug|x64
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Release|Win32.ActiveCfg = Release|Win32
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Release|Win32.Build.0 = Release|Win32
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Release|x64.ActiveCfg = Release|x64
+		{86F259A1-932C-4947-AEA0-A61E5A7B32B3}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

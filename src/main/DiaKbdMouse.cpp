@@ -1,11 +1,11 @@
-/**
- *	@file	DiaKbdMouse.cpp
- *	@brief	ÉLÅ[É{Å[ÉhÇ≈É}ÉEÉXÇêßå‰.
- *	@author	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ÉtÉäÅ[É\Å[ÉX
- *		HACK HACK MORE HACK
+Ôªø/**
+ *  @file   DiaKbdMouse.cpp
+ *  @brief  „Ç≠„Éº„Éú„Éº„Éâ„Åß„Éû„Ç¶„Çπ„ÇíÂà∂Âæ°.
+ *  @author Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      „Éï„É™„Éº„ÇΩ„Éº„Çπ
+ *      HACK HACK MORE HACK
  */
 
 #include "stdafx.h"
@@ -19,411 +19,359 @@
 #include "ConfigFileReader.h"
 
 
-/// ÉLÅ[É{Å[ÉhÇ≈É}ÉEÉXÇêßå‰Ç∑ÇÈÉAÉvÉäÅEÉNÉâÉX.
+/// „Ç≠„Éº„Éú„Éº„Éâ„Åß„Éû„Ç¶„Çπ„ÇíÂà∂Âæ°„Åô„Çã„Ç¢„Éó„É™„Éª„ÇØ„É©„Çπ.
 class CDiaKbdMouseApp {
 public:
-	CDiaKbdMouseApp();
-	// ~CDiaKbdMouseApp() {;}
+    CDiaKbdMouseApp();
+    // ~CDiaKbdMouseApp() {;}
 
-	int winMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
-
-private:
-	ATOM			registerClass(HINSTANCE hInstance);
-	bool			initInstance(HINSTANCE hInstance);
-
-	static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
-	static LRESULT CALLBACK dlgProcAbout(HWND, UINT, WPARAM, LPARAM);
-
-	DWORD			getConfigData(CDiaKbdMouseHook_ConvKeyTbl& tbl);
-	LRESULT 		wmCreate (HWND hWnd, WPARAM wParam, LPARAM lParam);
-	LRESULT 		wmCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
-	LRESULT 		wmUserTrayIcon(HWND hWnd, LPARAM lParam);
-	void			checkMenuItem(int id, bool checkSw /*, int dispSw*/);
-
-	static void		setMinmumWorkingSetSize();
+    int winMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
 
 private:
-	enum { MAX_LOADSTRING	= 100		  };
-	enum { WM_USER_TRAYICON = WM_USER + 1 };
+    ATOM            registerClass(HINSTANCE hInstance);
+    bool            initInstance(HINSTANCE hInstance);
 
-	HWND		hWnd_;
-	HINSTANCE	hInstance_;						///< åªç›ÇÃÉCÉìÉ^Å[ÉtÉFÉCÉX.
-	HICON		hIconSm_;
-	CTrayIcon	trayIcon_;
-	TCHAR		szTitle_[MAX_LOADSTRING];		///< É^ÉCÉgÉã ÉoÅ[ÇÃÉeÉLÉXÉg.
-	TCHAR		szWindowClass_[MAX_LOADSTRING];	///< ÉÅÉCÉì ÉEÉBÉìÉhÉE ÉNÉâÉXñº.
-	//TCHAR		szIniName_[0x4000];				///< ÉÇÉWÉÖÅ[Éãñº
-	static CDiaKbdMouseApp*	s_pSelf_;			///< é©ï™é©êgÇÃïœêî(ÉCÉìÉXÉ^ÉìÉX)Ç÷ÇÃÉ|ÉCÉìÉ^
+    static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
+    static LRESULT CALLBACK dlgProcAbout(HWND, UINT, WPARAM, LPARAM);
+
+    DWORD           getConfigData(CDiaKbdMouseHook_ConvKeyTbl& tbl);
+    LRESULT         wmCreate (HWND hWnd, WPARAM wParam, LPARAM lParam);
+    LRESULT         wmCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+    LRESULT         wmUserTrayIcon(HWND hWnd, LPARAM lParam);
+    void            checkMenuItem(int id, bool checkSw /*, int dispSw*/);
+
+    static void     setMinmumWorkingSetSize();
+
+private:
+    enum { MAX_LOADSTRING   = 100         };
+    enum { WM_USER_TRAYICON = WM_USER + 1 };
+
+    HWND        hWnd_;
+    HINSTANCE   hInstance_;                     ///< ÁèæÂú®„ÅÆ„Ç§„É≥„Çø„Éº„Éï„Çß„Ç§„Çπ.
+    HICON       hIconSm_;
+    CTrayIcon   trayIcon_;
+    TCHAR       szTitle_[MAX_LOADSTRING];       ///< „Çø„Ç§„Éà„É´ „Éê„Éº„ÅÆ„ÉÜ„Ç≠„Çπ„Éà.
+    TCHAR       szWindowClass_[MAX_LOADSTRING]; ///< „É°„Ç§„É≥ „Ç¶„Ç£„É≥„Éâ„Ç¶ „ÇØ„É©„ÇπÂêç.
+    //TCHAR     szIniName_[0x4000];             ///< „É¢„Ç∏„É•„Éº„É´Âêç
+    static CDiaKbdMouseApp* s_pSelf_;           ///< Ëá™ÂàÜËá™Ë∫´„ÅÆÂ§âÊï∞(„Ç§„É≥„Çπ„Çø„É≥„Çπ)„Å∏„ÅÆ„Éù„Ç§„É≥„Çø
 };
 
-/// é©ï™é©êgÇ÷ÇÃÉ|ÉCÉìÉ^.
-CDiaKbdMouseApp*	CDiaKbdMouseApp::s_pSelf_ = 0;
+/// Ëá™ÂàÜËá™Ë∫´„Å∏„ÅÆ„Éù„Ç§„É≥„Çø.
+CDiaKbdMouseApp*    CDiaKbdMouseApp::s_pSelf_ = 0;
 
 
-/** ÉRÉìÉXÉgÉâÉNÉ^
+/** „Ç≥„É≥„Çπ„Éà„É©„ÇØ„Çø
  */
 CDiaKbdMouseApp::CDiaKbdMouseApp()
-	: hWnd_(0)
-	, hInstance_(0)
-	, hIconSm_(0)
-	, trayIcon_()
+    : hWnd_(0)
+    , hInstance_(0)
+    , hIconSm_(0)
+    , trayIcon_()
 {
-	std::memset(szTitle_      , 0, sizeof szTitle_);
-	std::memset(szWindowClass_, 0, sizeof szWindowClass_);
-	assert( s_pSelf_ == NULL );
-	s_pSelf_ = this;
+    std::memset(szTitle_      , 0, sizeof szTitle_);
+    std::memset(szWindowClass_, 0, sizeof szWindowClass_);
+    assert( s_pSelf_ == NULL );
+    s_pSelf_ = this;
 }
 
-
-/** ÉGÉìÉgÉä.
+/** „Ç®„É≥„Éà„É™.
  */
 int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance*/, LPTSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
-	// WindowÉCÉìÉXÉ^ÉìÉXÇÃéÊìæ.
-	HINSTANCE hInstance = ::GetModuleHandle(NULL);
+    // Window„Ç§„É≥„Çπ„Çø„É≥„Çπ„ÅÆÂèñÂæó.
+    HINSTANCE hInstance = ::GetModuleHandle(NULL);
 
-	// ÉäÉ\Å[ÉXÇÊÇËñºëOï∂éöóÒÇéÊìæ.
-	::LoadString(hInstance, IDS_APP_TITLE, szTitle_ 	 , MAX_LOADSTRING);
-	::LoadString(hInstance, IDS_APP_NAME , szWindowClass_, MAX_LOADSTRING);
+    // „É™„ÇΩ„Éº„Çπ„Çà„ÇäÂêçÂâçÊñáÂ≠óÂàó„ÇíÂèñÂæó.
+    ::LoadString(hInstance, IDS_APP_TITLE, szTitle_      , MAX_LOADSTRING);
+    ::LoadString(hInstance, IDS_APP_NAME , szWindowClass_, MAX_LOADSTRING);
 
-	// ëΩèdãNìÆñhé~.
-	::CreateMutex(NULL, 1, szWindowClass_);
-	if (::GetLastError() == ERROR_ALREADY_EXISTS) {
-		DEBUGPRINTF("ëΩèdãNìÆ\n");
-		return -2;
-	}
+    // Â§öÈáçËµ∑ÂãïÈò≤Ê≠¢.
+    ::CreateMutex(NULL, 1, szWindowClass_);
+    if (::GetLastError() == ERROR_ALREADY_EXISTS) {
+        DEBUGPRINTF("Â§öÈáçËµ∑Âãï\n");
+        return -2;
+    }
 
-	// ÉEÉBÉìÉhÉE ÉNÉâÉXÇìoò^.
-	registerClass(hInstance);
+    // „Ç¶„Ç£„É≥„Éâ„Ç¶ „ÇØ„É©„Çπ„ÇíÁôªÈå≤.
+    registerClass(hInstance);
 
-	// ÉAÉvÉäÉPÅ[ÉVÉáÉìÇÃèâä˙âª.
-	if (initInstance(hInstance/*, nCmdShow*/) == 0) {
-		DEBUGPRINTF("ãNìÆéûèâä˙âªÇ≈é∏îs\n");
-		return -1;
-	}
+    // „Ç¢„Éó„É™„Ç±„Éº„Ç∑„Éß„É≥„ÅÆÂàùÊúüÂåñ.
+    if (initInstance(hInstance/*, nCmdShow*/) == 0) {
+        DEBUGPRINTF("Ëµ∑ÂãïÊôÇÂàùÊúüÂåñ„ÅßÂ§±Êïó\n");
+        return -1;
+    }
 
-	// ÉÅÉCÉì ÉÅÉbÉZÅ[ÉW ÉãÅ[Év.
-	HACCEL		hAccelTable;
-	hAccelTable = ::LoadAccelerators(hInstance, (LPCTSTR)IDC_ACCELTABLE);
-	MSG 		msg;
-	while (::GetMessage(&msg, NULL, 0, 0)) {
-		if (::TranslateAccelerator(msg.hwnd, hAccelTable, &msg) == 0) {
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
-		}
-		::Sleep(33);		// ìKìñÇ…êQÇ∆Ç≠.
-	}
+    // „É°„Ç§„É≥ „É°„ÉÉ„Çª„Éº„Ç∏ „É´„Éº„Éó.
+    HACCEL      hAccelTable;
+    hAccelTable = ::LoadAccelerators(hInstance, (LPCTSTR)IDC_ACCELTABLE);
+    MSG         msg;
+    while (::GetMessage(&msg, NULL, 0, 0)) {
+        if (::TranslateAccelerator(msg.hwnd, hAccelTable, &msg) == 0) {
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+        }
+        ::Sleep(33);        // ÈÅ©ÂΩì„Å´ÂØù„Å®„Åè.
+    }
 
-	// DLLèIóπ
-	DiaKbdMouseHook_uninstall();
+    // DLLÁµÇ‰∫Ü
+    DiaKbdMouseHook_uninstall();
 
-	return (int) msg.wParam;
+    return (int) msg.wParam;
 }
 
-
-
-///  ÉEÉBÉìÉhÉE ÉNÉâÉXÇìoò^.
+///  „Ç¶„Ç£„É≥„Éâ„Ç¶ „ÇØ„É©„Çπ„ÇíÁôªÈå≤.
 ///
 ATOM CDiaKbdMouseApp::registerClass(HINSTANCE hInstance)
 {
-	WNDCLASSEX		wcex;
-	wcex.cbSize			= sizeof(WNDCLASSEX);
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC) wndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= ::LoadIcon(hInstance, (LPCTSTR) IDI_ICON);
-	wcex.hCursor		= ::LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH) (COLOR_WINDOW + 1);
-	wcex.lpszMenuName	= (LPCTSTR) IDC_MENU;
-	wcex.lpszClassName	= szWindowClass_;
-	wcex.hIconSm		= hIconSm_ = ::LoadIcon(wcex.hInstance, (LPCTSTR) IDI_SMALL);
-	return ::RegisterClassEx(&wcex);
+    WNDCLASSEX      wcex;
+    wcex.cbSize         = sizeof(WNDCLASSEX);
+    wcex.style          = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc    = (WNDPROC) wndProc;
+    wcex.cbClsExtra     = 0;
+    wcex.cbWndExtra     = 0;
+    wcex.hInstance      = hInstance;
+    wcex.hIcon          = ::LoadIcon(hInstance, (LPCTSTR) IDI_ICON);
+    wcex.hCursor        = ::LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground  = (HBRUSH) (COLOR_WINDOW + 1);
+    wcex.lpszMenuName   = (LPCTSTR) IDC_MENU;
+    wcex.lpszClassName  = szWindowClass_;
+    wcex.hIconSm        = hIconSm_ = ::LoadIcon(wcex.hInstance, (LPCTSTR) IDI_SMALL);
+    return ::RegisterClassEx(&wcex);
 }
 
-
-///	ÉÅÉCÉì ÉvÉçÉOÉâÉÄ ÉEÉBÉìÉhÉEÇçÏê¨.
+/// „É°„Ç§„É≥ „Éó„É≠„Ç∞„É©„É† „Ç¶„Ç£„É≥„Éâ„Ç¶„Çí‰ΩúÊàê.
 ///
 bool CDiaKbdMouseApp::initInstance(HINSTANCE hInstance /*, int nCmdShow*/)
 {
-	hInstance_	= hInstance;
-	hWnd_		= ::CreateWindowEx(
-						0/*dwExStyle*/,
-						szWindowClass_,
-						szTitle_,
-						WS_CAPTION | /*WS_SYSMENU |*/ WS_POPUP,
-						CW_USEDEFAULT,
-						CW_USEDEFAULT,
-						0,
-						0,
-						NULL,
-						NULL,
-						hInstance,
-						NULL);
+    hInstance_  = hInstance;
+    hWnd_       = ::CreateWindowEx(
+                        0/*dwExStyle*/,
+                        szWindowClass_,
+                        szTitle_,
+                        WS_CAPTION | /*WS_SYSMENU |*/ WS_POPUP,
+                        CW_USEDEFAULT,
+                        CW_USEDEFAULT,
+                        0,
+                        0,
+                        NULL,
+                        NULL,
+                        hInstance,
+                        NULL);
 
-	if (hWnd_ == 0)
-		return false;
+    if (hWnd_ == 0)
+        return false;
 
-	::ShowWindow(hWnd_, SW_HIDE/*nCmdShow*/);
-	::UpdateWindow(hWnd_);
+    ::ShowWindow(hWnd_, SW_HIDE/*nCmdShow*/);
+    ::UpdateWindow(hWnd_);
 
-	return true;
+    return true;
 }
 
-
-/// ÉÅÉCÉì ÉEÉBÉìÉhÉEÇÃÉÅÉbÉZÅ[ÉWÇèàóù.
+/// „É°„Ç§„É≥ „Ç¶„Ç£„É≥„Éâ„Ç¶„ÅÆ„É°„ÉÉ„Çª„Éº„Ç∏„ÇíÂá¶ÁêÜ.
 ///
 LRESULT CALLBACK CDiaKbdMouseApp::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	CDiaKbdMouseApp*	pSelf = s_pSelf_;
-	assert( pSelf != 0 );
-	switch (uMsg) {
-	case WM_CREATE:
-		return pSelf->wmCreate(hWnd, wParam, lParam);
+    CDiaKbdMouseApp*    pSelf = s_pSelf_;
+    assert( pSelf != 0 );
+    switch (uMsg) {
+    case WM_CREATE:
+        return pSelf->wmCreate(hWnd, wParam, lParam);
 
-	case WM_COMMAND:		// ÉÅÉjÉÖÅ[çÄñ⁄ÇÃèàóù.
-		if (pSelf->wmCommand(hWnd, wParam, lParam) == 0)
-			return 0;
-		break;
+    case WM_COMMAND:        // „É°„Éã„É•„ÉºÈ†ÖÁõÆ„ÅÆÂá¶ÁêÜ.
+        if (pSelf->wmCommand(hWnd, wParam, lParam) == 0)
+            return 0;
+        break;
 
-	case WM_USER_TRAYICON:	// ÉgÉåÉCÉAÉCÉRÉìÇ≈ÉNÉäÉbÉNÇ≥ÇÍÇΩÇ∆Ç´ÇÃèàóù.
-		return pSelf->wmUserTrayIcon(hWnd, lParam);
+    case WM_USER_TRAYICON:  // „Éà„É¨„Ç§„Ç¢„Ç§„Ç≥„É≥„Åß„ÇØ„É™„ÉÉ„ÇØ„Åï„Çå„Åü„Å®„Åç„ÅÆÂá¶ÁêÜ.
+        return pSelf->wmUserTrayIcon(hWnd, lParam);
 
-	case WM_DESTROY:
-		// ÉLÅ[É{Å[ÉhÇ≈É}ÉEÉXëÄçÏÇ∑ÇÈèàóùÇÃÉXÉåÉbÉhÇèIóπ.
-		CKbdMouseCtrl::release();
-		// ÉgÉåÉCÉAÉCÉRÉìÇÃèIóπ.
-		pSelf->trayIcon_.release();
-		// ÉÅÉbÉZÅ[ÉWÉãÅ[ÉvÇèIóπÇ≥ÇπÇÈ.
-		::PostQuitMessage(0);
-		return 0;
+    case WM_DESTROY:
+        // „Ç≠„Éº„Éú„Éº„Éâ„Åß„Éû„Ç¶„ÇπÊìç‰Ωú„Åô„ÇãÂá¶ÁêÜ„ÅÆ„Çπ„É¨„ÉÉ„Éâ„ÇíÁµÇ‰∫Ü.
+        CKbdMouseCtrl::release();
+        // „Éà„É¨„Ç§„Ç¢„Ç§„Ç≥„É≥„ÅÆÁµÇ‰∫Ü.
+        pSelf->trayIcon_.release();
+        // „É°„ÉÉ„Çª„Éº„Ç∏„É´„Éº„Éó„ÇíÁµÇ‰∫Ü„Åï„Åõ„Çã.
+        ::PostQuitMessage(0);
+        return 0;
 
-	default:
-		pSelf->trayIcon_.checkRecreate(uMsg);	// É^ÉXÉNÉoÅ[Ç™çƒçÏê¨Ç≥ÇÍÇΩÇÁÉAÉCÉRÉìÇçƒìoò^.
-	}
+    default:
+        pSelf->trayIcon_.checkRecreate(uMsg);   // „Çø„Çπ„ÇØ„Éê„Éº„ÅåÂÜç‰ΩúÊàê„Åï„Çå„Åü„Çâ„Ç¢„Ç§„Ç≥„É≥„ÇíÂÜçÁôªÈå≤.
+    }
 
-	return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+    return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-
-#if 1
-DWORD	CDiaKbdMouseApp::getConfigData(CDiaKbdMouseHook_ConvKeyTbl& tbl)
+/// ÂÆöÁæ©„Éï„Ç°„Ç§„É´ÂèñÂæó.
+///
+DWORD   CDiaKbdMouseApp::getConfigData(CDiaKbdMouseHook_ConvKeyTbl& tbl)
 {
-	DWORD	dwKeyCode = 0;
-	TCHAR	szIniName[0x4000];
-	::GetModuleFileName(NULL, szIniName, 0x4000 );
-	std::size_t l = ::lstrlen(szIniName);
-	if (l > 4) {
-		std::memcpy( &szIniName[l-3], _T("cfg"), 4 * sizeof(TCHAR) );	// ägí£éqÇcfgÇ….
-		//x DEBUGPRINTF("%s\n", path);
-		CConfigFileReader	configData(szIniName, tbl);
-		dwKeyCode	= configData.getData();
-	}
-	return dwKeyCode;
+    DWORD   dwKeyCode = 0;
+    TCHAR   szIniName[0x1000];
+    ::GetModuleFileName(NULL, szIniName, 0x1000 );
+    std::size_t l = ::lstrlen(szIniName);
+    if (l > 4) {
+        std::memcpy( &szIniName[l-3], _T("cfg"), 4 * sizeof(TCHAR) );   // Êã°ÂºµÂ≠ê„Çícfg„Å´.
+        //x DEBUGPRINTF("%s\n", path);
+        CConfigFileReader   configData(szIniName, tbl);
+        dwKeyCode   = configData.getData();
+    }
+    return dwKeyCode;
 }
-#else
-DWORD getKeyCodeFromPrivateProfile()
-{
-	enum { EX_KEY = VK_APPS/*VK_RWIN*/ };
-	DWORD	dwKeyCode = EX_KEY;
-	TCHAR	szIniName[0x4000];
-	::GetModuleFileName(NULL, szIniName, 0x4000 );
-	std::size_t l = ::lstrlen(szIniName);
-	if (l > 4) {
-		std::::memcpy( &szIniName[l-3], _T("ini"), 4 * sizeof(TCHAR) );	// ägí£éqÇiniÇ….
-		//x DEBUGPRINTF("%s\n", path);
-		dwKeyCode = ::GetPrivateProfileInt(_T("COMMON"), _T("TRIGGER"), dwKeyCode, szIniName);
-		if (dwKeyCode == 0)
-			dwKeyCode = EX_KEY;
-	}
-	return dwKeyCode;
-}
-#endif
 
-
-/// WM_CREATE Ç≈çsÇ§èàóù.
+/// WM_CREATE „ÅßË°å„ÅÜÂá¶ÁêÜ.
 ///
 LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	// ÉgÉåÉCÇ…ÉAÉCÉRÉìÇìoò^.
-	int rc = trayIcon_.create(
-			WM_USER_TRAYICON,
-			hInstance_,
-			hWnd,
-			hIconSm_,
-			_T("DiaKbdMouse"),
-			IDC_MENU
-		);
-	if (rc == 0) {		// ÉgÉåÉCÉAÉCÉRÉìÇÃçÏê¨Ç…é∏îsÇµÇΩÇÁèIóπ.
-		::DestroyWindow(hWnd);
-		return 0;
-	}
+    // „Éà„É¨„Ç§„Å´„Ç¢„Ç§„Ç≥„É≥„ÇíÁôªÈå≤.
+    int rc = trayIcon_.create(
+            WM_USER_TRAYICON,
+            hInstance_,
+            hWnd,
+            hIconSm_,
+            _T("DiaKbdMouse"),
+            IDC_MENU
+        );
+    if (rc == 0) {      // „Éà„É¨„Ç§„Ç¢„Ç§„Ç≥„É≥„ÅÆ‰ΩúÊàê„Å´Â§±Êïó„Åó„Åü„ÇâÁµÇ‰∫Ü.
+        ::DestroyWindow(hWnd);
+        return 0;
+    }
 
-  #ifdef USE_LWINKEY
-	// ÉgÉåÉCÉAÉCÉRÉìÉÅÉjÉÖÅ[ÇÃèÛë‘Çê›íË
-	checkMenuItem(IDM_LWIN_SW, DiaKbdMouseHook_setLWinMode(-1));
-  #endif	
+    // ÂÆöÁæ©„Éï„Ç°„Ç§„É´Ë™≠„ÅøËæº„Åø.
+    CDiaKbdMouseHook_ConvKeyTbl tbl;
+    tbl.clear();
+    DWORD   dwKeyCode = getConfigData(tbl); // VK_RWIN; // VK_RMENU;
+    if (dwKeyCode == 0) {   // ÂÆöÁæ©„Éï„Ç°„Ç§„É´„Åß„Ç®„É©„Éº„Åå„ÅÇ„Å£„ÅüÂ†¥Âêà.
+        ::DestroyWindow(hWnd);
+        return 0;
+    }
+    DiaKbdMouseHook_install(dwKeyCode, tbl);
 
-	// íËã`ÉtÉ@ÉCÉãì«Ç›çûÇ›
- #if 1
-	CDiaKbdMouseHook_ConvKeyTbl	tbl;
-	tbl.clear();
-	DWORD	dwKeyCode = getConfigData(tbl);	// VK_RWIN;	// VK_RMENU;
-	if (dwKeyCode == 0) {	// íËã`ÉtÉ@ÉCÉãÇ≈ÉGÉâÅ[Ç™Ç†Ç¡ÇΩèÍçá.
-		::DestroyWindow(hWnd);
-		return 0;
-	}
-	DiaKbdMouseHook_install(dwKeyCode, tbl);
- #else
-	DWORD	dwKeyCode = getKeyCodeFromPrivateProfile();
-	// DLLë§äJén
-	DiaKbdMouseHook_install(dwKeyCode);
- #endif
+    // „Ç≠„Éº„Éú„Éº„Éâ„Åß„Éû„Ç¶„ÇπÊìç‰Ωú„Åô„ÇãÂá¶ÁêÜ„ÅÆ„Çπ„É¨„ÉÉ„Éâ„ÇíËµ∑Âãï.
+    CKbdMouseCtrl::create();
 
-	// ÉLÅ[É{Å[ÉhÇ≈É}ÉEÉXëÄçÏÇ∑ÇÈèàóùÇÃÉXÉåÉbÉhÇãNìÆ.
-	CKbdMouseCtrl::create();
-
-	// ÉqÅ[ÉvÉÅÉÇÉäÇÃí≤êÆ
-	setMinmumWorkingSetSize();
-	return 0;
+    // „Éí„Éº„Éó„É°„É¢„É™„ÅÆË™øÊï¥.
+    setMinmumWorkingSetSize();
+    return 0;
 }
 
-
-/// WM_COMMAND Ç≈çsÇ§èàóù.
+/// WM_COMMAND „ÅßË°å„ÅÜÂá¶ÁêÜ.
 ///
 LRESULT CDiaKbdMouseApp::wmCommand(HWND hWnd, WPARAM wParam, LPARAM /*lParam*/)
 {
-	DWORD wmId	  = LOWORD(wParam);
-	//x DWORD wmEvent = HIWORD(wParam);
-	// ëIëÇ≥ÇÍÇΩÉÅÉjÉÖÅ[ÇÃâêÕ
-	switch (wmId) {
-  #ifdef USE_LWINKEY
-	case IDM_LWIN_SW:
-		{
-			bool sw = DiaKbdMouseHook_setLWinMode(-1);
-			sw = (sw == 0);
-			DiaKbdMouseHook_setLWinMode(sw);
+    DWORD wmId    = LOWORD(wParam);
+    //x DWORD wmEvent = HIWORD(wParam);
+    // ÈÅ∏Êäû„Åï„Çå„Åü„É°„Éã„É•„Éº„ÅÆËß£Êûê.
+    switch (wmId) {
+    case IDM_HELP:
+        {
+            TCHAR path[MAX_PATH+16]; // ÂÆüË°å„Éï„Ç°„Ç§„É´Âêç„ÇíÊ†ºÁ¥ç„Åô„Çã„Éê„ÉÉ„Éï„Ç°.
+            ::GetModuleFileName( NULL, path, MAX_PATH );
+            std::size_t l = ::_tcslen(path);
+            if (l > 4) {
+                std::memcpy(&path[l-3], _T("htm"), 4*sizeof(TCHAR));    // Êã°ÂºµÂ≠ê„Çíhtm„Å´„Åó„Å¶„Åù„Çå„ÇíÈñã„Åè„Åì„Å®„Å´„Åô„Çã.
+                //x DEBUGPRINTF("%s\n", path);
+                ::ShellExecute (hWnd, _T("open"), path, NULL, NULL, SW_SHOW);
+                setMinmumWorkingSetSize();
+            }
+        }
+        return 0;
 
-			checkMenuItem(IDM_LWIN_SW, sw);
-		}
-		return 0;
-  #endif
+    case IDM_ABOUT:
+        ::DialogBox(hInstance_, (LPCTSTR) IDD_ABOUTBOX, hWnd, (DLGPROC) dlgProcAbout);
+        return 0;
 
-	case IDM_HELP:
-		{
-			TCHAR path[MAX_PATH+16]; // é¿çsÉtÉ@ÉCÉãñºÇäiî[Ç∑ÇÈÉoÉbÉtÉ@
-			::GetModuleFileName( NULL, path, MAX_PATH );
-			std::size_t l = ::_tcslen(path);
-			if (l > 4) {
-				std::memcpy(&path[l-3], _T("htm"), 4*sizeof(TCHAR));	// ägí£éqÇhtmÇ…ÇµÇƒÇªÇÍÇäJÇ≠Ç±Ç∆Ç…Ç∑ÇÈ.
-				//x DEBUGPRINTF("%s\n", path);
-				::ShellExecute (hWnd, _T("open"), path, NULL, NULL, SW_SHOW);
-				setMinmumWorkingSetSize();
-			}
-		}
-		return 0;
+    case IDM_EXIT:
+        ::DestroyWindow(hWnd);
+        return 0;
 
-	case IDM_ABOUT:
-		::DialogBox(hInstance_, (LPCTSTR) IDD_ABOUTBOX, hWnd, (DLGPROC) dlgProcAbout);
-		return 0;
-
-	case IDM_EXIT:
-		::DestroyWindow(hWnd);
-		return 0;
-
-	default:
-		;
-	}
-	return 1;
+    default:
+        ;
+    }
+    return 1;
 }
 
-
-/// ÉÅÉjÉÖÅ[çÄñ⁄Ç…É`ÉFÉbÉNÉ}Å[ÉNÇÇ¬ÇØÇÕÇ∏Çµ
+/// „É°„Éã„É•„ÉºÈ†ÖÁõÆ„Å´„ÉÅ„Çß„ÉÉ„ÇØ„Éû„Éº„ÇØ„Çí„Å§„Åë„ÅØ„Åö„Åó.
 ///
 void CDiaKbdMouseApp::checkMenuItem(int id, bool checkSw /*, int dispSw*/)
 {
-	int flags		= checkSw ? MFS_CHECKED : MFS_UNCHECKED;
-	// HMENU	hMenu = ::GetSubMenu(::GetMenu(hWnd_), 0);
-	HMENU	hMenu = trayIcon_.getMenuHandle();
-	//x int checked =
-	::CheckMenuItem(hMenu, id, MF_BYCOMMAND|flags);
+    int     flags = checkSw ? MFS_CHECKED : MFS_UNCHECKED;
+    // HMENU    hMenu = ::GetSubMenu(::GetMenu(hWnd_), 0);
+    HMENU   hMenu = trayIcon_.getMenuHandle();
+    //x int checked =
+    ::CheckMenuItem(hMenu, id, MF_BYCOMMAND|flags);
 
-	//x int dispFlags	= (dispMode < 0) ? MF_GLAY : (dispMode == 0) ? MF_DISABLE : MF_ENABLE;
-	//x EnableMenuItem(hMenu, id, MF_BYCOMMAND|dispFlags);
+    //x int dispFlags   = (dispMode < 0) ? MF_GLAY : (dispMode == 0) ? MF_DISABLE : MF_ENABLE;
+    //x EnableMenuItem(hMenu, id, MF_BYCOMMAND|dispFlags);
 }
 
-
-/// í ímóÃàÊÇÃÉAÉCÉRÉìÇ…ëŒÇµÇƒëÄçÏÇ™çsÇÌÇÍÇΩèÍçá.
+/// ÈÄöÁü•È†òÂüü„ÅÆ„Ç¢„Ç§„Ç≥„É≥„Å´ÂØæ„Åó„Å¶Êìç‰Ωú„ÅåË°å„Çè„Çå„ÅüÂ†¥Âêà.
 ///
 LRESULT CDiaKbdMouseApp::wmUserTrayIcon(HWND hWnd, LPARAM lParam)
 {
-	switch (lParam) {
-	case WM_RBUTTONDOWN:	// âEÉNÉäÉbÉNÇÃÇ∆Ç´ÅAÉ|ÉbÉvÉAÉbÉvÉÅÉjÉÖÅ[Ç≈ëIë.
-		{
-			unsigned no = trayIcon_.trackPopupMenu();
-			wmCommand(hWnd, no, lParam);
-		}
-		break;
-	default:
-		;
-	}
-	return 0;
+    switch (lParam) {
+    case WM_RBUTTONDOWN:    // Âè≥„ÇØ„É™„ÉÉ„ÇØ„ÅÆ„Å®„Åç„ÄÅ„Éù„ÉÉ„Éó„Ç¢„ÉÉ„Éó„É°„Éã„É•„Éº„ÅßÈÅ∏Êäû.
+        {
+            unsigned no = trayIcon_.trackPopupMenu();
+            wmCommand(hWnd, no, lParam);
+        }
+        break;
+    default:
+        ;
+    }
+    return 0;
 }
 
-
-/// ÉoÅ[ÉWÉáÉìèÓïÒÉ{ÉbÉNÉXÇÃÉÅÉbÉZÅ[ÉW ÉnÉìÉhÉâ.
+/// „Éê„Éº„Ç∏„Éß„É≥ÊÉÖÂ†±„Éú„ÉÉ„ÇØ„Çπ„ÅÆ„É°„ÉÉ„Çª„Éº„Ç∏ „Éè„É≥„Éâ„É©.
 ///
 LRESULT CALLBACK CDiaKbdMouseApp::dlgProcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	lParam;
-	switch (uMsg) {
-	case WM_INITDIALOG:
-		return TRUE;
+    lParam;
+    switch (uMsg) {
+    case WM_INITDIALOG:
+        return TRUE;
 
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
-			::EndDialog(hDlg, LOWORD(wParam));
-			setMinmumWorkingSetSize();
-			return TRUE;
-		}
-		break;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            ::EndDialog(hDlg, LOWORD(wParam));
+            setMinmumWorkingSetSize();
+            return TRUE;
+        }
+        break;
 
-	default:
-		;
-	}
-	return FALSE;
+    default:
+        ;
+    }
+    return FALSE;
 }
 
-
-/// ÉqÅ[ÉvÉÅÉÇÉäÇÃí≤êÆ
+/// „Éí„Éº„Éó„É°„É¢„É™„ÅÆË™øÊï¥.
 ///
 void CDiaKbdMouseApp::setMinmumWorkingSetSize()
 {
-	HINSTANCE hDll = ::LoadLibrary( _T( "kernel32.dll" ) );
-	if ( hDll ) {
-		typedef BOOL ( WINAPI *fn_t_SetProcessWorkingSetSize )( HANDLE, SIZE_T, SIZE_T );
-		fn_t_SetProcessWorkingSetSize fn_SetProcessWorkingSetSize = reinterpret_cast< fn_t_SetProcessWorkingSetSize >( ::GetProcAddress( hDll, "SetProcessWorkingSetSize" ) );
-		if ( fn_SetProcessWorkingSetSize ) {
-			HANDLE hCurrentProcess = ::GetCurrentProcess();
-		  #ifdef _WIN64
-			fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL );
-		  #else
-			fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFF, 0xFFFFFFFF );
-		  #endif
-		}
-		::FreeLibrary( hDll );
-	}
+    HINSTANCE hDll = ::LoadLibrary( _T( "kernel32.dll" ) );
+    if ( hDll ) {
+        typedef BOOL ( WINAPI *fn_t_SetProcessWorkingSetSize )( HANDLE, SIZE_T, SIZE_T );
+        fn_t_SetProcessWorkingSetSize fn_SetProcessWorkingSetSize
+            = reinterpret_cast< fn_t_SetProcessWorkingSetSize >( ::GetProcAddress( hDll, "SetProcessWorkingSetSize" ) );
+        if ( fn_SetProcessWorkingSetSize ) {
+            HANDLE hCurrentProcess = ::GetCurrentProcess();
+          #ifdef _WIN64
+            fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL );
+          #else
+            fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFF, 0xFFFFFFFF );
+          #endif
+        }
+        ::FreeLibrary( hDll );
+    }
 }
 
 
-
 // ===========================================================================
-/** ãNìÆÉGÉìÉgÉä
+/** Ëµ∑Âãï„Ç®„É≥„Éà„É™.
  */
 // ===========================================================================
 int APIENTRY ::_tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-	CDiaKbdMouseApp		diaCursorApp;
-	return diaCursorApp.winMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+    CDiaKbdMouseApp     diaCursorApp;
+    return diaCursorApp.winMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

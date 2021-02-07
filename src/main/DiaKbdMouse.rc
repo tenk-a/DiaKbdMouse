@@ -42,9 +42,6 @@ IDC_MENU MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-      #ifdef USE_LWINKEY
-        MENUITEM "左Winキーでマウス操作(&L)",   IDM_LWIN_SW
-      #endif
         MENUITEM "説明(&H)",                    IDM_HELP
         MENUITEM "バージョン情報(&A)",          IDM_ABOUT
         MENUITEM "終了(&X)",                    IDM_EXIT
@@ -75,7 +72,7 @@ CAPTION "バージョン情報"
 FONT 9, "System", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_MYICON,5,12,20,20
-    LTEXT           "DiaKbdMouse Version 0.8c",IDC_STATIC,31,8,100,8,SS_NOPREFIX
+    LTEXT           "DiaKbdMouse Version 0.8d",IDC_STATIC,31,8,100,8,SS_NOPREFIX
     LTEXT           "  (C) 2006-2013 tenk*",IDC_STATIC,27,23,92,8
     DEFPUSHBUTTON   "OK",IDOK,140,15,30,11,WS_GROUP
 END

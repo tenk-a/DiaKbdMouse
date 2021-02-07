@@ -1,51 +1,48 @@
-DiaKbdMouse ‚Ìƒ\[ƒX
+DiaKbdMouse ã®ã‚½ãƒ¼ã‚¹
 
-¡ Žg‚¢•û‚â—˜—pðŒ‚Æ‚©‚Í ../DiaKbdMouse.htm ‚ð‚Ý‚Ä‚­‚¾‚³‚¢B
+â–  ä½¿ã„æ–¹ã‚„åˆ©ç”¨æ¡ä»¶ã¨ã‹ã¯ ../DiaKbdMouse.htm ã‚’ã¿ã¦ãã ã•ã„ã€‚
 
-¡ Visual Studio 2008(vc9) ‚ÅƒRƒ“ƒpƒCƒ‹‚µ‚Ä‚Ü‚·B
-   ˆê‰ž vs2005(vc8) —p‚Ì sln ‚à—pˆÓ‚µ‚Ä‚Ü‚·(‚ª1,2“xƒRƒ“ƒpƒCƒ‹ŽŽ‚µ‚½‚Ì‚Ý)
+â–  Visual Studio 2019(vc14.2), Visual Studio 2008(vc9) ã§ãƒ“ãƒ«ãƒ‰ã—ã¦ã¾ã™ã€‚
+  vc14.2 ã¯xpä»¥ä¸‹éžå¯¾å¿œãªã®ã§ã€2k,xpç”¨ã« vc9 ã§ã‚‚ãƒ“ãƒ«ãƒ‰(å®Ÿæ©Ÿæœªç¢ºèª)
 
-¦ http://amaisaeta.seesaa.net/article/26290510.html ‚Ì vcslncnv ‚ð—p‚¢‚ê‚ÎA
-   vc8 ‚Ì sln ‚ð vs2002(vc7), vs2003(vc7.1) —p‚É‚à•ÏŠ·‚Å‚«‚éƒnƒY(¡‰ñ–¢Šm”F).
-   o—ÍƒtƒHƒ‹ƒ_–¼“™‚ÉƒRƒ“ƒpƒCƒ‰–¼‚ð•t‰Á‚µ‚Ä‚é‚Ì‚Å•ÏŠ·‚µ‚½‚ç•Ï–¼„§.
-   (sln, vcproj‚ðƒeƒLƒXƒgƒGƒfƒBƒ^‚ÅŠJ‚¯‚Ä _vc8 “™‚ðˆêŠ‡’uŠ·‚·‚ê‚Î)
 
-¡ Žå‚ÉŽQl‚É‚µ‚½•Å(MS‚Í“–‘R‚Æ‚µ‚ÄA‚»‚Ì‘¼)
-‚±‚ê‚ç‚Ì‘¼‚É‚à’¼Ú“I‚É‚ ‚è‚ª‚½‚©‚Á‚½•Å‚ª‚ ‚Á‚½‚Í‚¸‚¾‚ªT‚¦–Y‚ê.
+â–  ä¸»ã«å‚è€ƒã«ã—ãŸé (MSã¯å½“ç„¶ã¨ã—ã¦ã€ãã®ä»–)
+ã“ã‚Œã‚‰ã®ä»–ã«ã‚‚ç›´æŽ¥çš„ã«ã‚ã‚ŠãŒãŸã‹ã£ãŸé ãŒã‚ã£ãŸã¯ãšã ãŒæŽ§ãˆå¿˜ã‚Œ.
 
-EƒL[‚Ì‚Ì‚Á‚Æ‚è•û–@(dll)
+ãƒ»ã‚­ãƒ¼ã®ã®ã£ã¨ã‚Šæ–¹æ³•(dll)
 http://hitokuso.kicks-ass.org/progtips.html
 
-EƒgƒŒƒCƒAƒCƒRƒ“‚Ìˆ—ACRT‚ðŽg‚í‚È‚¢DLL ‚Æ‚©‚Ì‚³‚Ü‚´‚Ü‚È¬‹Z
+ãƒ»ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®å‡¦ç†ã€CRTã‚’ä½¿ã‚ãªã„DLL ã¨ã‹ã®ã•ã¾ã–ã¾ãªå°æŠ€
 http://hp.vector.co.jp/authors/VA000092/win32/index.html
 
-EƒgƒŒƒCƒAƒCƒRƒ“
+ãƒ»ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³
 http://www31.ocn.ne.jp/~yoshio2/vcmemo17-1.html
 
-ECapsLock ‚Æ‚ÌƒL[ŒðŠ·
+ãƒ»CapsLock ã¨ã®ã‚­ãƒ¼äº¤æ›
 http://www.jaist.ac.jp/~fujieda/scancode.html
 http://www.losttechnology.jp/Tips/keyscancodemap.html
 
 
-¡—š—ð
-2006-??-??  ƒL[ƒ{[ƒh‚¾‚¯‚Åƒ}ƒEƒX‚ðŽg‚¢‚½‚¢ê‡‚ª‚ ‚é‚ªA
-	    Win•W€‚ÌƒL[ƒ{[ƒhƒ}ƒEƒX‚Í‘€ìŠ´‚ªˆ«‚­‚Ä‚â‚¾‚Á‚½‚Ì‚Å
-	    KbdMouse(v0.5)‚ðì¬.
-2006-10-??  ‚È‚ñ‚Æ‚È‚­‚Å‚«‚»‚¤‚È‚Ì‚ÅAƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‚ðŽg‚¦‚é”Å‚É
-	    ‰ü‘¢‚µ DiaCursor(v0.5)‚É‰ü–¼
-2007-05-??  ‰EWIN{ƒJ[ƒ\ƒ‹‚Å‚ÌˆÚ“®‚ÅAæ‚ÉRWin‚ð—£‚·‚Æ–\”­‚µ‚½‚Ì‚ðC³.
-200?-??-??  ‰EWIN‚Æ‚Í•Ê‚É¶WIN‚Åƒ}ƒEƒX‘€ì‰Â”\‚¾‚Á‚½‚ª•sˆÀ’è—vˆö‚È‚Ì‚Å”pŽ~.
-2013-09-??  ‚±‚Ü‚²‚ÜFXì‹Æ.
-	    E–¼‘O‚ð DiaKbgMouse ‚É‰ü–¼.
-	    E’è‹`ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý‚ÌŽÀ‘•.
-	      ‚±‚ê‚É‚Æ‚à‚È‚¢ PrivateProfile(.ini)‚É‚æ‚é‰EWIN•ÏXÝ’è”pŽ~.
-	      DiaKbdMouse.exe‚Æ“¯‚¶ƒtƒHƒ‹ƒ_‚É‚ ‚é “¯.cfg ‚ð“Ç‚Ýž‚Þ.
-	    Ewin7/8‚Å‹@”\‚µ‚È‚¢ ƒVƒtƒg“¯Žž‰Ÿ‚µó‘ÔƒL[(‰EWIN+B)‚Ì”pŽ~.
-	    E‰EWINƒL[‚ð‚â‚ßAPPSƒL[‚ðŽg‚¤‚æ‚¤‚É•ÏX.
-	      ¦win7/8‚Å‚Í(‰E)WINƒL[+L ‚ÅƒƒbƒN‰æ–Ê‚ÖˆÚs‚·‚é‚ªA
-		æ‚ÁŽæ‚ê‚¸Œë‘€ì‚Å‰EWINƒL[+L‚ð‚æ‚­‰Ÿ‚µ‚Ä‚µ‚Ü‚Á‚½‚½‚ß.
-2013-09-22  E’è‹`ƒtƒ@ƒCƒ‹‚ðƒ~ƒX‚Á‚Ä2ƒXƒgƒ[ƒNƒL[‚ªŒø‚©‚È‚­‚È‚Á‚Ä‚½‚Ì‚ðC³.
-	    @(ƒ~ƒX‚µ‚â‚·‚¢Žd—l‚¾‚Á‚½‚Ì‚ÅƒvƒƒOƒ‰ƒ€‘¤‚Å‘Îˆ)
-	    E’è‹`ƒtƒ@ƒCƒ‹‚Ì ^QS(HOME) ^QD(END) ‚ð•œŠˆ.
-2015-04-20  ESendInput ‚·‚éƒL[Ý’è‚Ì dwFlag ‚É KEYEVENTF_EXTENDEDKEY
-	      ‚ð•t‚¯‚Ä‚È‚©‚Á‚½‚Ì‚ðC³
+â– å±¥æ­´
+2006-??-??  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã ã‘ã§ãƒžã‚¦ã‚¹ã‚’ä½¿ã„ãŸã„å ´åˆãŒã‚ã‚‹ãŒã€
+	    Winæ¨™æº–ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒžã‚¦ã‚¹ã¯æ“ä½œæ„ŸãŒæ‚ªãã¦ã‚„ã ã£ãŸã®ã§
+	    KbdMouse(v0.5)ã‚’ä½œæˆ.
+2006-10-??  ãªã‚“ã¨ãªãã§ããã†ãªã®ã§ã€ãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«ã‚’ä½¿ãˆã‚‹ç‰ˆã«
+	    æ”¹é€ ã— DiaCursor(v0.5)ã«æ”¹å
+2007-05-??  å³WINï¼‹ã‚«ãƒ¼ã‚½ãƒ«ã§ã®ç§»å‹•ã§ã€å…ˆã«RWinã‚’é›¢ã™ã¨æš´ç™ºã—ãŸã®ã‚’ä¿®æ­£.
+200?-??-??  å³WINã¨ã¯åˆ¥ã«å·¦WINã§ãƒžã‚¦ã‚¹æ“ä½œå¯èƒ½ã ã£ãŸãŒä¸å®‰å®šè¦å› ãªã®ã§å»ƒæ­¢.
+2013-09-??  ã“ã¾ã”ã¾è‰²ã€…ä½œæ¥­.
+	    ãƒ»åå‰ã‚’ DiaKbgMouse ã«æ”¹å.
+	    ãƒ»å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã®å®Ÿè£….
+	      ã“ã‚Œã«ã¨ã‚‚ãªã„ PrivateProfile(.ini)ã«ã‚ˆã‚‹å³WINå¤‰æ›´è¨­å®šå»ƒæ­¢.
+	      DiaKbdMouse.exeã¨åŒã˜ãƒ•ã‚©ãƒ«ãƒ€ã«ã‚ã‚‹ åŒ.cfg ã‚’èª­ã¿è¾¼ã‚€.
+	    ãƒ»win7/8ã§æ©Ÿèƒ½ã—ãªã„ ã‚·ãƒ•ãƒˆåŒæ™‚æŠ¼ã—çŠ¶æ…‹ã‚­ãƒ¼(å³WIN+B)ã®å»ƒæ­¢.
+	    ãƒ»å³WINã‚­ãƒ¼ã‚’ã‚„ã‚APPSã‚­ãƒ¼ã‚’ä½¿ã†ã‚ˆã†ã«å¤‰æ›´.
+	      â€»win7/8ã§ã¯(å³)WINã‚­ãƒ¼+L ã§ãƒ­ãƒƒã‚¯ç”»é¢ã¸ç§»è¡Œã™ã‚‹ãŒã€
+		ä¹—ã£å–ã‚Œãšèª¤æ“ä½œã§å³WINã‚­ãƒ¼+Lã‚’ã‚ˆãæŠ¼ã—ã¦ã—ã¾ã£ãŸãŸã‚.
+2013-09-22  ãƒ»å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒŸã‚¹ã£ã¦2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã‚­ãƒ¼ãŒåŠ¹ã‹ãªããªã£ã¦ãŸã®ã‚’ä¿®æ­£.
+	    ã€€(ãƒŸã‚¹ã—ã‚„ã™ã„ä»•æ§˜ã ã£ãŸã®ã§ãƒ—ãƒ­ã‚°ãƒ©ãƒ å´ã§å¯¾å‡¦)
+	    ãƒ»å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã® ^QS(HOME) ^QD(END) ã‚’å¾©æ´».
+2015-04-20  ãƒ»SendInput ã™ã‚‹ã‚­ãƒ¼è¨­å®šã® dwFlag ã« KEYEVENTF_EXTENDEDKEY
+	      ã‚’ä»˜ã‘ã¦ãªã‹ã£ãŸã®ã‚’ä¿®æ­£.
+2021-02-07  ãƒ»ã‚½ãƒ¼ã‚¹ã®UTF8åŒ–ã¨ã‹ã‚½ãƒ¼ã‚¹å¾®ä¿®æ­£. ãƒ“ãƒ«ãƒ‰æ§‹æˆä¿®æ­£. åŸºæœ¬vs2019ã§ãƒ“ãƒ«ãƒ‰.

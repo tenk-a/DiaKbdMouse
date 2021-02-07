@@ -1,4 +1,4 @@
-#ifndef CRITICALSECTION_H
+Ôªø#ifndef CRITICALSECTION_H
 #define CRITICALSECTION_H
 
 #include <windows.h>
@@ -7,29 +7,29 @@
 class CCriticalSection {
 public:
  #if 0
-	CCriticalSection() { std::memset(&cs_, 0, sizeof cs_); ::InitializeCriticalSection(&cs_); }
-	~CCriticalSection() { ::DeleteCriticalSection(&cs_); }
- #else	// ÉOÉçÅ[ÉoÉãÉCÉìÉXÉ^ÉìÉXÇÃÉOÉçÅ[ÉoÉãÉRÉìÉXÉgÉâÉNÉ^é¿çsÇîÇØÇÈÇΩÇﬂÇ±ÇøÇÁÇ….
-	void create() { std::memset(&cs_, 0, sizeof cs_); ::InitializeCriticalSection(&cs_); }
-	void release() { ::DeleteCriticalSection(&cs_); }
+    CCriticalSection() { std::memset(&cs_, 0, sizeof cs_); ::InitializeCriticalSection(&cs_); }
+    ~CCriticalSection() { ::DeleteCriticalSection(&cs_); }
+ #else  // „Ç∞„É≠„Éº„Éê„É´„Ç§„É≥„Çπ„Çø„É≥„Çπ„ÅÆ„Ç∞„É≠„Éº„Éê„É´„Ç≥„É≥„Çπ„Éà„É©„ÇØ„ÇøÂÆüË°å„ÇíÈÅø„Åë„Çã„Åü„ÇÅ„Åì„Å°„Çâ„Å´.
+    void create() { std::memset(&cs_, 0, sizeof cs_); ::InitializeCriticalSection(&cs_); }
+    void release() { ::DeleteCriticalSection(&cs_); }
  #endif
 private:
-	friend class CCriticalSectionLock;
-	void lock() { EnterCriticalSection(&cs_); }
-	void unlock() { LeaveCriticalSection(&cs_); }
+    friend class CCriticalSectionLock;
+    void lock() { EnterCriticalSection(&cs_); }
+    void unlock() { LeaveCriticalSection(&cs_); }
 
 private:
-	CRITICAL_SECTION	cs_;
+    CRITICAL_SECTION    cs_;
 };
 
 class CCriticalSectionLock {
 public:
-	CCriticalSectionLock(CCriticalSection& cs) : rCS_(cs) { rCS_.lock(); }
-	~CCriticalSectionLock() { rCS_.unlock(); }
+    CCriticalSectionLock(CCriticalSection& cs) : rCS_(cs) { rCS_.lock(); }
+    ~CCriticalSectionLock() { rCS_.unlock(); }
 private:
-	void operator=(CCriticalSectionLock const&) {}
+    void operator=(CCriticalSectionLock const&) {}
 private:
-	CCriticalSection&	rCS_;
+    CCriticalSection&   rCS_;
 };
 
-#endif	// CRITICALSECTION_H
+#endif  // CRITICALSECTION_H

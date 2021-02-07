@@ -1,10 +1,10 @@
-/**
+ï»¿/**
  *  @file   DiaKbdMouseHook_Impl.cpp
- *  @brief  ‰EWIN+‚ğ—p‚¢‚½ƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‘€ì‚·‚é‚½‚ß‚ÌƒL[‚ÌƒtƒbƒN‘¤ˆ—
+ *  @brief  APPS+ã‚’ç”¨ã„ãŸãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«æ“ä½œã™ã‚‹ãŸã‚ã®ã‚­ãƒ¼ã®ãƒ•ãƒƒã‚¯å´å‡¦ç†
  *  @auther Masashi KITAMURA
  *  @date   2006
  *  @note
- *      ƒtƒŠ[ƒ\[ƒX
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 
 #include "stdafx.h"
@@ -14,7 +14,7 @@
 #include "DiaKbdMouseHook.h"
 #include "../cmn/DebugPrintf.h"
 
-#ifdef NDEBUG   // Às‚Ìg—pƒƒ‚ƒŠ‚ğŒ¸‚ç‚·
+#if 0 //def NDEBUG   // å®Ÿè¡Œæ™‚ã®ä½¿ç”¨ãƒ¡ãƒ¢ãƒªã‚’æ¸›ã‚‰ã™
 //#pragma comment(linker, "/opt:nowin98")
 //#pragma comment(linker, "/ignore:4078")
 #pragma comment(linker, "/entry:\"DllMain\"")
@@ -37,28 +37,25 @@ unsigned    CDiaKbdMouseHook_Impl::s_uModeKey_          = 0;
 unsigned    CDiaKbdMouseHook_Impl::s_uMouseButton_      = 0;
 int         CDiaKbdMouseHook_Impl::s_iMouseButtonLife_  = 0;
 
-bool        CDiaKbdMouseHook_Impl::s_bDiaMouse_         = 0;
-bool        CDiaKbdMouseHook_Impl::s_bConvModeStat_     = 0;
-bool        CDiaKbdMouseHook_Impl::s_bTwoStStatQ_       = 0;
-bool        CDiaKbdMouseHook_Impl::s_bShiftStat_        = 0;
-bool        CDiaKbdMouseHook_Impl::s_bCtrlStat_         = 0;
+bool        CDiaKbdMouseHook_Impl::s_bDiaMouse_         = false;
+bool        CDiaKbdMouseHook_Impl::s_bConvModeStat_     = false;
+bool        CDiaKbdMouseHook_Impl::s_bTwoStStatQ_       = false;
+bool        CDiaKbdMouseHook_Impl::s_bShiftStat_        = false;
+bool        CDiaKbdMouseHook_Impl::s_bCtrlStat_         = false;
 
 #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-bool        CDiaKbdMouseHook_Impl::s_bExShift_          = 0;
-#endif
-#ifdef USE_LWINKEY
-bool        CDiaKbdMouseHook_Impl::s_bLWinStat_         = 0;
-bool        CDiaKbdMouseHook_Impl::s_bLWinModeSw_       = 1;
+bool        CDiaKbdMouseHook_Impl::s_bExShift_          = false;
 #endif
 
 
-
-/** ƒtƒbƒN‚ğİ’è
+/** ãƒ•ãƒƒã‚¯ã‚’è¨­å®š.
  */
 bool CDiaKbdMouseHook_Impl::install(int keycode, CDiaKbdMouseHook_ConvKeyTbl const& tbl)
 {
     if (s_hHook_LL_ == 0) {
         s_criticalSection_.create();
+        clearStat();
+        s_bDiaMouse_ = false;
         setModeKeyTbl(keycode, tbl);
         s_hHook_LL_  = ::SetWindowsHookEx(WH_KEYBOARD_LL, CDiaKbdMouseHook_Impl::LowLevelKeyboardProc, s_hInst_, 0);
         if (s_hHook_LL_ == NULL) {
@@ -69,8 +66,7 @@ bool CDiaKbdMouseHook_Impl::install(int keycode, CDiaKbdMouseHook_ConvKeyTbl con
 }
 
 
-
-/** ƒtƒbƒN‚ğ‰ğœ
+/** ãƒ•ãƒƒã‚¯ã‚’è§£é™¤.
  */
 bool CDiaKbdMouseHook_Impl::uninstall()
 {
@@ -82,7 +78,8 @@ bool CDiaKbdMouseHook_Impl::uninstall()
 }
 
 
-/// ƒ‚[ƒhØ‘ÖƒL[‚ÌƒR[ƒh‚ğİ’è
+/// ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿ã‚­ãƒ¼ã®ã‚³ãƒ¼ãƒ‰ã‚’è¨­å®š.
+///
 void CDiaKbdMouseHook_Impl::setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_ConvKeyTbl const& tbl) {
     assert(0 < vkMode && vkMode < 256);
     if (vkMode == 0)
@@ -90,7 +87,7 @@ void CDiaKbdMouseHook_Impl::setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_Conv
     CCriticalSectionLock    lock(s_criticalSection_);
     s_uModeKey_ = vkMode;
  #if 1 // _MSC_VER == 1500 && defined(NDEBUG) && defined(_WIN64)
-    // vc9 x64 Release ‚Å memcpy ‚ªƒŠƒ“ƒN‚Å‚«‚È‚¢‚Æé‚í‚ê‚é‚Ì‚Å–³—‚â‚è‰ñ”ğ
+    // vc9 x64 Release ã§ memcpy ãŒãƒªãƒ³ã‚¯ã§ããªã„ã¨å®£ã‚ã‚Œã‚‹ã®ã§ç„¡ç†ã‚„ã‚Šå›é¿.
     unsigned* s = (unsigned*)&tbl;
     unsigned* d = (unsigned*)&s_convKeys_;
     unsigned* e = d + sizeof(s_convKeys_)/sizeof(unsigned);
@@ -102,11 +99,12 @@ void CDiaKbdMouseHook_Impl::setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_Conv
 }
 
 
-/// ƒ}ƒEƒX‰»‚·‚éƒL[î•ñ‚ğƒ{ƒ^ƒ“‰»‚µ‚½‚à‚Ì‚ğæ“¾
+/** ãƒã‚¦ã‚¹åŒ–ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’ãƒœã‚¿ãƒ³åŒ–ã—ãŸã‚‚ã®ã‚’å–å¾—.
+ */
 unsigned CDiaKbdMouseHook_Impl::mouseButton() {
     CCriticalSectionLock    lock(s_criticalSection_);
-    // Šg’£ƒL[‘€ì’†‚ÉWin+L ‚ÅƒƒbƒN‰æ–Ê‚ÉˆÚ‚è–ß‚é‚Æ“à•”ó‘Ô•s³‚Åƒ}ƒEƒXˆÚ“®‚ª–\”­‚·‚é‚±‚Æ‚ª‚ ‚é‚Ì‚Å
-    // ”íŠQŒyŒ¸‚Ì‚½‚ßƒ^ƒCƒ}[‚ğ—pˆÓ‚µ‚ÄƒNƒŠƒA.
+    // æ‹¡å¼µã‚­ãƒ¼æ“ä½œä¸­ã«Win+L ã§ãƒ­ãƒƒã‚¯ç”»é¢ã«ç§»ã‚Šæˆ»ã‚‹ã¨å†…éƒ¨çŠ¶æ…‹ä¸æ­£ã§ãƒã‚¦ã‚¹ç§»å‹•ãŒæš´ç™ºã™ã‚‹ã“ã¨ãŒã‚ã‚‹ã®ã§
+    // è¢«å®³è»½æ¸›ã®ãŸã‚ã‚¿ã‚¤ãƒãƒ¼ã‚’ç”¨æ„ã—ã¦ã‚¯ãƒªã‚¢.
     if (s_iMouseButtonLife_) {
         if (--s_iMouseButtonLife_ <= 0) {
             s_iMouseButtonLife_ = 0;
@@ -117,28 +115,11 @@ unsigned CDiaKbdMouseHook_Impl::mouseButton() {
 }
 
 
-#ifdef USE_LWINKEY
-/** ¶WinƒL[‚É‚æ‚éƒ}ƒEƒX‘€ì‚ğ‚·‚é‚©‚Ç‚¤‚©‚ğİ’è.
- *  -1‚¾‚Æ‰½‚à‚µ‚È‚¢(ó‘Ôæ“¾—p)B
- *  @return ’¼‘O‚Ìó‘Ô‚ğ•Ô‚·.
- */
-bool CDiaKbdMouseHook_Impl::setLWinMode(int sw) {
-    bool oldMode = s_bLWinModeSw_;
-    if (sw >= 0) {
-        clearStat();
-        s_bLWinModeSw_ = (sw != 0);
-    }
-    return oldMode;
-}
-#endif
-
-
-
-/// ƒ}ƒEƒXŒü‚¯ƒ{ƒ^ƒ“‚ğİ’è
+/// ãƒã‚¦ã‚¹å‘ã‘ãƒœã‚¿ãƒ³ã‚’è¨­å®š
 ///
 inline bool CDiaKbdMouseHook_Impl::setMouseButton(unsigned btn, bool sw)
 {
-    CCriticalSectionLock    lock(s_criticalSection_);
+    //CCriticalSectionLock    lock(s_criticalSection_);
     if (sw)
         s_uMouseButton_ |= btn;
     else
@@ -147,56 +128,49 @@ inline bool CDiaKbdMouseHook_Impl::setMouseButton(unsigned btn, bool sw)
 }
 
 
-
-/// WH_KEYBOARD_LL ‚ÅŒÄ‚Î‚ê‚éŠÖ”
-///
+/** WH_KEYBOARD_LL ã§å‘¼ã°ã‚Œã‚‹é–¢æ•°.
+ */
 LRESULT CALLBACK CDiaKbdMouseHook_Impl::LowLevelKeyboardProc(int nCode, WPARAM wparam, LPARAM lparam)
 {
     KBDLLHOOKSTRUCT*    pInfo = (KBDLLHOOKSTRUCT*)lparam;
 
     // DEBUGPRINTF("* %02x %04x {%02x %02x %02x %d %08x}\n", nCode, wparam, pInfo->vkCode, pInfo->scanCode, pInfo->flags, pInfo->time, pInfo->dwExtraInfo );
 
-    {
+    if (nCode >= 0 && pInfo->dwExtraInfo != DiaKbdMouseHook_EXTRAINFO) {    // è‡ªèº«ãŒç”Ÿæˆã—ãŸã‚­ãƒ¼ã§ãªã„ãªã‚‰æœ‰åŠ¹ã¨ã—ã¦.
         CCriticalSectionLock    lock(s_criticalSection_);
         s_iMouseButtonLife_ = 1000;
-        if (s_bConvModeStat_ == 0) {    // Šg’£ƒVƒtƒg‚ÍAAPPS‚ª‰Ÿ‚³‚ê‚Ä‚¢‚éŠÔ‚Ì‚İ—LŒø.
+        if (s_bConvModeStat_ == 0) {    // æ‹¡å¼µã‚·ãƒ•ãƒˆã¯ã€APPSãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹é–“ã®ã¿æœ‰åŠ¹.
             clearStat();
         }
+        bool sw = false;
+        switch (wparam) {
+        case WM_KEYDOWN:        // ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã‚‰.
+        case WM_SYSKEYDOWN:
+            sw = true;          // onçŠ¶æ…‹ã«.
+            //[[fallthrough]];
+        case WM_KEYUP:          // ã‚­ãƒ¼ãŒæ”¾ã•ã‚ŒãŸã‚‰.
+        case WM_SYSKEYUP:       // offçŠ¶æ…‹ã«.
+            // æ‰€å®šã®ã‚­ãƒ¼ãªã‚‰æ¨ªå–ã‚Šã—ã¦ã€æƒ…å ±ã‚’æ§ãˆã€ä»–ã®å‹•ä½œã«åå¿œã—ãªã„ã‚ˆã†ã«ã—ã¦è¿”ã‚‹.
+            if (keyDownUp( sw, pInfo->vkCode ))
+                return true;
+            break;
 
-        if (nCode >= 0 && pInfo->dwExtraInfo != DiaKbdMouseHook_EXTRAINFO) {    // —LŒø‚Èó‘Ô‚Å
-            bool sw = false;
-            switch (wparam) {
-            case WM_KEYDOWN:        // ƒL[‚ª‰Ÿ‚³‚ê‚½‚ç
-            case WM_SYSKEYDOWN:
-                sw = true;          // onó‘Ô‚É
-                // ‘±‚­
-            case WM_KEYUP:          // ƒL[‚ª•ú‚³‚ê‚½‚ç
-            case WM_SYSKEYUP:       // offó‘Ô‚É
-                // Š’è‚ÌƒL[‚È‚ç‰¡æ‚è‚µ‚ÄAî•ñ‚ğT‚¦A‘¼‚Ì“®ì‚É”½‰‚µ‚È‚¢‚æ‚¤‚É‚µ‚Ä•Ô‚é
-                {
-                    if (keyDownUp( sw, pInfo->vkCode ))
-                        return true;
-                }
-                break;
-
-            default:
-                ;
-            }
+        default:
+            ;
         }
     }
     return ::CallNextHookEx(s_hHook_LL_, nCode, wparam, lparam);
 }
 
 
-
-/// Š’è‚ÌƒL[‚È‚ç‰¡æ‚è‚µ‚ÄAî•ñ‚ğT‚¦A‘¼‚Ì“®ì‚É”½‰‚µ‚È‚¢‚æ‚¤‚É‚µ‚Ä•Ô‚é.
+/// æ‰€å®šã®ã‚­ãƒ¼ãªã‚‰æ¨ªå–ã‚Šã—ã¦ã€æƒ…å ±ã‚’æ§ãˆã€ä»–ã®å‹•ä½œã«åå¿œã—ãªã„ã‚ˆã†ã«ã—ã¦è¿”ã‚‹.
 ///
 bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
 {
     // DEBUGPRINTF("* %02x %d\n", vkCode, sw );
 
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-    if (s_bExShift_) {  // Šg’£ƒVƒtƒg’†‚ÍAƒJ[ƒ\ƒ‹ˆÚ“®‚Ì‚İ—LŒø
+    if (s_bExShift_) {  // æ‹¡å¼µã‚·ãƒ•ãƒˆä¸­ã¯ã€ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã®ã¿æœ‰åŠ¹.
         const CDiaKbdMouseHook_ConvKey::COne&   rOne = s_convKeys_[vkCode].oneKey_[ s_bTwoStStatQ_ ];
         unsigned vk = rOne.u8VkCode_;
         switch (vk) {
@@ -209,7 +183,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
         case 0xF0:
             break;
 
-        default:    // ƒJ[ƒ\ƒ‹ˆÈŠO‚ÌƒL[‚ª‰Ÿ‚³‚ê‚½‚ç
+        default:    // ã‚«ãƒ¼ã‚½ãƒ«ä»¥å¤–ã®ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã‚‰.
             if (vkCode != VK_LSHIFT && vkCode != VK_RSHIFT && vkCode != VK_RCONTROL && vkCode != VK_LCONTROL) {
                 // DEBUGPRINTF("ExShift %#x %#x\n", vkCode, vk);
                 clearExShift();
@@ -219,13 +193,10 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
     }
  #endif
 
-    // ƒ‚[ƒhØ‘ÖƒL[‚¾‚Á‚½‚çA‘S‚­Win‚ÌƒfƒtƒHƒ‹ƒg“®ì‚ğ‚³‚¹‚È‚¢
+    // ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿ã‚­ãƒ¼ã ã£ãŸã‚‰ã€å…¨ãWinã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå‹•ä½œã‚’ã•ã›ãªã„
     if (vkCode == s_uModeKey_ && s_uModeKey_ != 0) {
-      #ifdef USE_LWINKEY
-        s_bLWinStat_ = false;               // ¶WIN‰Ÿ‚µ’†‚È‚ç‚»‚ê‚ÍƒLƒƒƒ“ƒZƒ‹
-      #endif
-      #if 0 // SHIFT+‰EWIN ‚ğCapsLock‚É‚µ‚Ä‚¢‚éê‡... ”÷–­‚È”»’è‚Å‚¢‚â‚Èó‘Ô‚ ‚è‚»‚¤‚È‚Ì‚Å‚â‚ß(‰EWIN+TAB‚É•ÏX)
-        if (s_bShiftStat_) {            // ƒVƒtƒg‚ª‰Ÿ‚³‚ê‚Ä‚½‚çACapsLockˆµ‚¢
+      #if 0 // SHIFT+APPS ã‚’CapsLockã«ã—ã¦ã„ã‚‹å ´åˆ... å¾®å¦™ãªåˆ¤å®šã§ã„ã‚„ãªçŠ¶æ…‹ã‚ã‚Šãã†ãªã®ã§ã‚„ã‚(å³WIN+TABã«å¤‰æ›´)
+        if (s_bShiftStat_) {            // ã‚·ãƒ•ãƒˆãŒæŠ¼ã•ã‚Œã¦ãŸã‚‰ã€CapsLockæ‰±ã„
             sendKey(1, sw?0:KEYEVENTF_KEYUP, VK_CAPITAL);
 
         } else
@@ -233,7 +204,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
         {
             s_bConvModeStat_ = sw;
 
-            if (sw) {   // CapsLock ‚à‚Ç‚«‚ÌƒtƒŠ‚ğ‚·‚é
+            if (sw) {   // CapsLock ã‚‚ã©ãã®ãƒ•ãƒªã‚’ã™ã‚‹
              #if 0
                 //INPUT input   = { INPUT_KEYBOARD, { 0xF0, 0, 0, 0, 0, 0, }};
                 INPUT input = { INPUT_KEYBOARD, { 0xF0, 0, 0, 0, DiaKbdMouseHook_EXTRAINFO, }};
@@ -244,92 +215,69 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
             }
         }
         return true;
-    } //else
+    } else
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_SHIFT || vkCode == VK_RSHIFT || vkCode == VK_LSHIFT)) {
-        // ShiftƒL[‚Ìó‘Ôİ’è
+        // Shiftã‚­ãƒ¼ã®çŠ¶æ…‹è¨­å®š
         s_bShiftStat_ = sw;
-    } //else
+        //return true;
+    } else
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_CONTROL || vkCode == VK_RCONTROL || vkCode == VK_LCONTROL)) {
-        // CtrlƒL[‚Ìó‘Ôİ’è
+        // Ctrlã‚­ãƒ¼ã®çŠ¶æ…‹è¨­å®š
         s_bCtrlStat_  = sw;
-    }
-  #ifdef USE_LWINKEY
-    else if (s_bConvModeStat_ == 0 && vkCode == VK_LWIN && s_bLWinModeSw_) {
-        // ¶WinƒL[‚Ìó‘Ôİ’è
-        setMouseButton(DIAKBDMOUSE_MOUSE_MODEKEY, sw);
-        s_bLWinStat_     = sw;
-        if (sw == 0)
-            s_uMouseButton_ = 0;
-    }
-  #endif
-    else if (vkCode == 0xF0 || vkCode == 0xF2) {
-        // IME ‘Îô‚ÅƒXƒ‹[‚µ‚Æ‚­...
-
+        //return true;
+    } else
+    if (vkCode == 0xF0 || vkCode == 0xF2) {
+        // IME å¯¾ç­–ã§ã‚¹ãƒ«ãƒ¼ã—ã¨ã...
     } else {
         if (s_bConvModeStat_) {
-            // ‚±‚Ìê‚ÅƒL[‚ğ•ÏŠ·‚µ‚Ä‚µ‚Ü‚¤
+            // ã“ã®å ´ã§ã‚­ãƒ¼ã‚’å¤‰æ›ã—ã¦ã—ã¾ã†
             sendConvKey(sw, vkCode);
-            // ƒ‚[ƒhØ‘ÖƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚éŠÔ‚ÍA‘¼‚ÌƒL[‚àWin‚ÌƒfƒtƒHƒ‹ƒg“®ì‚ğ‚³‚¹‚¿‚á‘Ê–Ú
+            // ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹é–“ã¯ã€ä»–ã®ã‚­ãƒ¼ã‚‚Winã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå‹•ä½œã‚’ã•ã›ã¡ã‚ƒé§„ç›®
             return true;
         }
-      #ifdef USE_LWINKEY
-        if (s_bLWinStat_ && s_bLWinModeSw_) {
-            switch (vkCode) {
-            case '1': vkCode = VK_LBUTTON ; break;
-            case '2': vkCode = VK_MBUTTON ; break;
-            case '3': vkCode = VK_RBUTTON ; break;
-            case '4': vkCode = VK_XBUTTON1; break;
-            case '5': vkCode = VK_XBUTTON2; break;
-            default: break;
-            }
-            makeMouseButton(sw, vkCode);
-            return true;
-        }
-      #endif
     }
     return false;
 }
 
 
-
-/// ‰EWIN+‚Å“ü—Í‚³‚ê‚½ƒL[‚ğ•ÏŠ·‚µ‚ÄSendInput‚·‚é
+/// APPS+ã§å…¥åŠ›ã•ã‚ŒãŸã‚­ãƒ¼ã‚’å¤‰æ›ã—ã¦SendInputã™ã‚‹
 ///
 void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 {
+    typedef CDiaKbdMouseHook_ConvKey    CConvKey;
     if (uKey >= CDiaKbdMouseHook_Impl::VK_NUM) {
         assert(uKey < CDiaKbdMouseHook_Impl::VK_NUM);
         return;
     }
-    typedef CDiaKbdMouseHook_ConvKey    CConvKey;
     const CConvKey::COne&   rOne = s_convKeys_[uKey].oneKey_[ s_bTwoStStatQ_ ];
 
     switch (rOne.u8Mode_) {
-    case CConvKey::MD_NONE:     // •ÏŠ·–³‚µ‚Ì‚Æ‚«
+    case CConvKey::MD_NONE:     // å¤‰æ›ç„¡ã—ã®ã¨ã
         if (uKey != s_uModeKey_) {
             s_bTwoStStatQ_ = 0;
         }
         break;
 
-    case CConvKey::MD_USE:      // •ÏŠ·‚ğs‚¤ƒL[‚Ìê‡
+    case CConvKey::MD_USE:      // å¤‰æ›ã‚’è¡Œã†ã‚­ãƒ¼ã®å ´åˆ
     case CConvKey::MD_CTRL:
     case CConvKey::MD_SHIFT:
     case CConvKey::MD_CTRLSHIFT:
-        if (s_bDiaMouse_) {     // ‹­§“I‚Éƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‚Åƒ}ƒEƒX‚ğ“®‚©‚·
+        if (s_bDiaMouse_) {     // å¼·åˆ¶çš„ã«ãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«ã§ãƒã‚¦ã‚¹ã‚’å‹•ã‹ã™
             makeMouseButton(sw, rOne.u8VkCode_);
             break;
         }
         //[[fallthourgh]]
     case CConvKey::MD_DIRECT:
-        if (sw) {                       // ƒL[DOWN
+        if (sw) {               // ã‚­ãƒ¼DOWN
             sendKey(rOne.u8Mode_, 0, rOne.u8VkCode_);
-        } else {                        // ƒL[UP
-            sendKey(rOne.u8Mode_, KEYEVENTF_KEYUP  , rOne.u8VkCode_);
+        } else {                // ã‚­ãƒ¼UP
+            sendKey(rOne.u8Mode_, KEYEVENTF_KEYUP, rOne.u8VkCode_);
             s_bTwoStStatQ_ = 0;
         }
         break;
 
-    case CConvKey::MD_2ST_Q:    // 2ƒXƒgƒ[ƒNƒL[‚ÌƒgƒŠƒK[ƒL[‚¾‚Á‚½‚ç
-        if (sw)                 // ‰Ÿ‚µ‚½‚Æ‚«‚Ì‚İ
+    case CConvKey::MD_2ST_Q:    // 2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã‚­ãƒ¼ã®ãƒˆãƒªã‚¬ãƒ¼ã‚­ãƒ¼ã ã£ãŸã‚‰
+        if (sw)                 // æŠ¼ã—ãŸã¨ãã®ã¿
             s_bTwoStStatQ_ = 1;
         break;
 
@@ -348,8 +296,8 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
  #endif
 
     case CConvKey::MD_MOUSE:
-        if (sw == 0 && rOne.u8VkCode_ == 0xff) {    // è”²‚«‚ÅƒŠƒŠ[ƒX‚Åƒ`ƒFƒbƒN
-            s_bDiaMouse_ ^= 1;                      // ƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‚Åƒ}ƒEƒXˆÚ“®‚·‚é‚©‚Ç‚¤‚©‚ğØ‘Ö
+        if (sw == 0 && rOne.u8VkCode_ == 0xff) {    // æ‰‹æŠœãã§ãƒªãƒªãƒ¼ã‚¹æ™‚ã§ãƒã‚§ãƒƒã‚¯
+            s_bDiaMouse_ = !s_bDiaMouse_;           // ãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«ã§ãƒã‚¦ã‚¹ç§»å‹•ã™ã‚‹ã‹ã©ã†ã‹ã‚’åˆ‡æ›¿
         } else {
             unsigned vk = rOne.u8VkCode_;
             makeMouseButton(sw, vk);
@@ -362,20 +310,17 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 }
 
 
-/** ƒ{ƒ^ƒ“ó‘Ô‚ğ‘S‚ÄƒNƒŠƒA(ƒL[ƒe[ƒuƒ‹•ÏX“™‚Ì‚Ì‚½‚ß)
- */
+/// ãƒœã‚¿ãƒ³çŠ¶æ…‹ã‚’å…¨ã¦ã‚¯ãƒªã‚¢(ã‚­ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«å¤‰æ›´ç­‰ã®æ™‚ã®ãŸã‚)
+///
 void CDiaKbdMouseHook_Impl::clearStat()
 {
-    s_bConvModeStat_    = 0;
-    s_bTwoStStatQ_      = 0;
-    s_bShiftStat_       = 0;
-    s_bCtrlStat_        = 0;
-    //s_bDiaMouse_      = 0;
-    s_uMouseButton_     = 0;        // ƒ}ƒEƒXî•ñƒNƒŠƒA
+    s_bConvModeStat_    = false;
+    s_bTwoStStatQ_      = false;
+    s_bShiftStat_       = false;
+    s_bCtrlStat_        = false;
+    //s_bDiaMouse_      = false;
+    s_uMouseButton_     = 0;        // ãƒã‚¦ã‚¹æƒ…å ±ã‚¯ãƒªã‚¢
     s_iMouseButtonLife_ = 0;
- #ifdef USE_LWINKEY
-    s_bLWinStat_        = 0;
- #endif
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
     clearExShift();
  #endif
@@ -383,16 +328,16 @@ void CDiaKbdMouseHook_Impl::clearStat()
 
 
 #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-/// Šg’£ƒVƒtƒgó‘Ô‚ğƒNƒŠƒA
+/// æ‹¡å¼µã‚·ãƒ•ãƒˆçŠ¶æ…‹ã‚’ã‚¯ãƒªã‚¢
 ///
 void CDiaKbdMouseHook_Impl::clearExShift()
 {
     if (s_bExShift_) {
-        //X s_uMouseButton_ = 0;        // ƒ}ƒEƒXî•ñƒNƒŠƒA
+        //X s_uMouseButton_ = 0;        // ãƒã‚¦ã‚¹æƒ…å ±ã‚¯ãƒªã‚¢
         s_bExShift_     = false;
         sendKey(1, KEYEVENTF_KEYUP, VK_LSHIFT);
       #if 0
-        // Šg’£ƒVƒtƒg‚ÌI‚í‚è‚Ì‡}‚Æ‚µ‚Ä0xF0(CapsLock)‚ª•ú‚³‚ê‚½‚±‚Æ‚É‚·‚é
+        // æ‹¡å¼µã‚·ãƒ•ãƒˆã®çµ‚ã‚ã‚Šã®åˆå›³ã¨ã—ã¦0xF0(CapsLock)ãŒæ”¾ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹
         INPUT input = { INPUT_KEYBOARD, { 0xF0, 0, KEYEVENTF_KEYUP, 0, DiaKbdMouseHook_EXTRAINFO, }};
         ::SendInput(1, &input, sizeof(INPUT));
       #endif
@@ -401,30 +346,30 @@ void CDiaKbdMouseHook_Impl::clearExShift()
 #endif
 
 
-/// SendInput‚·‚é
+/// SendInputã™ã‚‹
 ///
 void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 {
     typedef CDiaKbdMouseHook_ConvKey    CConvKey;
-    INPUT       input[8];
-    unsigned    n = 0;
-    bool        bCtrl  = (s_bCtrlStat_ == 0) && (mode == CConvKey::MD_CTRL  || mode == CConvKey::MD_CTRLSHIFT);
+    bool bCtrl  = !s_bCtrlStat_ && (mode == CConvKey::MD_CTRL  || mode == CConvKey::MD_CTRLSHIFT);
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-    bool        bShift = ((s_bShiftStat_|s_bExShift_) == 0) && (mode == CConvKey::MD_SHIFT || mode == CConvKey::MD_CTRLSHIFT);
+    bool bShift = !(s_bShiftStat_|s_bExShift_) && (mode == CConvKey::MD_SHIFT || mode == CConvKey::MD_CTRLSHIFT);
  #else
-    bool        bShift = (s_bShiftStat_ == 0) && (mode == CConvKey::MD_SHIFT || mode == CConvKey::MD_CTRLSHIFT);
+    bool bShift = !s_bShiftStat_ && (mode == CConvKey::MD_SHIFT || mode == CConvKey::MD_CTRLSHIFT);
  #endif
 
-    if (bCtrl)  // CTRL‚ª‰Ÿ‚³‚ê‚½‚±‚Æ‚É‚·‚é
+    INPUT       input[8];
+    unsigned    n = 0;
+    if (bCtrl)  // CTRLãŒæŠ¼ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹
         setInputParam( input[n++], 0, VK_LCONTROL);
-    if (bShift) // Shift‚ª‰Ÿ‚³‚ê‚½‚±‚Æ‚É‚·‚é
+    if (bShift) // ShiftãŒæŠ¼ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹
         setInputParam( input[n++], 0, VK_LSHIFT  );
 
     setInputParam( input[n++], uFlags, uVk );
 
-    if (bCtrl)  // CTRL‚ª•ú‚³‚ê‚½‚±‚Æ‚É‚·‚é
+    if (bCtrl)  // CTRLãŒæ”¾ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹
         setInputParam( input[n++], KEYEVENTF_KEYUP, VK_LCONTROL);
-    if (bShift) // Shift‚ª•ú‚³‚ê‚½‚±‚Æ‚É‚·‚é
+    if (bShift) // ShiftãŒæ”¾ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹
         setInputParam( input[n++], KEYEVENTF_KEYUP, VK_LSHIFT  );
 
     ::SendInput(n, &input[0], sizeof(INPUT));
@@ -433,7 +378,7 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 }
 
 
-/// SendInput‚Ìƒpƒ‰ƒ[ƒ^‚ğƒL[ƒ{[ƒhŒü‚¯‚Éİ’è
+/// SendInputã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å‘ã‘ã«è¨­å®š
 ///
 void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsigned uVk )
 {
@@ -446,8 +391,7 @@ void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsign
 }
 
 
-
-/// ƒ}ƒEƒX‘€ì—p‚Ìƒ{ƒ^ƒ“‚ğ¶¬
+/// ãƒã‚¦ã‚¹æ“ä½œç”¨ã®ãƒœã‚¿ãƒ³ã‚’ç”Ÿæˆ
 ///
 bool CDiaKbdMouseHook_Impl::makeMouseButton( bool sw, unsigned uVk )
 {

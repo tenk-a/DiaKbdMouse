@@ -1,129 +1,120 @@
-/**
- *	@file	TrayIcon.cpp
- *	@brief	ƒgƒŒƒCí’“ƒAƒCƒRƒ“ˆ——pƒNƒ‰ƒX
- *	@author	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ƒtƒŠ[ƒ\[ƒX
+ï»¿/**
+ *  @file   TrayIcon.cpp
+ *  @brief  ãƒˆãƒ¬ã‚¤å¸¸é§ã‚¢ã‚¤ã‚³ãƒ³å‡¦ç†ç”¨ã‚¯ãƒ©ã‚¹
+ *  @author Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 
 #include "stdafx.h"
 #include "TrayIcon.h"
 
 
-
-/// •¶š—ñsrc ‚ğdst‚É size-1 ‚Ì”ÍˆÍ‚ÅƒRƒs[Bdst‚É‚Í•K‚¸ÅŒã‚É\0‚ğ‚Â‚¯‚éB
+/// æ–‡å­—åˆ—src ã‚’dstã« size-1 ã®ç¯„å›²ã§ã‚³ãƒ”ãƒ¼ã€‚dstã«ã¯å¿…ãšæœ€å¾Œã«\0ã‚’ã¤ã‘ã‚‹.
 static inline const TCHAR* tcsCpyNum(TCHAR *dst, const TCHAR *src, unsigned size) {
-	TCHAR*		d = dst;
-	if (src && *src) {
-		const TCHAR *e = dst+size;
-		if (size)
-			--e;
-		const TCHAR * s = src;
-		do {
-			*d++ = *s++;
-		} while ((*s != 0) & (d < e));
-	}
-	*d = _T('\0');
-	return dst;
+    TCHAR*      d = dst;
+    if (src && *src) {
+        const TCHAR *e = dst+size;
+        if (size)
+            --e;
+        const TCHAR * s = src;
+        do {
+            *d++ = *s++;
+        } while ((*s != 0) & (d < e));
+    }
+    *d = _T('\0');
+    return dst;
 }
 
-
-/** ƒgƒŒƒCƒAƒCƒRƒ“‚Ìì¬
+/** ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®ä½œæˆ.
  */
 bool CTrayIcon::create(unsigned uWm, HINSTANCE hInstance, HWND hWnd, HICON hIcon, const TCHAR* pTip, UINT uMenu)
 {
-	hInstance_							= hInstance;
-	hWnd_								= hWnd;
+    hInstance_                          = hInstance;
+    hWnd_                               = hWnd;
 
-	// ’Ê’m—Ìˆæ‚ÌƒAƒCƒRƒ“‚ğì¬
-	notifyIconData_.cbSize 				= sizeof(NOTIFYICONDATA);
-	notifyIconData_.hWnd 				= hWnd;
-	notifyIconData_.uID 				= 0;
-	notifyIconData_.uFlags 				= NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	notifyIconData_.uCallbackMessage 	= uWm;
-	notifyIconData_.hIcon 				= hIcon;
-	
-	tcsCpyNum(notifyIconData_.szTip, pTip, sizeof(notifyIconData_.szTip));
+    // é€šçŸ¥é ˜åŸŸã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œæˆ.
+    notifyIconData_.cbSize              = sizeof(NOTIFYICONDATA);
+    notifyIconData_.hWnd                = hWnd;
+    notifyIconData_.uID                 = 0;
+    notifyIconData_.uFlags              = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    notifyIconData_.uCallbackMessage    = uWm;
+    notifyIconData_.hIcon               = hIcon;
 
-	// ƒAƒCƒRƒ“‚ğ“o˜^‚Å‚«‚é‚©ƒGƒ‰[‚É‚È‚é‚Ü‚ÅŒJ‚è•Ô‚·
-	while (::Shell_NotifyIcon(NIM_ADD, &notifyIconData_) == 0) {
-		if (::GetLastError() != ERROR_TIMEOUT) {	// ƒ^ƒCƒ€ƒAƒEƒgˆÈŠO‚È‚ç
-			notifyIconData_.cbSize = 0;
-			return false;	// ƒAƒCƒRƒ““o˜^ƒGƒ‰[
-		}
-		// “o˜^‚Å‚«‚Ä‚¢‚È‚¢‚±‚Æ‚ğŠm”F‚·‚é
-		if (::Shell_NotifyIcon(NIM_MODIFY, &notifyIconData_)) {
-			// “o˜^‚Å‚«‚Ä‚¢‚½
-			break;
-		} else {
-			// “o˜^‚Å‚«‚Ä‚¢‚È‚©‚Á‚½
-			::Sleep(100);
-		}
-	}
+    tcsCpyNum(notifyIconData_.szTip, pTip, sizeof(notifyIconData_.szTip));
 
-	uWmTaskBarCreated_ = ::RegisterWindowMessage( _T("TaskbarCreated") );
+    // ã‚¢ã‚¤ã‚³ãƒ³ã‚’ç™»éŒ²ã§ãã‚‹ã‹ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹ã¾ã§ç¹°ã‚Šè¿”ã™.
+    while (::Shell_NotifyIcon(NIM_ADD, &notifyIconData_) == 0) {
+        if (::GetLastError() != ERROR_TIMEOUT) {    // ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆä»¥å¤–ãªã‚‰.
+            notifyIconData_.cbSize = 0;
+            return false;   // ã‚¢ã‚¤ã‚³ãƒ³ç™»éŒ²ã‚¨ãƒ©ãƒ¼.
+        }
+        // ç™»éŒ²ã§ãã¦ã„ãªã„ã“ã¨ã‚’ç¢ºèªã™ã‚‹.
+        if (::Shell_NotifyIcon(NIM_MODIFY, &notifyIconData_)) {
+            // ç™»éŒ²ã§ãã¦ã„ãŸ.
+            break;
+        } else {
+            // ç™»éŒ²ã§ãã¦ã„ãªã‹ã£ãŸ.
+            ::Sleep(100);
+        }
+    }
 
-	// ‚±‚±‚Åƒƒjƒ…[‚à—pˆÓ‚µ‚Ä‚µ‚Ü‚¤
-	uMenuId_  = uMenu;
-	hMenu_    = ::LoadMenu( hInstance_, MAKEINTRESOURCE( uMenu ) );
-	hMenuSub_ = ::GetSubMenu( hMenu_, 0 );
-	return true;
+    uWmTaskBarCreated_ = ::RegisterWindowMessage( _T("TaskbarCreated") );
+
+    // ã“ã“ã§ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚‚ç”¨æ„ã—ã¦ã—ã¾ã†.
+    uMenuId_  = uMenu;
+    hMenu_    = ::LoadMenu( hInstance_, MAKEINTRESOURCE( uMenu ) );
+    hMenuSub_ = ::GetSubMenu( hMenu_, 0 );
+    return true;
 }
 
-
-
-/** ƒgƒŒƒCƒAƒCƒRƒ“‚ÌŠJ•ú
+/** ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®é–‹æ”¾.
  */
 void CTrayIcon::release()
 {
-	// ’Ê’m—Ìˆæ‚ÌƒAƒCƒRƒ“‚Ìíœ
-	if (notifyIconData_.cbSize) {
-		notifyIconData_.cbSize 	= sizeof(NOTIFYICONDATA);
-		notifyIconData_.hWnd 	= hWnd_;
-		notifyIconData_.uID 	= 0;
-		notifyIconData_.uFlags 	= 0;
-		::Shell_NotifyIcon(NIM_DELETE, &notifyIconData_);
-		notifyIconData_.cbSize 	= 0;
-	}
-	::DestroyMenu(hMenu_);  //ƒƒjƒ…[”jŠü
+    // é€šçŸ¥é ˜åŸŸã®ã‚¢ã‚¤ã‚³ãƒ³ã®å‰Šé™¤.
+    if (notifyIconData_.cbSize) {
+        notifyIconData_.cbSize  = sizeof(NOTIFYICONDATA);
+        notifyIconData_.hWnd    = hWnd_;
+        notifyIconData_.uID     = 0;
+        notifyIconData_.uFlags  = 0;
+        ::Shell_NotifyIcon(NIM_DELETE, &notifyIconData_);
+        notifyIconData_.cbSize  = 0;
+    }
+    ::DestroyMenu(hMenu_);  //ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç ´æ£„.
 }
 
-
-
-/** WndProc ‚É‚ÄƒgƒŒƒCì‚è’¼‚µ‚ÌƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ª—ˆ‚½‚©ƒ`ƒFƒbƒN‚µ‚Ä—ˆ‚Ä‚½‚çÄì¬
+/** WndProc ã«ã¦ãƒˆãƒ¬ã‚¤ä½œã‚Šç›´ã—ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ¥ãŸã‹ãƒã‚§ãƒƒã‚¯ã—ã¦æ¥ã¦ãŸã‚‰å†ä½œæˆ.
  */
 void CTrayIcon::checkRecreate(UINT msg)
 {
-	if (msg == uWmTaskBarCreated_) {
-		create(notifyIconData_.uCallbackMessage, hInstance_, hWnd_, notifyIconData_.hIcon, notifyIconData_.szTip, uMenuId_);
-	}
+    if (msg == uWmTaskBarCreated_) {
+        create(notifyIconData_.uCallbackMessage, hInstance_, hWnd_, notifyIconData_.hIcon, notifyIconData_.szTip, uMenuId_);
+    }
 }
 
-
-
-/** ƒAƒCƒRƒ“ˆÊ’u‚Åƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[‚Å‘I‘ğ‚³‚ê‚½‚çA‚»‚ÌID‚ğ•Ô‚·B–³Œø‚È‚ç0‚ğ•Ô‚·B
+/** ã‚¢ã‚¤ã‚³ãƒ³ä½ç½®ã§ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã§é¸æŠã•ã‚ŒãŸã‚‰ã€ãã®IDã‚’è¿”ã™ã€‚ç„¡åŠ¹ãªã‚‰0ã‚’è¿”ã™.
  */
 UINT CTrayIcon::trackPopupMenu()
 {
-	// ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[‚ğŠJ‚­‘O‚ÉƒƒCƒ“ƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚·‚é.
-	::SetForegroundWindow(hWnd_);
+    // ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é–‹ãå‰ã«ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹.
+    ::SetForegroundWindow(hWnd_);
 
-	// ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[‚ğŠJ‚­.
-	POINT point;
-	::GetCursorPos(&point);
-	if (hMenuSub_ == NULL)
-		return 0;
+    // ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é–‹ã.
+    POINT point;
+    ::GetCursorPos(&point);
+    if (hMenuSub_ == NULL)
+        return 0;
 
-	UINT n = ::TrackPopupMenu(
-					hMenuSub_,
-					TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
-					point.x,
-					point.y,
-					0,
-					hWnd_,
-					NULL
-				);
-	return n;
+    UINT n = ::TrackPopupMenu(
+                    hMenuSub_,
+                    TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+                    point.x,
+                    point.y,
+                    0,
+                    hWnd_,
+                    NULL
+                );
+    return n;
 }
-

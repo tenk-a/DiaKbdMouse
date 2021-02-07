@@ -1,10 +1,10 @@
-/**
- *	@file	DiaKbdMouse.h
- *	@brief	ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‚ğ§Œä
- *	@author	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ƒtƒŠ[ƒ\[ƒX
+ï»¿/**
+ *  @file   DiaKbdMouse.h
+ *  @brief  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹ã‚’åˆ¶å¾¡
+ *  @author Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 #ifndef DIAKBDMOUSE_H
 #define DIAKBDMOUSE_H

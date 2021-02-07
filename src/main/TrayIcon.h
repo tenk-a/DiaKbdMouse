@@ -1,10 +1,10 @@
-/**
- *	@file	TrayIcon.h
- *	@brief	ƒgƒŒƒCí’“ƒAƒCƒRƒ“ˆ——pƒNƒ‰ƒX
- *	@author	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ƒtƒŠ[ƒ\[ƒX
+ï»¿/**
+ *  @file   TrayIcon.h
+ *  @brief  ãƒˆãƒ¬ã‚¤å¸¸é§ã‚¢ã‚¤ã‚³ãƒ³å‡¦ç†ç”¨ã‚¯ãƒ©ã‚¹
+ *  @author Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 #ifndef TRAYICON_H
 #define TRAYICON_H
@@ -14,36 +14,35 @@
 #include <windows.h>
 
 
-///	ƒgƒŒƒCí’“ƒAƒCƒRƒ“ˆ——pƒNƒ‰ƒX
+/// ãƒˆãƒ¬ã‚¤å¸¸é§ã‚¢ã‚¤ã‚³ãƒ³å‡¦ç†ç”¨ã‚¯ãƒ©ã‚¹.
 class CTrayIcon {
 public:
-	CTrayIcon() { for (int i = sizeof *this; --i >= 0;) ((char*)this)[i] = '\0'; }	// –³ì–@
-	~CTrayIcon() { release(); }
+    CTrayIcon() { for (int i = sizeof *this; --i >= 0;) ((char*)this)[i] = '\0'; }  // ç„¡ä½œæ³•.
+    ~CTrayIcon() { release(); }
 
-	/// ƒgƒŒƒCƒAƒCƒRƒ“‚Ìì¬
-	bool create(unsigned uWm, HINSTANCE hInstance, HWND hWnd, HICON hIcon, const TCHAR* pTip, UINT uMenu);
+    /// ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®ä½œæˆ.
+    bool create(unsigned uWm, HINSTANCE hInstance, HWND hWnd, HICON hIcon, const TCHAR* pTip, UINT uMenu);
 
-	/// ƒgƒŒƒCƒAƒCƒRƒ“‚ÌŠJ•ú
-	void release();
+    /// ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®é–‹æ”¾.
+    void release();
 
-	/// WndProc ‚É‚ÄƒgƒŒƒCì‚è’¼‚µ‚ÌƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ª—ˆ‚½‚©ƒ`ƒFƒbƒN‚µ‚Ä—ˆ‚Ä‚½‚çÄì¬
-	void checkRecreate(UINT uMsg);
+    /// WndProc ã«ã¦ãƒˆãƒ¬ã‚¤ä½œã‚Šç›´ã—ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ¥ãŸã‹ãƒã‚§ãƒƒã‚¯ã—ã¦æ¥ã¦ãŸã‚‰å†ä½œæˆ.
+    void checkRecreate(UINT uMsg);
 
-	/// ƒAƒCƒRƒ“ˆÊ’u‚Åƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[‚Å‘I‘ğ‚³‚ê‚½‚çA‚»‚ÌID‚ğ•Ô‚·B–³Œø‚È‚ç0‚ğ•Ô‚·B
-	UINT trackPopupMenu();
+    /// ã‚¢ã‚¤ã‚³ãƒ³ä½ç½®ã§ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã§é¸æŠã•ã‚ŒãŸã‚‰ã€ãã®IDã‚’è¿”ã™ã€‚ç„¡åŠ¹ãªã‚‰0ã‚’è¿”ã™.
+    UINT trackPopupMenu();
 
-	/// Œ»İ‚ÌƒgƒŒƒCƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹‚ğ•Ô‚·
-	const HMENU	getMenuHandle() const { return hMenuSub_; }
+    /// ç¾åœ¨ã®ãƒˆãƒ¬ã‚¤ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«ã‚’è¿”ã™.
+    const HMENU getMenuHandle() const { return hMenuSub_; }
 
 private:
-	NOTIFYICONDATA 		notifyIconData_;			///< ƒgƒŒƒC‚É‚Ì‚éƒAƒCƒRƒ“‚Ì‚½‚ß‚Ìî•ñ
-	HINSTANCE			hInstance_;					///< ƒCƒ“ƒXƒ^ƒ“ƒX¥ƒnƒ“ƒhƒ‹
-	HWND				hWnd_;						///< ƒEƒBƒ“ƒhƒEEƒnƒ“ƒhƒ‹
-	UINT 				uWmTaskBarCreated_;			///< ƒ^ƒXƒNƒo[‚ªì‚ç‚ê‚½‚É‚­‚éƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-	HMENU				hMenu_;						///< ƒgƒŒƒCƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
-	HMENU				hMenuSub_;					///< ƒgƒŒƒCƒƒjƒ…[‚ÌƒTƒuƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
-	UINT				uMenuId_;					///< ƒƒjƒ…[‚ÌID
+    NOTIFYICONDATA      notifyIconData_;            ///< ãƒˆãƒ¬ã‚¤ã«ã®ã‚‹ã‚¢ã‚¤ã‚³ãƒ³ã®ãŸã‚ã®æƒ…å ±.
+    HINSTANCE           hInstance_;                 ///< ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ï½¥ãƒãƒ³ãƒ‰ãƒ«.
+    HWND                hWnd_;                      ///< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ãƒãƒ³ãƒ‰ãƒ«.
+    UINT                uWmTaskBarCreated_;         ///< ã‚¿ã‚¹ã‚¯ãƒãƒ¼ãŒä½œã‚‰ã‚ŒãŸæ™‚ã«ãã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«.
+    HMENU               hMenu_;                     ///< ãƒˆãƒ¬ã‚¤ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«.
+    HMENU               hMenuSub_;                  ///< ãƒˆãƒ¬ã‚¤ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«.
+    UINT                uMenuId_;                   ///< ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ID.
 };
-
 
 #endif

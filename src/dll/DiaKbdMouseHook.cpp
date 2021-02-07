@@ -1,10 +1,10 @@
-/**
- *	@file	DiaKbdMouseHook.h
- *	@brief	APPS+‚ğ—p‚¢‚½ƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‘€ì‚·‚é‚½‚ß‚ÌƒL[‚ÌƒtƒbƒN—pDLL
- *	@auther	Masashi KITAMURA
- *	@date	2006
+ï»¿/**
+ *  @file   DiaKbdMouseHook.h
+ *  @brief  APPS+ã‚’ç”¨ã„ãŸãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«æ“ä½œã™ã‚‹ãŸã‚ã®ã‚­ãƒ¼ã®ãƒ•ãƒƒã‚¯ç”¨DLL
+ *  @auther Masashi KITAMURA
+ *  @date   2006
  *  @note
- *		ƒtƒŠ[ƒ\[ƒX
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 
 #include "stdafx.h"
@@ -12,68 +12,48 @@
 #include "DiaKbdMouseHook_Impl.h"
 
 
-/// DLL ƒGƒ“ƒgƒŠ
+/// DLL ã‚¨ãƒ³ãƒˆãƒª.
 BOOL APIENTRY DllMain(
-		HANDLE hModule,
-		DWORD  ul_reason_for_call,
-		LPVOID /*lpReserved*/
+        HANDLE hModule,
+        DWORD  ul_reason_for_call,
+        LPVOID /*lpReserved*/
 ){
-	switch (ul_reason_for_call) {
-	case DLL_PROCESS_ATTACH:
-		CDiaKbdMouseHook_Impl::init( HINSTANCE(hModule) );
-		::DisableThreadLibraryCalls(HMODULE(hModule));
-		break;
-	case DLL_THREAD_ATTACH:		break;
-	case DLL_THREAD_DETACH:		break;
-	case DLL_PROCESS_DETACH:	break;
-	default:					break;
-	}
-	return TRUE;
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH:
+        CDiaKbdMouseHook_Impl::init( HINSTANCE(hModule) );
+        ::DisableThreadLibraryCalls(HMODULE(hModule));
+        break;
+    case DLL_THREAD_ATTACH:     break;
+    case DLL_THREAD_DETACH:     break;
+    case DLL_PROCESS_DETACH:    break;
+    default:                    break;
+    }
+    return TRUE;
 }
 
 
 
-/** ƒtƒbƒN‚ğİ’è
+/** ãƒ•ãƒƒã‚¯ã‚’è¨­å®š.
  */
-HOOKDLL_API int DiaKbdMouseHook_install(int keycodde, CDiaKbdMouseHook_ConvKeyTbl const& tbl)
+HOOKDLL_API int DiaKbdMouseHook_install(int keycode, CDiaKbdMouseHook_ConvKeyTbl const& tbl)
 {
-	return CDiaKbdMouseHook_Impl::install(keycodde, tbl);
+    return CDiaKbdMouseHook_Impl::install(keycode, tbl);
 }
 
 
 
 /**
- *	ƒtƒbƒN‚ğ‰ğœ
+ *  ãƒ•ãƒƒã‚¯ã‚’è§£é™¤.
  */
 HOOKDLL_API int DiaKbdMouseHook_uninstall()
 {
-	return CDiaKbdMouseHook_Impl::uninstall();
+    return CDiaKbdMouseHook_Impl::uninstall();
 }
 
 
-/** ƒpƒbƒh“I‚É‚µ‚½ƒ}ƒEƒXƒ{ƒ^ƒ“î•ñ‚Ìæ“¾
+/** ãƒ‘ãƒƒãƒ‰çš„ã«ã—ãŸãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³æƒ…å ±ã®å–å¾—.
  */
 HOOKDLL_API unsigned DiaKbdMouseHook_mouseButton()
 {
-	return CDiaKbdMouseHook_Impl::mouseButton();
+    return CDiaKbdMouseHook_Impl::mouseButton();
 }
-
-
-#if 0
-/** ƒ‚[ƒh‚ğØ‚è‘Ö‚¦‚éƒL[‚ğİ’è
- */
-HOOKDLL_API void DiaKbdMouseHook_setModeKey(unsigned vkMode) {
-	CDiaKbdMouseHook_Impl::setModeKey(vkMode);
-}
-#endif
-
-
-#ifdef USE_LWINKEY
-/** ¶Win‚É‚æ‚éƒ}ƒEƒX‘€ì‚Ì—˜—p‚Ìon/off. -1‚¾‚Æ‰½‚à‚µ‚È‚¢.
- *	@return •Ô’l‚Í’¼‘O‚Ìó‘Ô
- */
-HOOKDLL_API bool DiaKbdMouseHook_setLWinMode(int sw)
-{
-	return CDiaKbdMouseHook_Impl::setLWinMode(sw);
-}
-#endif

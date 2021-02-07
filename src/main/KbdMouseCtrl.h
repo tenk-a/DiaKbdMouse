@@ -1,10 +1,10 @@
-/**
- *	@file	KbdMouseCtrl.h
- *	@brief	ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‘€ì‚·‚éˆ—(•ÊƒXƒŒƒbƒh)
- *	@auther	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ƒtƒŠ[ƒ\[ƒX
+ï»¿/**
+ *  @file   KbdMouseCtrl.h
+ *  @brief  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹æ“ä½œã™ã‚‹å‡¦ç†(åˆ¥ã‚¹ãƒ¬ãƒƒãƒ‰)
+ *  @auther Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 #ifndef KBDMOUSECTRL_H
 #define KBDMOUSECTRL_H
@@ -15,39 +15,36 @@
 #include "../cmn/DgtXY2AnlgXY.hpp"
 
 
-/// ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‘€ì‚·‚éˆ—(•ÊƒXƒŒƒbƒh)
+/// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹æ“ä½œã™ã‚‹å‡¦ç†(åˆ¥ã‚¹ãƒ¬ãƒƒãƒ‰)
 class CKbdMouseCtrl {
 public:
-	/// ì¬
-	static void		create();
+    /// ä½œæˆ.
+    static void     create();
 
-	/// ‰ğœ
-	static void		release();
-
-private:
-	CKbdMouseCtrl();
-	~CKbdMouseCtrl();
-
-	static void		run();
-
-	static void		ctrl();
-	static void		moveMouse(unsigned uNow, unsigned uOld, unsigned uTrig);
-	static unsigned makeReptKey(unsigned uNow, unsigned uOld, unsigned uTrig);
-	static void 	sendMouseButton(unsigned uTrig, unsigned uRel);
- #ifdef USE_LWINKEY
-	static void 	checkModeKey(unsigned uNow, unsigned uTrig);
- #endif
+    /// è§£é™¤.
+    static void     release();
 
 private:
-	enum {SLEEP_COUNT =  8 };
-	enum { DLT		  =  4 };
-	enum { HIS_NUM	  = 12 };
-	static HANDLE 							s_hThread_;					///< ƒXƒŒƒbƒhƒnƒ“ƒhƒ‹
-	static unsigned							s_uOld_;					///< 1ƒtƒŒ[ƒ€‘O‚Ìƒ{ƒ^ƒ“î•ñ
-	static DgtXY2AnlgXY<float,256,HIS_NUM>	s_dgtXY2AnlgXY_;			///< ƒfƒWƒ^ƒ‹ƒ{ƒ^ƒ“î•ñ‚ğƒAƒiƒƒO‰»‚·‚é‚½‚ß‚ÌƒNƒ‰ƒX
-	static bool								s_bWin1st_;
-	static unsigned							s_uReptCnt_;
-	static const INPUT						s_input_mouseSendTbl_[];	///< ƒ}ƒEƒXî•ñ‚É•ÏŠ·‚·‚é‚Æ‚«‚Ég‚¤
+    CKbdMouseCtrl();
+    ~CKbdMouseCtrl();
+
+    static void     run();
+
+    static void     ctrl();
+    static void     moveMouse(unsigned uNow, unsigned uOld, unsigned uTrig);
+    static unsigned makeReptKey(unsigned uNow, unsigned uOld, unsigned uTrig);
+    static void     sendMouseButton(unsigned uTrig, unsigned uRel);
+
+private:
+    enum {SLEEP_COUNT =  8 };
+    enum { DLT        =  4 };
+    enum { HIS_NUM    = 12 };
+    static HANDLE                           s_hThread_;                 ///< ã‚¹ãƒ¬ãƒƒãƒ‰ãƒãƒ³ãƒ‰ãƒ«.
+    static unsigned                         s_uOld_;                    ///< 1ãƒ•ãƒ¬ãƒ¼ãƒ å‰ã®ãƒœã‚¿ãƒ³æƒ…å ±.
+    static DgtXY2AnlgXY<float,256,HIS_NUM>  s_dgtXY2AnlgXY_;            ///< ãƒ‡ã‚¸ã‚¿ãƒ«ãƒœã‚¿ãƒ³æƒ…å ±ã‚’ã‚¢ãƒŠãƒ­ã‚°åŒ–.
+    static bool                             s_bWin1st_;
+    static unsigned                         s_uReptCnt_;
+    static const INPUT                      s_input_mouseSendTbl_[];    ///< ãƒã‚¦ã‚¹æƒ…å ±ã«å¤‰æ›ã™ã‚‹ã¨ãã«ä½¿ã†.
 };
 
 

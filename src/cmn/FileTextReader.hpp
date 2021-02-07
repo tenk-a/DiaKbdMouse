@@ -1,8 +1,8 @@
-/**
- *	@file	FileTextReader.hpp
- *	@brief	ƒoƒCƒiƒŠƒtƒ@ƒCƒ‹‚ğƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Æ‚µ‚Ä•¶šEs“Ç‚İ‚İ‚·‚é‚½‚ß‚ÌƒNƒ‰ƒX
- *	@note
- *	- \r\n ‚ğ \n ‰»‚·‚é.
+ï»¿/**
+ *  @file   FileTextReader.hpp
+ *  @brief  ãƒã‚¤ãƒŠãƒªãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã¨ã—ã¦æ–‡å­—ãƒ»è¡Œèª­ã¿è¾¼ã¿ã™ã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¹
+ *  @note
+ *  - \r\n ã‚’ \n åŒ–ã™ã‚‹.
  */
 #ifndef FILETEXTREADER_HPP
 #define FILETEXTREADER_HPP
@@ -11,39 +11,39 @@
 #include "TextReaderBase.hpp"
 
 class FileTextReader : public TextReaderBase {
-	enum { DFLT_BUF_SZ = 1024 * 1024 };
-	typedef TextReaderBase	base;
+    enum { DFLT_BUF_SZ = 1024 * 1024 };
+    typedef TextReaderBase  base;
 public:
-	typedef FileHdl::OpenMode	OpenMode;
+    typedef FileHdl::OpenMode   OpenMode;
 
-	FileTextReader() {}
-	explicit FileTextReader(TCHAR const* nm, OpenMode md=FileHdl::R) { open(nm, md); }
-	~FileTextReader() { }
+    FileTextReader() {}
+    explicit FileTextReader(TCHAR const* nm, OpenMode md=FileHdl::R) { open(nm, md); }
+    ~FileTextReader() { }
 
-	bool		open(TCHAR const* fname, OpenMode md=FileHdl::R) {
-					bool rc = fh_.open(fname, md);
-					if (rc)
-						setbuf(NULL, DFLT_BUF_SZ);
-					return rc;
-				}
-	bool		openStd(int type) { return type ? false : fh_.openStd(type); }
+    bool        open(TCHAR const* fname, OpenMode md=FileHdl::R) {
+                    bool rc = fh_.open(fname, md);
+                    if (rc)
+                        setbuf(NULL, DFLT_BUF_SZ);
+                    return rc;
+                }
+    bool        openStd(int type) { return type ? false : fh_.openStd(type); }
 
-	bool		is_open() const { return fh_.is_open(); }
+    bool        is_open() const { return fh_.is_open(); }
 
-	//void		close() { base::close(); }
-	//size_t	read(void* readbuf, size_t sz) { return base::read(readbuf, sz); }
-	//int 		getc() { return base::getc(); }
-	//char*		gets(char* buf, size_t sz) { return base::gets(buf, sz); }
-	//int		setbuf(char* buf, size_t sz) { return base::setbuf(buf, sz); }
-
-private:
-	void		raw_close() { fh_.close(); }
-	size_t		raw_read(void* buf, size_t sz) { return fh_.read(buf, sz); }
-	void		raw_free(void* p) { return FileHdl::memFree(p); }
-	void*		raw_malloc(size_t sz) { return FileHdl::memRealloc(NULL, sz); }
+    //void      close() { base::close(); }
+    //size_t    read(void* readbuf, size_t sz) { return base::read(readbuf, sz); }
+    //int       getc() { return base::getc(); }
+    //char*     gets(char* buf, size_t sz) { return base::gets(buf, sz); }
+    //int       setbuf(char* buf, size_t sz) { return base::setbuf(buf, sz); }
 
 private:
-	FileHdl		fh_;
+    void        raw_close() { fh_.close(); }
+    size_t      raw_read(void* buf, size_t sz) { return fh_.read(buf, sz); }
+    void        raw_free(void* p) { return FileHdl::memFree(p); }
+    void*       raw_malloc(size_t sz) { return FileHdl::memRealloc(NULL, sz); }
+
+private:
+    FileHdl     fh_;
 };
 
 #endif

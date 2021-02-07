@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
-<title>DiaKbdMouse v0.8c</title>
-<meta http-equiv="Content-Type" content="text/html; charset=x-sjis">
+<title>DiaKbdMouse v0.8d</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <style><!--
 body{line-height : 135%; color : #202020; background-color : #fcfcfc; font-size : 1em; margin : 1em 3em 2em 2em;}
@@ -27,301 +27,313 @@ ul,ol,li,table{line-height : 135%;}
 
 <body>
 
-<h1>DiaKbdMouse  v0.8c</h1>
-<h3>for (���{���) Windows 2K/Xp/Vista/7/8 (x86/x64)</h3>
+<h1>DiaKbdMouse  v0.8d</h1>
+<h3>for (日本語版) Windows Vista/7/8/8.1/10 x86/x64  (2K/Xp x86)</h3>
 
 <p>
 
 <dl>
-<dt>�����m</dt>
+<dt>■モノ</dt>
 <dd>
 <p>
-Apps�L�[���������ŁA�J�[�\���Ń}�E�X���삵����A�Ẫ_�C�������h�J�[�\��(SDEX��)�ŃJ�[�\���ړ������肷�邽�߂ɍ쐬�����\�t�g�ł��B
-�� Apps�L�[��JP109�n���ƉECtrl�ׂ̗ɂ���A���i�}�E�X�E�N���b�N�̃��j���[���o��L�[
+Appsキー同時押しで、カーソルでマウス操作したり、古のダイヤモンドカーソル(SDEX等)でカーソル移動したりするために作成したソフトです。
+※ AppsキーはJP109系だと右Ctrlの隣にある、普段マウス右クリックのメニューが出るキー
 <p>
-v0.8����͒�`�t�@�C���ŃL�[�ݒ肷��悤�ɂȂ��Ă���̂ŁA�_�C�������h�J�[�\���ȊO���ݒ�\�ł�(Apps�łȂ��ʂ̃L�[���������ł��悭)�B
+v0.8からは定義ファイルでキー設定するようになっているので、ダイヤモンドカーソル以外も設定可能です(Appsでなく別のキー同時押しでもよく)。
 <p>
-������L�[�o�C���f�B���O�\�t�g�̈��ł����A
-�Ȃ�ׂ�Windows�W���L�[���C�W�炸�Ɏg�������L�[�������ǉ�����Ƃ����㕨�ŁA�������{�i�I�ȃL�[�̏�����ł͂Ȃ��ȈՂȂ��̂�OS�W����WIN�L�[�����������܂���B
-�i�������̂�������͑��̖{�i�I�ȃL�[�o�C���f�B���O�\�t�g���g����ق����g�ł��傤�j
+いわゆるキーバインディングソフトの一種ですが、
+なるべくWindows標準キーをイジらずに使いたいキーを少し追加するという代物で、実装も本格的なキーの乗っ取りではなく簡易なものでOS標準のWINキー操作を乗っ取れません。
+（こだわりのある向きは他の本格的なキーバインディングソフトを使われるほうが吉でしょう）
 <br>
 <p>
-�ł���� Apps�łȂ� CapsLock �L�[�𒼐ڊg���L�[�Ƃ��Ďg�����������̂ł����A��ɗ]��ނ������̂ł�����߂܂����B<br>
-CapsLock�L�[(�̈ʒu)���g���L�[�ɂ������ꍇ�́A���W�X�g���ݒ�� CapsLock�L�[ �� Apps �L�[�������i���邢�� CapsLock��Apps��) ���Ă��������B
-���ڃ��W�X�g����������Ȃ�A���̃L�[�����c�[�����g���Ȃ�B�ꉞ �ݒ�p�̃��W�X�g���t�@�C����p�ӂ��Ă܂��i��q�j�B
+できれば Appsでなく CapsLock キーを直接拡張キーとして使いたかったのですが、手に余る類だったのであきらめました。<br>
+CapsLockキー(の位置)を拡張キーにしたい場合は、レジストリ設定で CapsLockキー と Apps キーを交換（あるいは CapsLockをApps化) してください。
+直接レジストリをいじるなり、他のキー交換ツールを使うなり。一応 設定用のレジストリファイルを用意してます（後述）。
 
 <p><br>
 </dd>
 
-<dt>���C���X�g�[��</dt>
+<dt>■インストール</dt>
 <dd>
 <p>
-�𓀂����t�@�C���S��C�ӂ̃t�H���_������ē���Ă��������B���Ƃ��� c:\tool\DiaKbdMouse ���B<br>
-�Ȃ�ׂ� Program Files �� Program Files (x86) ���� UAC �ŃK�[�h�����t�H���_<strong>�ȊO</strong>�ɍ쐬���Ă��������B
-(�L�[��`�t�@�C���Ƀ~�X���L�����ꍇ DiaKbdMouse.exe �Ɠ����t�H���_�� DiaKbdMouse.err �t�@�C���ɏo�͂��邽��)
+解凍したファイル群を任意のフォルダを作って入れてください。たとえば c:\tool\DiaKbdMouse 等。<br>
+Program Files や Program Files (x86) 等の UAC でガードされるフォルダ<strong>以外</strong>に作成してください。
+(キー定義ファイルにミスが有った場合 DiaKbdMouse.exe と同じフォルダに DiaKbdMouse.err ファイルに出力するため)
+<ul>
+<li>README.md</li>
+<li>DiaKbdMouse.cfg</li>
+<li>DiaKbdMouse.htm</li>
+<li>install.bat</li>
+<li>inst/*</li>
+<li>config_etc/*</li>
+</ul>
+<p>
+がある状態で、install.bat を実行、お使いの環境に合わせて 1,2,3 いずれかを選んでください (実のところ3なら何れの環境でも動くはず)
 <ul>
 <li>DiaKbdMouse.exe</li>
 <li>DiaKbdMouseHook.dll</li>
-<li>DiaKbdMouse.cfg</li>
-<li>DiaKbdMouse.htm</li>
 </ul>
 <p>
-���@�荞��ł��������B<br>
-����Ȃ��Ȃ�����폜�B<br>
-���W�X�g���͎g���Ă܂���B<br>
-�i���ACapsLock��Apps�L�[���������Ă���ꍇ�͊e���Ń��W�X�g���𑀍삵�Ă��������j
+がコピーされます。
+<p>
+いらなくなったら削除。<br>
+レジストリは使ってません。<br>
+（が、CapsLockとAppsキーを交換している場合は各自でレジストリを操作してください）
 
 <p><br>
 </dd>
 
 
-<dt>������</dt>
+<dt>■操作</dt>
 <dd>
 <p>
-DiaKbdMouse.exe�����s����ƃ^�X�N�g���C�ɍڂ�܂��B<br>
-�^�X�N�g���C�ɍڂ����A�C�R�����E�N���b�N����΃��j���[���o��̂ŁA
-�I���͂������炵�Ă��������B
+DiaKbdMouse.exeを実行するとタスクトレイに載ります。<br>
+タスクトレイに載ったアイコンを右クリックすればメニューが出るので、
+終了はそこからしてください。
 
 <p>
-�t����`�t�@�C���ɂ�� Apps�L�[�ł̑���
+付属定義ファイルによる Appsキーでの操作
 <p>
 <table>
 <tbody>
-<tr><th>�}�E�X����֌W</th><td>�@</td></tr>
-<tr><th>Apps+�J�[�\���L�[</th><td>�}�E�X�J�[�\���ړ�</td></tr>
-<tr><th>Apps+IJKL	</th><td>�}�E�X�J�[�\���ړ�</td></tr>
-<tr><th>Apps+1		</th><td>�}�E�X�E���{�^��</td></tr>
-<tr><th>Apps+2		</th><td>�}�E�X�E�����{�^��</td></tr>
-<tr><th>Apps+3		</th><td>�}�E�X�E�E�{�^��</td></tr>
-<tr><th>Apps+4		</th><td>�}�E�X�EX�{�^��1</td></tr>
-<tr><th>Apps+5		</th><td>�}�E�X�EX�{�^��2</td></tr>
-<tr><th>Apps+6		</th><td>�_�C�������h�J�[�\���Ń}�E�X�J�[�\���𓮂���(�g�O��)</td>
-<tr><th>�@</th><td>�@</td></tr>
+<tr><th>マウス操作関係</th><td>　</td></tr>
+<tr><th>Apps+カーソルキー</th><td>マウスカーソル移動</td></tr>
+<tr><th>Apps+IJKL	</th><td>マウスカーソル移動</td></tr>
+<tr><th>Apps+1		</th><td>マウス・左ボタン</td></tr>
+<tr><th>Apps+2		</th><td>マウス・中央ボタン</td></tr>
+<tr><th>Apps+3		</th><td>マウス・右ボタン</td></tr>
+<tr><th>Apps+4		</th><td>マウス・Xボタン1</td></tr>
+<tr><th>Apps+5		</th><td>マウス・Xボタン2</td></tr>
+<tr><th>Apps+6		</th><td>ダイヤモンドカーソルでマウスカーソルを動かす(トグル)</td>
+<tr><th>　</th><td>　</td></tr>
 
-<tr><th>VZ���_�C�������h�J�[�\���֌W</th><td>�@</td></tr>
-<tr><th>Apps+S</th><td>��</td></tr>
-<tr><th>Apps+D</th><td>��</td></tr>
-<tr><th>Apps+E</th><td>��</td></tr>
-<tr><th>Apps+X</th><td>��</td></tr>
+<tr><th>VZ風ダイヤモンドカーソル関係</th><td>　</td></tr>
+<tr><th>Apps+S</th><td>←</td></tr>
+<tr><th>Apps+D</th><td>→</td></tr>
+<tr><th>Apps+E</th><td>↑</td></tr>
+<tr><th>Apps+X</th><td>↓</td></tr>
 <tr><th>Apps+R</th><td>Page Up</td></tr>
 <tr><th>Apps+C</th><td>Page Down</td></tr>
-<tr><th>Apps+A</th><td>CTRL+�� (�P��E�ړ���z��)</td></tr>
-<tr><th>Apps+F</th><td>CTRL+�� (�P�ꍶ�ړ���z��)</td></tr>
-<tr><th>Apps+W</th><td>CTRL+�� (1�s��X�N���[����z��)</td></tr>
-<tr><th>Apps+Z</th><td>CTRL+�� (1�s���X�N���[����z��)</td></tr>
-<tr><th>Apps+Q,Apps+S</th><td>HOME (�s���ړ���z��)</td></tr>
-<tr><th>Apps+Q,Apps+D</th><td>END (�s���ړ���z��)</td></tr>
-<tr><th>Apps+Q,Apps+R</th><td>CTRL+HOME (�t�@�C���擪�ړ���z��)</td></tr>
-<tr><th>Apps+Q,Apps+C</th><td>CTRL+END (�t�@�C�����ړ���z��)</td></tr>
+<tr><th>Apps+A</th><td>CTRL+← (単語右移動を想定)</td></tr>
+<tr><th>Apps+F</th><td>CTRL+→ (単語左移動を想定)</td></tr>
+<tr><th>Apps+W</th><td>CTRL+↑ (1行上スクロールを想定)</td></tr>
+<tr><th>Apps+Z</th><td>CTRL+↓ (1行下スクロールを想定)</td></tr>
+<tr><th>Apps+Q,Apps+S</th><td>HOME (行頭移動を想定)</td></tr>
+<tr><th>Apps+Q,Apps+D</th><td>END (行末移動を想定)</td></tr>
+<tr><th>Apps+Q,Apps+R</th><td>CTRL+HOME (ファイル先頭移動を想定)</td></tr>
+<tr><th>Apps+Q,Apps+C</th><td>CTRL+END (ファイル末移動を想定)</td></tr>
 <tr><th>Apps+H</th><td>BACK SPACE</td></tr>
 <tr><th>Apps+G</th><td>DELETE</td></tr>
-<tr><th>Apps+Q,Apps+F</th><td>CTRL+F (������z��)</td></tr>
-<tr><th>Apps+Q,Apps+A</th><td>CTRL+H (�u����z��:Visual Studio .net �̃L�[)</td></tr>
-<tr><th>�@</th><td>�@</td></tr>
+<tr><th>Apps+Q,Apps+F</th><td>CTRL+F (検索を想定)</td></tr>
+<tr><th>Apps+Q,Apps+A</th><td>CTRL+H (置換を想定:Visual Studio .net のキー)</td></tr>
+<tr><th>　</th><td>　</td></tr>
 
-<tr><th>���̑��̕ҏW�L�[</th><td>�@</td></tr>
+<tr><th>その他の編集キー</th><td>　</td></tr>
 <tr><th>Apps+T</th><td>HOME</td></tr>
 <tr><th>Apps+V</th><td>END</td></tr>
 <tr><th>Apps+ESC</th><td>CapsLock</td></tr>
-<tr><th>�@</th><td>�@</td></tr>
+<tr><th>　</th><td>　</td></tr>
 
-<tr><th>����</th><td>(Mac�� Fn �L�[ ���Q�l)</td></tr>
-<tr><th>Apps+F10</th><td>����</td></tr>
-<tr><th>Apps+F11</th><td>���ʉ�����</td></tr>
-<tr><th>Apps+F12</th><td>���ʏグ��</td></tr>
+<tr><th>音量</th><td>(Macの Fn キー を参考)</td></tr>
+<tr><th>Apps+F10</th><td>消音</td></tr>
+<tr><th>Apps+F11</th><td>音量下げる</td></tr>
+<tr><th>Apps+F12</th><td>音量上げる</td></tr>
 
 </tbody>
 </table>
 
 <p>
-�L�[�z�u��Vz�̊�{�I�ȂƂ�����v���o���Ȃ���K���ɐݒ�B<br>
-�y�ɏo����͈͂Ŏ����̕K�v�����Ȕ͈͂̂�.
+キー配置はVzの基本的なところを思い出しながら適当に設定。<br>
+楽に出来る範囲で自分の必要そうな範囲のみ.
 <p>
-�}�E�X���L�[�́ASHIFT ���������Ŕ{���ړ��ACTRL ���������Ŕ��ʈړ��A�ɂȂ�܂�.
+マウス化キーは、SHIFT 同時押しで倍速移動、CTRL 同時押しで微量移動、になります.
 <p><br>
 </dd>
 
-<dt>��CapsLock�L�[��Apps�L�[�̌���</dt>
+<dt>■CapsLockキーとAppsキーの交換</dt>
 <dd>
 <p>
-CapsLock �L�[�̈ʒu��Apps�L�[�ɕύX����ɂ̓��W�X�g����M��܂��B<br>
-MS �� TweakUI ��e��L�[�o�C���f�B���O�c�[���Őݒ�ł���Ƒz���̂ŁA�ڂ����̓O�O���Ă��������B<br>
-���ɑS���L�[�ύX���s�Ȃ��Ă��Ȃ��Ȃ�΁Aconfig_etc/ �t�H���_���ɂ��郌�W�X�g���t�@�C����p���ĕύX���邱�Ƃ��ł��܂��B
+CapsLock キーの位置をAppsキーに変更するにはレジストリを弄ります。<br>
+MS の TweakUI や各種キーバインディングツールで設定できると想うので、詳しくはググってください。<br>
+他に全くキー変更を行なっていないならば、config_etc/ フォルダ内にあるレジストリファイルを用いて変更することもできます。
 
 <table>
 <tbody>
-<tr><th> <a href="config_etc/keymap_swap_CapsLock_Apps.reg">keymap_swap_CapsLock_Apps.reg</a></th><td>CapsLock �� Apps ������</td></tr>
-<tr><th> <a href="config_etc/keymap_CapsLock_to_Apps.reg">keymap_CapsLock_to_Apps.reg</a></th><td>CapsLock �݂̂� Apps �ɕύX</td></tr>
-<tr><th> <a href="config_etc/keymap_clear.reg">keymap_clear.reg</a></th><td>�L�[�������N���A(�c�[�L)</td></tr>
+<tr><th> <a href="config_etc/keymap_swap_CapsLock_Apps.reg">keymap_swap_CapsLock_Apps.reg</a></th><td>CapsLock と Apps を交換</td></tr>
+<tr><th> <a href="config_etc/keymap_CapsLock_to_Apps.reg">keymap_CapsLock_to_Apps.reg</a></th><td>CapsLock のみを Apps に変更</td></tr>
+<tr><th> <a href="config_etc/keymap_clear.reg">keymap_clear.reg</a></th><td>キー交換をクリア(残骸有)</td></tr>
 </tbody>
 </table>
 
 <p>
-���łɂ���ݒ�𖳂����ď㏑������̂ŁA���̃L�[�̐ݒ���s���Ă���Ȃ�΁A���̃��W�X�g���t�@�C�����g��Ȃ��ł��������B
+すでにある設定を無くして上書きするので、他のキーの設定を行われているならば、このレジストリファイルを使わないでください。
 
 <p>
-�Ȃ��A���W�X�g�����C�����Ă������ɂ͔��f���ꂸ�A�K���A�T�C���A�E�g�i���O�A�E�g�j���ċN�������āA�T�C���C���i���O�I���j���Ȃ����K�v������܂��B
+なお、レジストリを修正しても直ぐには反映されず、必ず、サインアウト（ログアウト）か再起動をして、サインイン（ログオン）しなおす必要があります。
 
 <p><br>
 </dd>
 
-<dt>�� �Ǘ��Ҍ����ł̎g�p/�����N���ݒ�ɂ���
+<dt>■ 管理者権限での使用/自動起動設定について
 <dd>
-(�ȉ��A����� windows8 �Ŋm�F)
+(以下、操作は windows8,10 で確認)
 <p>
-�Ǘ��Ҍ����ł��ADiaKbdMouse ��L���ɂ���ɂ́ADiaKbdMouse.exe ���Ǘ��Ҍ����Ŏ��s�ł���悤�ɐݒ肷��K�v������܂��B
+管理者権限でも、DiaKbdMouse を有効にするには、DiaKbdMouse.exe を管理者権限で実行できるように設定する必要があります。
 <p>
-�G�N�X�v���[������ DiaKbdMouse.exe ���E�N���b�N���v���p�e�B���݊������Ǘ��҂Ƃ��Ă��̃v���O���������s���遨�`�F�b�N�}�[�N��on
+エクスプローラ等で DiaKbdMouse.exe を右クリック→プロパティ→互換性→管理者としてこのプログラムを実行する→チェックマークをon
 <br>
-���Ă��������B(���R�A���s�̂��тɃ_�C�A���O�Ŏ��s�m�F�����߂���悤�ɂȂ�܂�)
+してください。(当然、実行のたびにダイアログで実行確認を求められるようになります)
 <p>
-PC�����グ��(�T�C���C����)�� ������ DiaKbdMouse ���N������ɂ́A�^�X�N�E�X�P�W���[���Őݒ肵�Ă݂Ă��������B
-(@IT ��<a href="http://www.atmarkit.co.jp/ait/articles/1305/31/news049.html">�u�^�X�N�E�X�P�W���[���̊�{�I�Ȏg�����iWindows 7�^8�ҁj�v</a><a href="http://megalodon.jp/2013-0920-0444-46/www.atmarkit.co.jp/ait/articles/1305/31/news049.html">.</a> <a href="http://www.atmarkit.co.jp/fwin2k/win2ktips/1178tasksys/tasksys.html">�u�^�X�N�E�X�P�W���[���ŃV�X�e���N�����Ƀ^�X�N�����s����v</a> �����肪�Q�l�ɂȂ�܂��j
+PC立ち上げ時(サインイン時)に 自動で DiaKbdMouse を起動するには、タスク・スケジューラで設定してみてください。
+(@IT の<a href="http://www.atmarkit.co.jp/ait/articles/1305/31/news049.html">「タスク・スケジューラの基本的な使い方（Windows 7／8編）」</a><a href="http://megalodon.jp/2013-0920-0444-46/www.atmarkit.co.jp/ait/articles/1305/31/news049.html">.</a> <a href="http://www.atmarkit.co.jp/fwin2k/win2ktips/1178tasksys/tasksys.html">「タスク・スケジューラでシステム起動時にタスクを実行する」</a> あたりが参考になります）
 
 <p>
-�ȉ��A�ݒ��B<br>
-�R���g���[���p�l����(�m�V�X�e���ƃZ�L�����e�B�n)���Ǘ��҃c�[�����^�X�N�E�X�P�W���[�� �i���邢�� taskschd.msc /s �����s�j�B
+以下、設定例。<br>
+コントロールパネル→(［システムとセキュリティ］)→管理者ツール→タスク・スケジューラ （あるいは taskschd.msc /s を実行）。
 <br>
 <ul>
-<li>�m�^�X�N�̍쐬�n<br>
-<li>[�S��] �ɂ�<br>
+<li>［タスクの作成］<br>
+<li>[全般] にて<br>
 <ul>
-<li>���O: DiaKbdMouse<br>
-<li>����: Apps�L�[�ɂ��L�[�{�[�h�ł̃}�E�X��_�C�������h�J�[�\������.<br>
-<li>"���[�U�[�����O�I�����Ă���Ƃ��̂ݎ��s����"�A���`�F�b�N<br>
-�i"���[�U�[�����O�I�����Ă��邩�ǂ����ɂ�����炸���s����"�ł��悳���������ǁA�Ƃ肠�����j
-<li>"�ŏ�ʂ̓����Ŏ��s����"�A���`�F�b�N<br>
-�i�����œ����ɂ���̂ŁA�\�� exe �ɊǗ��Ҍ�����ݒ肵�Ȃ��Ă�(���Ă�)���O�I�����͊Ǘ��Ҍ����Ŏ��s����܂��j
+<li>名前: DiaKbdMouse<br>
+<li>説明: Appsキーによるキーボードでのマウスやダイヤモンドカーソル操作.<br>
+<li>"ユーザーがログオンしているときのみ実行する"、をチェック<br>
+（"ユーザーがログオンしているかどうかにかかわらず実行する"でもよさそうだけど、とりあえず）
+<li>"最上位の特権で実行する"、をチェック<br>
+（ここで特権にするので、予め exe に管理者権限を設定しなくても(しても)ログオン時は管理者権限で実行されます）
 </ul>
-<li>[�g���K�[]�ɂ�<br>
+<li>[トリガー]にて<br>
 <ul>
-<li>[[�V�����g���K�[]<br>
+<li>[[新しいトリガー]<br>
 <ul>
-<li>�^�X�N�̊J�n�� "���O�I����"�ɂ���<br>
-<li>"����̃��[�U�["�A���`�F�b�N
-<li>"�x�����Ԃ��w�肷��"�A�ɂ��Ă͊�����. <br>
-���̊��ł̓`�F�b�N���K�v�ł����i���ԂƂ��� "30�b��" ��ݒ�. ���̂ւ�͓����Ȃ������璲��).<br>
-<li>��ԉ��ɂ���A"�L��"�A���`�F�b�N<br>
+<li>タスクの開始を "ログオン時"にする<br>
+<li>"特定のユーザー"、をチェック
+<li>"遅延時間を指定する"、については環境次第. <br>
+私の環境ではチェックが必要でした（時間として "30秒間" を設定. このへんは動かなかったら調整).<br>
+<li>一番下にある、"有効"、をチェック<br>
 </ul>
-<li>[����] �ɂ�<br>
+<li>[操作] にて<br>
 <ul>
-<li>"�V�K"<br>
+<li>"新規"<br>
 <ul>
-<li>"����"�� "�v���O�����̊J�n"<br>
-<li>�v���O����/�X�N���v�g�ɃC���X�g�[������DiaKbdMouse�̃p�X��ݒ�B�Ⴆ��<br>
+<li>"操作"は "プログラムの開始"<br>
+<li>プログラム/スクリプトにインストールしたDiaKbdMouseのパスを設定。例えば<br>
 c:\tool\DiaKbdMouse\DiaKbdMouse.exe
 </ul>
 </ul>
-<li>[����] �ɂ�<br>
+<li>[条件] にて<br>
 <ul>
-<li>�`�F�b�N�}�[�N��S�ĊO��.<br>
-(�d���A�́A�R���s���[�^�[��AC�d���Ŏg�p���Ă���ꍇ�̂݃^�X�N���J�n����A�̃`�F�b�N���O��)<br>
-<li>[�ݒ�] �ɂ�<br>
-"�^�X�N���~����܂ł̎���"�A�̃`�F�b�N���O���B<br>
+<li>チェックマークを全て外す.<br>
+(電源、の、コンピューターをAC電源で使用している場合のみタスクを開始する、のチェックを外す)<br>
+<li>[設定] にて<br>
+"タスクを停止するまでの時間"、のチェックを外す。<br>
 </ul>
 </ul>
-<li>���ݒ肷�񂾂� OK �������A����<br>
+<li>→設定すんだら OK を押し、完了<br>
 </ul>
 
 <p><br>
 </dd>
 
-<dt>����`�t�@�C���ɂ���</dt>
+<dt>■定義ファイルについて</dt>
 <dd>
 <p>
-��`�t�@�C���̋L�q���@�́A<a href="DiaKbdMouse.cfg">DiaKbdMouse.cfg</a> �̃R�����g�����Ă��������B
+定義ファイルの記述方法は、<a href="DiaKbdMouse.cfg">DiaKbdMouse.cfg</a> のコメントを見てください。
 <p><br>
 </dd>
 
-<dt>���\�[�X�ɂ���</dt>
+<dt>■ソースについて</dt>
 <dd>
 <p>
-vc++�ł��B�\�[�X�ɂ��ẮAsrc/�t�H���_���ɂ���<a href="src/readme.txt">readme.txt</a> �����Ă��������B
-<p><br>
+vc++です。ソースについては、src/フォルダ内にある<a href="src/readme.txt">readme.txt</a> を見てください。
+<p>
+リポジトリは</a>
+<a href="https://github.com/tenk-a/DiaKbdMouse.git">https://github.com/tenk-a/DiaKbdMouse</a>
+<br>
 </dd>
 
-<dt>��������</dt>
+<dt>■制限等</dt>
 <dd>
 <p>
-��`�t�@�C���̓ǂݍ��݂́ADiaKbdMouse �̋N�����݂̂ł��B��`��ύX�����ꍇ�� DiaKbdMouse.exe ���I�����Ď��s���Ă��������B
+定義ファイルの読み込みは、DiaKbdMouse の起動時のみです。定義を変更した場合は DiaKbdMouse.exe を終了＆再実行してください。
 <p>
-Apps�L�[���������ł̑��쒆�ɁAWin+L �Ń��b�N��ʂɈȍ~���čēx�߂��Ă���ƁADiaKbdMouse �̓�����Ԃ��s����ɂȂ��Ă��邱�Ƃ�����܂��BApps�L�[����x on/off ����Ύ���ꍇ�������ł����A�_���Ȃ�ADiaKbdMouse ���I�������čēx���s���Ă��������B�� �둀��� �EWin+L �Ń��b�N��ʑJ�ڂ��悭���悤�ɂȂ������� �EWin����Apps�ɃL�[��ύX���܂����B</li>
+Appsキー同時押しでの操作中に、Win+L でロック画面に以降して再度戻ってくると、DiaKbdMouse の内部状態が不安定になっていることがあります。Appsキーを一度 on/off すれば治る場合が多いですが、ダメなら、DiaKbdMouse を終了させて再度実行してください。※ 誤操作で 右Win+L でロック画面遷移をよくやるようになったため 右WinからAppsにキーを変更しました。</li>
 
 <p>
-�N���b�v�{�[�h��L�[�{�[�h���g������悤�ȃ\�t�g�A
-IME�̐ݒ�Ƃ����X�A���̃L�[�{�[�h����݂̃\�t�g�Ƃ̑���(�s�)�͂���ł��傤�B(CapsLock��Apps���������Ă���ꍇ�AIME���̐ݒ�ɂ���Ă�CapsLock(�p���L�[)�̈������e�����邱�Ƃ�����܂���)
+クリップボードやキーボードを拡張するようなソフト、
+IMEの設定とか諸々、他のキーボードがらみのソフトとの相性(不具合)はあるでしょう。(CapsLockとAppsを交換している場合、IME側の設定によってはCapsLock(英数キー)の扱いが影響することがありました)
 
 <p>
-�L�[�{�[�h�ɂ��܂����A�L�[�̓������́A�g�ݍ��킹�ɂ���ẮA�Е��̓��͂��������Ȃ��ꍇ������܂�(�d�l)�B
-<!-- Apps��CapsLock�����ւ��āACapsLock+ESDX�Ń}�E�X�ړ�������ꍇ�AD�Ƃ̑g�ݍ��킹�ɂ��΂�
-�ړ��������Ȃ������ł��B-->
+キーボードによりますが、キーの同時押は、組み合わせによっては、片方の入力しか効かない場合があります(仕様)。
+<!-- AppsとCapsLockを入れ替えて、CapsLock+ESDXでマウス移動をする場合、Dとの組み合わせによる斜め
+移動が効かないかもです。-->
 
 <p>
-�ǂ����A���`�E�B���X�\�t�g�ɂ���Ă� DiaKbdMouse.dll ���E�B���X�Ɍ�F����邱�Ƃ�����悤�ł��B�������Ⴄ�̂ł���...
-
-<p><br>
-</dd>
-
-
-<dt>�����p</dt>
-<dd>
-<p>
-�z�z�◘�p�͂����R�ɂǂ����B��������҂͂Ȃ��ۏႵ�܂���̂ŁA
-���ȐӔC�ł��肢���܂��B
-<p>
-�\�[�X�̈��p/���p/�����ɂ��ẮA��������Ǖ����Ƃ��̒��쌠������
-���̌����ő��҂̗��p��(���l��)���ς̎��R�𐧌�����悤�Ȑ^�������Ȃ�
-������́A�A���s�v�Ŏd���⒘�앨�Ɏg���̂ł�ok�ł��B
-�\�[�X���J����ꍇ��(������x)�������������ɂ��Ă�������
-(���������Ă�����̂��A�����p���߂�A���Ă�����̂��AGPL�ɂȂ�̂�����̂�)�B
-������񎩌ȐӔC�ŁB
-<p>
-(���������A�����Ȃ��̂��Q�Ƃ��đg�ݗ��ĂĂ�(�v���O�������Ă�)�����Ȃ킯�ŁA
- ��������������Ƃ��̎Q�Ƃ◬�p�̌�����S�Ĕc�����Ă�킯�łȂ����A��)
+どうもアンチウィルスソフトによっては DiaKbdMouse.dll がウィルスに誤認されることがあるようです。もちろん違うのですが...
 
 <p><br>
 </dd>
 
+
+<dt>■利用</dt>
+<dd>
 <p>
-<dt>������</dt>
+配布や利用はご自由にどうぞ。もちろん作者はなんら保障しませんので、
+自己責任でお願いします。
+<p>
+ソースの引用/流用/改造については、改造や改良部分とかの著作権やら特許
+やらの権利で他者の利用や(同様の)改変の自由を制限するような真似をしない
+かぎりは、連絡不要で仕事や著作物に使うのでもokです。
+ソース公開する場合は(ある程度)許諾条件同じにしてください
+(金払えっていわれるのも、商利用だめよ、っていわれるのも、GPLになるのも困るので)。
+もちろん自己責任で。
+<p>
+(だいたい、いろんなものを参照して組み立ててる(プログラムしてる)だけなわけで、
+ 自分がが作ったときの参照や流用の権利を全て把握してるわけでないし、で)
+
+<p><br>
+</dd>
+
+<p>
+<dt>■履歴</dt>
 <dd>
 <p>
 <dl><dt>2006-11-12 v0.5</dt><td>
 <dd><ul><li>
-�����J 
+初公開 
 </li></ul></dd>
 
 <dt>2007-05-22 </dt>
 <dd><ul><li>
-�Ewin�{�J�[�\�����g���Ă���Œ��ɁA�Ewin���ɕ����ƁA�}�E�X���\�����Ă��܂��̂��C��.<br>
-�}�E�X�̉E�N���b�N��'2'�A���N���b�N��'3'�ɂ��Ă��̂��A��͂�A�}�E�X�Ɠ�������(����2,�E��3)�ɏC��.
+右win＋カーソルを使っている最中に、右winを先に放すと、マウスが暴走してしまうのを修正.<br>
+マウスの右クリックが'2'、中クリックが'3'にしてたのを、やはり、マウスと同じ並び(中が2,右が3)に修正.
 </li></ul></dd>
 
 <dt>20??-??-??</dt>
 <dd>
 <ul>
-<li> �s����ɂȂ�₷��(�EWin�Ƃ͕ʂ�)��Win�L�[�ɂ��}�E�X����p�~. </li>
-<li> �}�E�X���L�[�� CTRL ���������� 4�h�b�g�P�ʌŒ�̔��ʈړ����\��. </li>
+<li> 不判定になりやすい(右Winとは別の)左Winキーによるマウス操作廃止. </li>
+<li> マウス化キーと CTRL 同時押しで 4ドット単位固定の微量移動を可能に. </li>
 </ul>
 </dd>
 
 <dt>2013-09-15 v0.8</dt>
 <dd>
 <ul>
-<li> ���O�� DiaKbdMouse �ɉ���. </li>
-<li> �L�[�z�u���Œ�łȂ��A��`�t�@�C����ǂ݂��ނ悤�ɕύX. </li>
-<li> �g������L�[�� �EWin ���� Apps �L�[�ɕύX.(Win+L�둀�쓙�A�EWin�L�[�͉����ƕs����N���₷�������̂�)</li>
-<li> �s���肾������(vista?�t�߂���)�@�\���Ȃ��Ȃ��Ă��A�I���J�n�L�[(�[��SHIFT���������J�[�\���ړ�)�A���폜</li>
-<li> �}�E�X���L�[�� SHIFT ���������Ŕ{���ړ��ł���悤�ɂ��� </li>
-<li> ���̑����X </li>
+<li> 名前を DiaKbdMouse に改名. </li>
+<li> キー配置を固定でなく、定義ファイルを読みこむように変更. </li>
+<li> 拡張するキーを 右Win から Apps キーに変更.(Win+L誤操作等、右Winキーは何かと不具合が起きやすかったので)</li>
+<li> 不安定だったり(vista?付近から)機能しなくなってた、選択開始キー(擬似SHIFT同時押しカーソル移動)、を削除</li>
+<li> マウス化キーと SHIFT 同時押しで倍速移動できるようにした </li>
+<li> その他諸々 </li>
 </ul>
 </dd>
 
 <dt>2013-09-22 v0.8b</dt>
 <dd>
 <ul>
-<li> ��`�t�@�C����2�X�g���[�N�L�[�̐ݒ���ŋ@�\���Ă��Ȃ������̂��C��(�d�l�����������̂Ńv���O�����C��). </li>
-<li> ^QA(HOME) ^QD(END) ���`�t�@�C���ɒǉ�(����). </li>
+<li> 定義ファイルの2ストロークキーの設定誤りで機能していなかったのを修正(仕様が悪かったのでプログラム修正). </li>
+<li> ^QA(HOME) ^QD(END) を定義ファイルに追加(復活). </li>
 </ul>
 </dd>
 </dl>
@@ -329,9 +341,17 @@ IME�̐ݒ�Ƃ����X�A���̃L�[�{�[�h����݂̃\�t�g�Ƃ̑���(�s�)�͂���ł��傤�B(
 <dt>2013-09-22 v0.8c</dt>
 <dd>
 <ul>
-<li> �ϊ������L�[�̐ݒ肪�s�\���������̂��C�� </li>
+<li> 変換したキーの設定が不十分だったのを修正 </li>
 </ul>
 </dd>
+
+<dt>2021-02-07 v0.8d</dt>
+<dd>
+<ul>
+<li> Visual Studio 2019(vc14.2) でのビルドに変更. (win2k/xp向けにvs2008(vc9)ビルドも用意)</li>
+</ul>
+</dd>
+
 </dl>
 
 <p>

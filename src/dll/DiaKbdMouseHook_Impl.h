@@ -1,10 +1,10 @@
-/**
- *	@file	DiaKbdMouseHook_Impl.h
- *	@brief	ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‘€ì‚·‚é‚½‚ß‚ÌƒL[‚ÌƒtƒbƒN—pDLL
- *	@auther	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		ƒtƒŠ[ƒ\[ƒX
+ï»¿/**
+ *  @file   DiaKbdMouseHook_Impl.h
+ *  @brief  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹æ“ä½œã™ã‚‹ãŸã‚ã®ã‚­ãƒ¼ã®ãƒ•ãƒƒã‚¯ç”¨DLL
+ *  @auther Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 #ifndef DIAKBDMOUSEHOOK_IMPL_H
 #define DIAKBDMOUSEHOOK_IMPL_H
@@ -18,74 +18,62 @@
 //#define DIAKBDMOUSEHOOK_USE_EX_SHIFT
 
 
-/// ƒL[“ü—Í‚ğæ“¾(‚Ì‚Á‚Æ‚é)‚½‚ß‚ÌƒtƒbƒN
+/// ã‚­ãƒ¼å…¥åŠ›ã‚’å–å¾—(ã®ã£ã¨ã‚‹)ãŸã‚ã®ãƒ•ãƒƒã‚¯.
 class CDiaKbdMouseHook_Impl {
 public:
-	enum { VK_NUM = 256 };
+    enum { VK_NUM = 256 };
 
-	/// ‰Šú‰»
-	static void init(HINSTANCE hInst) { s_hInst_ = hInst; }
+    /// åˆæœŸåŒ–.
+    static void init(HINSTANCE hInst) { s_hInst_ = hInst; }
 
-	/// ƒtƒbƒN‚·‚é
-	static bool install(int keycode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
+    /// ãƒ•ãƒƒã‚¯ã™ã‚‹.
+    static bool install(int keycode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
 
-	/// ƒtƒbƒN‚ğ‰ğœ
-	static bool uninstall();
+    /// ãƒ•ãƒƒã‚¯ã‚’è§£é™¤.
+    static bool uninstall();
 
-	/// ƒ}ƒEƒX‰»‚·‚éƒL[î•ñ‚ğƒ{ƒ^ƒ“‰»‚µ‚½‚à‚Ì‚ğæ“¾
-	static unsigned mouseButton();
+    /// ãƒã‚¦ã‚¹åŒ–ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’ãƒœã‚¿ãƒ³åŒ–ã—ãŸã‚‚ã®ã‚’å–å¾—.
+    static unsigned mouseButton();
 
-  #ifdef USE_LWINKEY
-	/// ¶WinŠg’£‚Ìon/off
-	static bool setLWinMode(int sw);
-  #endif
-
-	/// •ÏŠ·ƒe[ƒuƒ‹‚ğw’èƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚Ş
-	static void setConvTable(const CDiaKbdMouseHook_ConvKey tbl[VK_NUM]);
+    static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wparam, LPARAM lparam);
 
 private:
-	static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wparam, LPARAM lparam);
+    /// ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿ã‚­ãƒ¼ã®ã‚³ãƒ¼ãƒ‰ã‚’è¨­å®š.
+    static void setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
 
-	/// ƒ‚[ƒhØ‘ÖƒL[‚ÌƒR[ƒh‚ğİ’è
-	static void setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
+    static bool keyDownUp(bool sw, unsigned vkCode);
+    static void sendConvKey(bool sw, unsigned uKey );
+    static void sendKey(int mode, unsigned uFlags, unsigned uVk );
+    static void setInputParam(INPUT& rImput, unsigned uFlags, unsigned uVk );
 
-	static bool keyDownUp(bool sw, unsigned vkCode);
-	static void sendConvKey(bool sw, unsigned uKey );
-	static void sendKey(int mode, unsigned uFlags, unsigned uVk );
-	static void setInputParam(INPUT& rImput, unsigned uFlags, unsigned uVk );
+    static bool makeMouseButton( bool sw, unsigned uVk );
+    static bool setMouseButton(unsigned btn, bool sw);
 
-	static bool makeMouseButton( bool sw, unsigned uVk );
-	static bool setMouseButton(unsigned btn, bool sw);
-
-	static void clearStat();
+    static void clearStat();
 
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-	static void clearExShift();
+    static void clearExShift();
  #endif
 
 private:
-	enum { DiaKbdMouseHook_EXTRAINFO = 0xD1AC };
+    enum { DiaKbdMouseHook_EXTRAINFO = 0xD1AC };
 
-	static CCriticalSection		s_criticalSection_;
-	static HINSTANCE   			s_hInst_;			///< WindowƒCƒ“ƒXƒ^ƒ“ƒX
-	static volatile HHOOK		s_hHook_LL_;		///< ƒtƒbƒN
-	static unsigned				s_uModeKey_;		///< ƒ‚[ƒhØ‘ÖƒL[‚ÌƒL[ƒR[ƒh
-	static unsigned				s_uMouseButton_;	///< ƒ}ƒEƒX‘€ì—p‚Ìƒ{ƒ^ƒ“î•ñ
-	static int					s_iMouseButtonLife_; ///< (Win+L‚Å‚Ì)–\”­‚Ì”íŠQŒyŒ¸—p
-	static bool					s_bConvModeStat_;	///< ƒL[‘€ì‚É‚æ‚éƒ‚[ƒhon/off
-	static bool					s_bTwoStStatQ_;		///< 2ƒXƒgƒ[ƒNƒL[ƒ‚[ƒh‚©
-	static bool					s_bShiftStat_;		///< SHIFT‚ª‰Ÿ‚³‚ê‚Ä‚é‚Æ‚«
-	static bool					s_bCtrlStat_;		///< CTRL‚ª‰Ÿ‚³‚ê‚Ä‚é‚Æ‚«
-	static bool					s_bDiaMouse_;		///< ƒ_ƒCƒAƒ‚ƒ“ƒhƒJ[ƒ\ƒ‹‚Åƒ}ƒEƒX‚ğ“®‚©‚·
+    static CCriticalSection     s_criticalSection_;
+    static HINSTANCE            s_hInst_;           ///< Windowã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹.
+    static volatile HHOOK       s_hHook_LL_;        ///< ãƒ•ãƒƒã‚¯.
+    static unsigned             s_uModeKey_;        ///< ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿ã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰.
+    static unsigned             s_uMouseButton_;    ///< ãƒã‚¦ã‚¹æ“ä½œç”¨ã®ãƒœã‚¿ãƒ³æƒ…å ±.
+    static int                  s_iMouseButtonLife_; ///< (Win+Lã§ã®)æš´ç™ºæ™‚ã®è¢«å®³è»½æ¸›ç”¨.
+    static bool                 s_bConvModeStat_;   ///< ã‚­ãƒ¼æ“ä½œã«ã‚ˆã‚‹ãƒ¢ãƒ¼ãƒ‰on/off
+    static bool                 s_bTwoStStatQ_;     ///< 2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã‚­ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‹.
+    static bool                 s_bShiftStat_;      ///< SHIFTãŒæŠ¼ã•ã‚Œã¦ã‚‹ã¨ã.
+    static bool                 s_bCtrlStat_;       ///< CTRLãŒæŠ¼ã•ã‚Œã¦ã‚‹ã¨ã.
+    static bool                 s_bDiaMouse_;       ///< ãƒ€ã‚¤ã‚¢ãƒ¢ãƒ³ãƒ‰ã‚«ãƒ¼ã‚½ãƒ«ã§ãƒã‚¦ã‚¹ã‚’å‹•ã‹ã™.
   #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-	static bool					s_bExShift_;		///< ƒJ[ƒ\ƒ‹ˆÚ“®‚Å‚Ì©“®ƒVƒtƒg‰Ÿ‚µ
-  #endif
-  #ifdef USE_LWINKEY
-	static bool					s_bLWinStat_;		///< ¶WinƒL[‘€ì‚É‚æ‚éon/off
-	static bool					s_bLWinModeSw_;		///< ¶WinƒL[‚É‚æ‚éƒL[ƒ{[ƒhƒ}ƒEƒX—˜—p‚Ìon/off
+    static bool                 s_bExShift_;        ///< ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã§ã®è‡ªå‹•ã‚·ãƒ•ãƒˆæŠ¼ã—.
   #endif
 
-	static CDiaKbdMouseHook_ConvKeyTbl	s_convKeys_;
+    static CDiaKbdMouseHook_ConvKeyTbl  s_convKeys_;
 };
 
 #endif

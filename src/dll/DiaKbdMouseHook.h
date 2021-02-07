@@ -1,10 +1,10 @@
-/**
- *	@file	DiaKbdMouseHook.h
- *	@brief	ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‘€ì‚·‚é‚½‚ß‚ÌƒL[‚ÌƒtƒbƒN—pDLL
- *	@auther	Masashi KITAMURA
- *	@date	2006
+ï»¿/**
+ *  @file   DiaKbdMouseHook.h
+ *  @brief  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹æ“ä½œã™ã‚‹ãŸã‚ã®ã‚­ãƒ¼ã®ãƒ•ãƒƒã‚¯ç”¨DLL
+ *  @auther Masashi KITAMURA
+ *  @date   2006
  *  @note
- *		ƒtƒŠ[ƒ\[ƒX
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 #ifndef DIAKBDMOUSEHOOK_H
 #define DIAKBDMOUSEHOOK_H
@@ -21,78 +21,65 @@
 
 class CDiaKbdMouseHook_ConvKeyTbl;
 
-/// ƒtƒbƒN‚·‚é
-HOOKDLL_API int 	 DiaKbdMouseHook_install(int keyCode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
+/// ãƒ•ãƒƒã‚¯ã™ã‚‹.
+HOOKDLL_API int      DiaKbdMouseHook_install(int keyCode, CDiaKbdMouseHook_ConvKeyTbl const& tbl);
 
-/// ƒtƒbƒN‚ğ‚â‚ß‚é
-HOOKDLL_API int 	 DiaKbdMouseHook_uninstall();
+/// ãƒ•ãƒƒã‚¯ã‚’ã‚„ã‚ã‚‹.
+HOOKDLL_API int      DiaKbdMouseHook_uninstall();
 
-/// ƒ‚[ƒh‚ğØ‚è‘Ö‚¦‚éƒL[‚ğİ’è
-HOOKDLL_API void	DiaKbdMouseHook_setModeKey(unsigned vkMode);
-
-#ifdef USE_LWINKEY
-/// ¶WinƒL[‚É‚æ‚éƒ}ƒEƒX‘€ì‚Ìon/off
-HOOKDLL_API	bool	DiaKbdMouseHook_setLWinMode(int sw);
-#endif
-
-/// ƒpƒbƒh“I‚É‚µ‚½ƒ}ƒEƒXƒ{ƒ^ƒ“î•ñ‚Ìæ“¾
+/// ãƒ‘ãƒƒãƒ‰çš„ã«ã—ãŸãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³æƒ…å ±ã®å–å¾—.
 HOOKDLL_API unsigned DiaKbdMouseHook_mouseButton();
 
-/// ƒ}ƒEƒX‰»‚·‚éƒL[‚Ìî•ñ
+/// ãƒã‚¦ã‚¹åŒ–ã™ã‚‹ã‚­ãƒ¼ã®æƒ…å ±.
 enum EDiaKbdMouse_Mouse {
-	DIAKBDMOUSE_MOUSE_LEFT		= 0x0001,
-	DIAKBDMOUSE_MOUSE_UP		= 0x0002,
-	DIAKBDMOUSE_MOUSE_RIGHT		= 0x0004,
-	DIAKBDMOUSE_MOUSE_DOWN		= 0x0008,
-	DIAKBDMOUSE_MOUSE_LBUTTON	= 0x0010,
-	DIAKBDMOUSE_MOUSE_RBUTTON	= 0x0020,
-	DIAKBDMOUSE_MOUSE_MBUTTON	= 0x0040,
-	DIAKBDMOUSE_MOUSE_XBUTTON1	= 0x0080,
-	DIAKBDMOUSE_MOUSE_XBUTTON2	= 0x0100,
-	DIAKBDMOUSE_MOUSE_WHEEL1	= 0x0200,
-	DIAKBDMOUSE_MOUSE_WHEEL2	= 0x0400,
-  #ifdef USE_LWINKEY
-	DIAKBDMOUSE_MOUSE_MODEKEY	= 0x0800,		///< ¶Win‚ğg‚Á‚½‚Æ‚«‚Ì‘Îô
-  #else
-	DIAKBDMOUSE_MOUSE_SPEEDUP	= 0x0800,
-  #endif
-	DIAKBDMOUSE_MOUSE_SPEEDCHG	= 0x1000,
+    DIAKBDMOUSE_MOUSE_LEFT      = 0x0001,
+    DIAKBDMOUSE_MOUSE_UP        = 0x0002,
+    DIAKBDMOUSE_MOUSE_RIGHT     = 0x0004,
+    DIAKBDMOUSE_MOUSE_DOWN      = 0x0008,
+    DIAKBDMOUSE_MOUSE_LBUTTON   = 0x0010,
+    DIAKBDMOUSE_MOUSE_RBUTTON   = 0x0020,
+    DIAKBDMOUSE_MOUSE_MBUTTON   = 0x0040,
+    DIAKBDMOUSE_MOUSE_XBUTTON1  = 0x0080,
+    DIAKBDMOUSE_MOUSE_XBUTTON2  = 0x0100,
+    DIAKBDMOUSE_MOUSE_WHEEL1    = 0x0200,
+    DIAKBDMOUSE_MOUSE_WHEEL2    = 0x0400,
+    DIAKBDMOUSE_MOUSE_SPEEDUP   = 0x0800,
+    DIAKBDMOUSE_MOUSE_SPEEDCHG  = 0x1000,
 };
 
 
-
-/// •ÏŠ·ƒe[ƒuƒ‹—p‚ÌŒ^
+/// å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«ç”¨ã®å‹.
 class CDiaKbdMouseHook_ConvKey {
 public:
-	///< ƒ‚[ƒh
-	enum EMode {
-		MD_NONE		= 0,			///< g‚í‚È‚¢
-		MD_USE		= 1,			///< g‚¤
-		MD_CTRL		= 2,			///< CTRL•¹—p
-		MD_SHIFT	= 3,			///< SHIFT•¹—p
-		MD_CTRLSHIFT= 4,			///< CTRL+SHIFT•¹—p
-		MD_2ST_Q	= 5,			///< 2ƒXƒgƒ[ƒNƒL[‚ÌƒgƒŠƒK[(Q)
-		MD_EX_SHIFT = 6,			//x ”p~(ƒJ[ƒ\ƒ‹ˆÚ“®‚ÅƒVƒtƒg•¹—pƒ‚[ƒh(”ÍˆÍ‘I‘ğ‚ğ‘z’è))
-		MD_MOUSE	= 7,			///< ƒ}ƒEƒX
-		MD_DIRECT	= 8,			///< ’P‘ÌƒL[
-	};
-	class COne {
-	public:
-		unsigned char u8Mode_;		///< ƒ‚[ƒh(EMode)
-		unsigned char u8VkCode_;	///< •ÏŠ·‚·‚éƒL[ƒR[ƒh
-	};
-	COne	oneKey_[2];				///< [0]=Šg’£ƒL[‚Ì‚İ‚Ì‚Æ‚«‚ÌƒL[  [1]=2ƒXƒgƒ[ƒNƒL[(Q)‚ğ‰Ÿ‚µ‚½‚Æ‚«—p
+    ///< ãƒ¢ãƒ¼ãƒ‰.
+    enum EMode {
+        MD_NONE     = 0,            ///< ä½¿ã‚ãªã„.
+        MD_USE      = 1,            ///< ä½¿ã†.
+        MD_CTRL     = 2,            ///< CTRLä½µç”¨.
+        MD_SHIFT    = 3,            ///< SHIFTä½µç”¨.
+        MD_CTRLSHIFT= 4,            ///< CTRL+SHIFTä½µç”¨.
+        MD_2ST_Q    = 5,            ///< 2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã‚­ãƒ¼ã®ãƒˆãƒªã‚¬ãƒ¼(Q)
+        MD_EX_SHIFT = 6,            //x å»ƒæ­¢(ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã§ã‚·ãƒ•ãƒˆä½µç”¨ãƒ¢ãƒ¼ãƒ‰(ç¯„å›²é¸æŠã‚’æƒ³å®š))
+        MD_MOUSE    = 7,            ///< ãƒã‚¦ã‚¹.
+        MD_DIRECT   = 8,            ///< å˜ä½“ã‚­ãƒ¼.
+    };
+    class COne {
+    public:
+        unsigned char u8Mode_;      ///< ãƒ¢ãƒ¼ãƒ‰(EMode)
+        unsigned char u8VkCode_;    ///< å¤‰æ›ã™ã‚‹ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰.
+    };
+    COne    oneKey_[2];             ///< [0]=æ‹¡å¼µã‚­ãƒ¼ã®ã¿ã®ã¨ãã®ã‚­ãƒ¼  [1]=2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã‚­ãƒ¼(Q)ã‚’æŠ¼ã—ãŸã¨ãç”¨.
 };
 
 class CDiaKbdMouseHook_ConvKeyTbl {
 public:
-	enum { MAX_SIZE = 256 };
-	//CDiaKbdMouseHook_ConvKeyTbl() { std::memset(tbl_, 0, sizeof tbl_); }
-	CDiaKbdMouseHook_ConvKey& operator[](unsigned n) { assert(n < MAX_SIZE); return tbl_[n]; }
-	CDiaKbdMouseHook_ConvKey const& operator[](unsigned n) const { assert(n < MAX_SIZE); return tbl_[n]; }
-	void	clear() { std::memset(tbl_, 0, sizeof tbl_); }
+    enum { MAX_SIZE = 256 };
+    //CDiaKbdMouseHook_ConvKeyTbl() { std::memset(tbl_, 0, sizeof tbl_); }
+    CDiaKbdMouseHook_ConvKey& operator[](unsigned n) { assert(n < MAX_SIZE); return tbl_[n]; }
+    CDiaKbdMouseHook_ConvKey const& operator[](unsigned n) const { assert(n < MAX_SIZE); return tbl_[n]; }
+    void    clear() { std::memset(tbl_, 0, sizeof tbl_); }
 public:
-	CDiaKbdMouseHook_ConvKey	tbl_[MAX_SIZE];
+    CDiaKbdMouseHook_ConvKey    tbl_[MAX_SIZE];
 };
 
 #endif

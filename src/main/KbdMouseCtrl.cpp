@@ -1,14 +1,14 @@
-/**
- *	@file	KbdMouseCtrl.cpp
- *	@brief	ƒL[ƒ{[ƒh‚Åƒ}ƒEƒX‘€ì‚·‚éˆ—(•ÊƒXƒŒƒbƒh)
- *	@auther	Masashi KITAMURA
- *	@date	2006
- *	@note
- *		•Ê‚ÉƒXƒŒƒbƒh‚í‚¯‚é•K—v‚È‚©‚Á‚½‚©‚à...
- *		‚¾‚µAtimeBeginPeriod()‚Æ‚©‚à‚¢‚ç‚ñ‚©...
- *		‚ªAƒ`ƒFƒbƒN‚µ‚È‚¨‚·‚Ì–Ê“|‚È‚ñ‚Å‚»‚Ì‚Ü‚Ü
+ï»¿/**
+ *  @file   KbdMouseCtrl.cpp
+ *  @brief  ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ãƒã‚¦ã‚¹æ“ä½œã™ã‚‹å‡¦ç†(åˆ¥ã‚¹ãƒ¬ãƒƒãƒ‰)
+ *  @auther Masashi KITAMURA
+ *  @date   2006
+ *  @note
+ *      åˆ¥ã«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚ã‘ã‚‹å¿…è¦ãªã‹ã£ãŸã‹ã‚‚...
+ *      ã ã—ã€timeBeginPeriod()ã¨ã‹ã‚‚ã„ã‚‰ã‚“ã‹...
+ *      ãŒã€ãƒã‚§ãƒƒã‚¯ã—ãªãŠã™ã®é¢å€’ãªã‚“ã§ãã®ã¾ã¾
  *
- *		ƒtƒŠ[ƒ\[ƒX
+ *      ãƒ•ãƒªãƒ¼ã‚½ãƒ¼ã‚¹
  */
 
 #include "stdafx.h"
@@ -16,187 +16,155 @@
 #include "../cmn/DebugPrintf.h"
 #include "KbdMouseCtrl.h"
 
-HANDLE 			CKbdMouseCtrl::s_hThread_		= 0;
-unsigned		CKbdMouseCtrl::s_uOld_			= 0;
-bool			CKbdMouseCtrl::s_bWin1st_ 		= 0;
-unsigned		CKbdMouseCtrl::s_uReptCnt_		= 0;
+HANDLE          CKbdMouseCtrl::s_hThread_       = 0;
+unsigned        CKbdMouseCtrl::s_uOld_          = 0;
+bool            CKbdMouseCtrl::s_bWin1st_       = 0;
+unsigned        CKbdMouseCtrl::s_uReptCnt_      = 0;
 
-DgtXY2AnlgXY<float,256,CKbdMouseCtrl::HIS_NUM> 	CKbdMouseCtrl::s_dgtXY2AnlgXY_;
+DgtXY2AnlgXY<float,256,CKbdMouseCtrl::HIS_NUM>  CKbdMouseCtrl::s_dgtXY2AnlgXY_;
 
 
-/// ƒ}ƒEƒX‰»‚·‚é‚½‚ß‚Ìî•ñ
+/// ãƒã‚¦ã‚¹åŒ–ã™ã‚‹ãŸã‚ã®æƒ…å ±.
 const INPUT CKbdMouseCtrl::s_input_mouseSendTbl_[] = {
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_LEFTDOWN  , 0, 0, }},		// 0
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_LEFTUP	 , 0, 0, }},		// 1
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_RIGHTDOWN , 0, 0, }},		// 2
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_RIGHTUP	 , 0, 0, }},		// 3
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_MIDDLEDOWN, 0, 0, }},		// 4
-	{ INPUT_MOUSE	, { 	   0, 0, 0		 , MOUSEEVENTF_MIDDLEUP  , 0, 0, }},		// 5
-	{ INPUT_MOUSE	, { 	   0, 0, XBUTTON1, MOUSEEVENTF_XDOWN	 , 0, 0, }},		// 6
-	{ INPUT_MOUSE	, { 	   0, 0, XBUTTON1, MOUSEEVENTF_XUP		 , 0, 0, }},		// 7
-	{ INPUT_MOUSE	, { 	   0, 0, XBUTTON2, MOUSEEVENTF_XDOWN	 , 0, 0, }},		// 8
-	{ INPUT_MOUSE	, { 	   0, 0, XBUTTON2, MOUSEEVENTF_XUP		 , 0, 0, }},		// 9
-	{ INPUT_KEYBOARD, { 	0xF0, 0, 0		 , KEYEVENTF_KEYUP		 , 0, 0, }},		// 10 Win+ƒJ[ƒ\ƒ‹or1,2,3‚ÉAÅ‰‚Éƒ_ƒ~[‚Å‰½‚©ƒL[‚ª‰Ÿ‚³‚ê‚½‚±‚Æ‚É‚·‚é
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_LEFTDOWN  , 0, 0, }},        // 0
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_LEFTUP    , 0, 0, }},        // 1
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_RIGHTDOWN , 0, 0, }},        // 2
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_RIGHTUP   , 0, 0, }},        // 3
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_MIDDLEDOWN, 0, 0, }},        // 4
+    { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_MIDDLEUP  , 0, 0, }},        // 5
+    { INPUT_MOUSE   , {        0, 0, XBUTTON1, MOUSEEVENTF_XDOWN     , 0, 0, }},        // 6
+    { INPUT_MOUSE   , {        0, 0, XBUTTON1, MOUSEEVENTF_XUP       , 0, 0, }},        // 7
+    { INPUT_MOUSE   , {        0, 0, XBUTTON2, MOUSEEVENTF_XDOWN     , 0, 0, }},        // 8
+    { INPUT_MOUSE   , {        0, 0, XBUTTON2, MOUSEEVENTF_XUP       , 0, 0, }},        // 9
+    { INPUT_KEYBOARD, {     0xF0, 0, 0       , KEYEVENTF_KEYUP       , 0, 0, }},        // 10 Win+ã‚«ãƒ¼ã‚½ãƒ«or1,2,3æ™‚ã«ã€æœ€åˆã«ãƒ€ãƒŸãƒ¼ã§ä½•ã‹ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã“ã¨ã«ã™ã‚‹.
 };
 
 
-/** ì¬
+/** ä½œæˆ.
  */
 void CKbdMouseCtrl::create()
 {
-	::timeBeginPeriod(1);
-	DWORD		threadId;
-	s_hThread_ = ::CreateThread(NULL, 4*1024, (LPTHREAD_START_ROUTINE)CKbdMouseCtrl::run, (void*)NULL, 0, &threadId);
+    ::timeBeginPeriod(1);
+    DWORD       threadId;
+    s_hThread_ = ::CreateThread(NULL, 4*1024, (LPTHREAD_START_ROUTINE)CKbdMouseCtrl::run, (void*)NULL, 0, &threadId);
 }
 
-
-/** ŠJ•ú
+/** é–‹æ”¾.
  */
 void CKbdMouseCtrl::release()
 {
-	::CloseHandle(s_hThread_);
-	::Sleep(3*SLEEP_COUNT);
-	::timeEndPeriod(1);
+    ::CloseHandle(s_hThread_);
+    ::Sleep(3*SLEEP_COUNT);
+    ::timeEndPeriod(1);
 }
 
-
-/** •ÊƒXƒŒƒbƒh‚Å‚ÌÀs
+/** åˆ¥ã‚¹ãƒ¬ãƒƒãƒ‰ã§ã®å®Ÿè¡Œ.
  */
 void CKbdMouseCtrl::run()
 {
-	for (;;) {
-		ctrl();
-		::Sleep(SLEEP_COUNT);
-	}
+    for (;;) {
+        ctrl();
+        ::Sleep(SLEEP_COUNT);
+    }
 }
 
-
-/// ƒL[“ü—Í‚Åƒ}ƒEƒX‚ğ§Œä
+/// ã‚­ãƒ¼å…¥åŠ›ã§ãƒã‚¦ã‚¹ã‚’åˆ¶å¾¡.
 ///
 void CKbdMouseCtrl::ctrl()
 {
-	unsigned	uNow = DiaKbdMouseHook_mouseButton();
-	// if (uNow) DEBUGPRINTF("%mouse now=%x\n", uNow);
+    unsigned    uNow = DiaKbdMouseHook_mouseButton();
+    // if (uNow) DEBUGPRINTF("%mouse now=%x\n", uNow);
 
-	// ƒgƒŠƒK[ì¬
-	unsigned	uOld  = s_uOld_;
-	unsigned 	uTrig = uNow & (~uOld);
+    // ãƒˆãƒªã‚¬ãƒ¼ä½œæˆ.
+    unsigned    uOld  = s_uOld_;
+    unsigned    uTrig = uNow & (~uOld);
 
-	// •ú‚µ‚½uŠÔ(ƒŠƒŠ[ƒX)‚ğì¬
-	unsigned 	uRel  = (~uNow) & uOld;
+    // æ”¾ã—ãŸç¬é–“(ãƒªãƒªãƒ¼ã‚¹)ã‚’ä½œæˆ.
+    unsigned    uRel  = (~uNow) & uOld;
 
-	// Ÿ‰ñ—p‚ÉT‚¦‚é
-	s_uOld_ = uNow;
+    // æ¬¡å›ç”¨ã«æ§ãˆã‚‹.
+    s_uOld_ = uNow;
 
- #ifdef USE_LWINKEY
-	// ƒ‚[ƒhƒL[‚Ì’²®.
-	checkModeKey(uNow, uTrig);
- #endif
+    // ãƒã‚¦ã‚¹ç§»å‹•.
+    moveMouse(uNow, uOld, uTrig);
 
-	// ƒ}ƒEƒXˆÚ“®
-	moveMouse(uNow, uOld, uTrig);
-
-	// ƒ}ƒEƒXƒ{ƒ^ƒ“‚Ìˆ—.
-	sendMouseButton(uTrig, uRel);
+    // ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã®å‡¦ç†.
+    sendMouseButton(uTrig, uRel);
 }
 
-
-#ifdef USE_LWINKEY
-/// ƒ‚[ƒhEƒL[‚Ì‚Â‚¶‚Â‚Ü‡‚í‚¹.
-///
-void CKbdMouseCtrl::checkModeKey(unsigned uNow, unsigned uTrig)
-{
-	// ¶WinƒL[‚ğŒ³‹@”\—LŒø‚ÅÀs‚·‚é‚ÆAWinƒL[‚ğ•ú‚µ‚½‚ÉƒXƒ^[ƒgƒƒjƒ…[‚ªŠJ‚­‚Ì‚ÅA
-	// ˆêu•Ê‚ÌƒL[‚ğ‰Ÿ‚µ‚½‚±‚Æ‚É‚µ‚ÄA‚²‚Ü‚©‚·
-	if (uTrig & DIAKBDMOUSE_MOUSE_MODEKEY)						// ‰Ÿ‚³‚ê‚½‰‰ñ‚Éon
-		s_bWin1st_ = true;
-	else if ((uNow & DIAKBDMOUSE_MOUSE_MODEKEY) == 0)			// •ú‚³‚ê‚½‚ç off
-		s_bWin1st_ = 0;
-	if (s_bWin1st_ && (uNow & ~DIAKBDMOUSE_MOUSE_MODEKEY)) {	// WinˆÈŠO‚Ì‘¼‚ÌƒL[‚à‰Ÿ‚³‚ê‚½‚çA‚²‚Ü‚©‚µ‚ÈƒL[‚ğ”­Œø
-		s_bWin1st_ = 0;
-		::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[10]), sizeof(INPUT));
-			// 0xF0‚ÍIME‹N“®’†‚¾‚Æ‚æ‚­‚È‚¢‚©‚à‚¾‚ªA‚»‚à‚»‚à‚»‚Ì‚æ‚¤‚È‚É‰Ÿ‚·‚±‚Æ‚Í‚È‚¢‚¾‚ë‚¤A‚Å
-	}
-}
-#endif
-
-
-/// ƒ}ƒEƒXˆÚ“®
+/// ãƒã‚¦ã‚¹ç§»å‹•.
 ///
 void CKbdMouseCtrl::moveMouse(unsigned uNow, unsigned uOld, unsigned uTrig)
 {
-	// ƒJ[ƒ\ƒ‹ˆÚ“®‚Ì‚½‚ß‚Ì“ü—Í
-	int tx  = 0;
-	int ty  = 0;
-	int mul = (uNow & DIAKBDMOUSE_MOUSE_SPEEDUP) ? 2 : 1;
-	if (uNow & DIAKBDMOUSE_MOUSE_SPEEDCHG) {	// ‚ä‚Á‚­‚è‚¿‚å‚Á‚Æ‚Ã‚ÂˆÚ“®.
-		unsigned uRept = makeReptKey(uNow, uOld, uTrig);
-		tx = -((uRept & DIAKBDMOUSE_MOUSE_LEFT) != 0) + ((uRept & DIAKBDMOUSE_MOUSE_RIGHT) != 0);
-		ty = -((uRept & DIAKBDMOUSE_MOUSE_UP  ) != 0) + ((uRept & DIAKBDMOUSE_MOUSE_DOWN ) != 0);
-		tx *= 4*mul;
-		ty *= 4*mul;
-	} else {								// ‚»‚±‚»‚±‚È‚ß‚ç‚©‚ÉˆÚ“®.
-		int 	dx = -((uNow  & DIAKBDMOUSE_MOUSE_LEFT) != 0) + ((uNow  & DIAKBDMOUSE_MOUSE_RIGHT) != 0);
-		int 	dy = -((uNow  & DIAKBDMOUSE_MOUSE_UP  ) != 0) + ((uNow  & DIAKBDMOUSE_MOUSE_DOWN ) != 0);
-		s_dgtXY2AnlgXY_.set(dx, dy);
-		// ƒAƒiƒƒO’l‚Æ‚µ‚Ä -256`256‚Ì’l‚ğ•Ô‚·
-		float	ax = s_dgtXY2AnlgXY_.analogX();
-		float	ay = s_dgtXY2AnlgXY_.analogY();
-		tx	= LONG(ax*DLT*mul) >> 8;
-		ty	= LONG(ay*DLT*mul) >> 8;
-	}
+    // ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã®ãŸã‚ã®å…¥åŠ›.
+    int tx  = 0;
+    int ty  = 0;
+    int mul = (uNow & DIAKBDMOUSE_MOUSE_SPEEDUP) ? 2 : 1;
+    if (uNow & DIAKBDMOUSE_MOUSE_SPEEDCHG) {    // ã‚†ã£ãã‚Šã¡ã‚‡ã£ã¨ã¥ã¤ç§»å‹•.
+        unsigned uRept = makeReptKey(uNow, uOld, uTrig);
+        tx = -((uRept & DIAKBDMOUSE_MOUSE_LEFT) != 0) + ((uRept & DIAKBDMOUSE_MOUSE_RIGHT) != 0);
+        ty = -((uRept & DIAKBDMOUSE_MOUSE_UP  ) != 0) + ((uRept & DIAKBDMOUSE_MOUSE_DOWN ) != 0);
+        tx *= 4*mul;
+        ty *= 4*mul;
+    } else {                                // ãã“ãã“ãªã‚ã‚‰ã‹ã«ç§»å‹•.
+        int     dx = -((uNow  & DIAKBDMOUSE_MOUSE_LEFT) != 0) + ((uNow  & DIAKBDMOUSE_MOUSE_RIGHT) != 0);
+        int     dy = -((uNow  & DIAKBDMOUSE_MOUSE_UP  ) != 0) + ((uNow  & DIAKBDMOUSE_MOUSE_DOWN ) != 0);
+        s_dgtXY2AnlgXY_.set(dx, dy);
+        // ã‚¢ãƒŠãƒ­ã‚°å€¤ã¨ã—ã¦ -256ï½256ã®å€¤ã‚’è¿”ã™.
+        float   ax = s_dgtXY2AnlgXY_.analogX();
+        float   ay = s_dgtXY2AnlgXY_.analogY();
+        tx  = LONG(ax*DLT*mul) >> 8;
+        ty  = LONG(ay*DLT*mul) >> 8;
+    }
 
-	// “ü—Í’l‚ª‚ ‚Á‚½‚çAƒJ[ƒ\ƒ‹‚ğˆÚ“®
-	if (tx | ty) {
-		INPUT	input;
-		input.type			 = INPUT_MOUSE;
-		input.mi.mouseData	 = 65535;
-		input.mi.dwFlags	 = MOUSEEVENTF_MOVE;
-		input.mi.time		 = 0;
-		input.mi.dwExtraInfo = 0;
-		input.mi.dx			 = tx;
-		input.mi.dy			 = ty;
-		::SendInput(1, &input, sizeof(INPUT));
-	}
+    // å…¥åŠ›å€¤ãŒã‚ã£ãŸã‚‰ã€ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•.
+    if (tx | ty) {
+        INPUT   input;
+        input.type           = INPUT_MOUSE;
+        input.mi.mouseData   = 65535;
+        input.mi.dwFlags     = MOUSEEVENTF_MOVE;
+        input.mi.time        = 0;
+        input.mi.dwExtraInfo = 0;
+        input.mi.dx          = tx;
+        input.mi.dy          = ty;
+        ::SendInput(1, &input, sizeof(INPUT));
+    }
 }
 
-
-/// ƒL[ƒŠƒs[ƒg¶¬
+/// ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆç”Ÿæˆ.
 ///
 unsigned CKbdMouseCtrl::makeReptKey(unsigned uNow, unsigned uOld, unsigned uTrig)
 {
-	enum { REPT_KEY = DIAKBDMOUSE_MOUSE_LEFT | DIAKBDMOUSE_MOUSE_RIGHT | DIAKBDMOUSE_MOUSE_UP | DIAKBDMOUSE_MOUSE_DOWN };
-	enum { TIME1ST	= 32 };		// 8*30=256msec ‚­‚ç‚¢.
-	enum { TIME2ND	=  8 };		// 8*8 = 64msec ‚­‚ç‚¢.
-	unsigned uRept = uTrig;
-	if (uNow == uOld) {
-		++s_uReptCnt_;
-		if (s_uReptCnt_ == TIME1ST) {
-			uRept = uNow & REPT_KEY;
-		} else if (s_uReptCnt_ == TIME1ST + TIME2ND) {
-			uRept 		= uNow & REPT_KEY;
-			s_uReptCnt_	= TIME1ST;
-		}
-	} else {
-		s_uReptCnt_ = 0;
-	}
-	return uRept;
+    enum { REPT_KEY = DIAKBDMOUSE_MOUSE_LEFT | DIAKBDMOUSE_MOUSE_RIGHT | DIAKBDMOUSE_MOUSE_UP | DIAKBDMOUSE_MOUSE_DOWN };
+    enum { TIME1ST  = 32 };     // 8*30=256msec ãã‚‰ã„.
+    enum { TIME2ND  =  8 };     // 8*8 = 64msec ãã‚‰ã„.
+    unsigned uRept = uTrig;
+    if (uNow == uOld) {
+        ++s_uReptCnt_;
+        if (s_uReptCnt_ == TIME1ST) {
+            uRept = uNow & REPT_KEY;
+        } else if (s_uReptCnt_ == TIME1ST + TIME2ND) {
+            uRept       = uNow & REPT_KEY;
+            s_uReptCnt_ = TIME1ST;
+        }
+    } else {
+        s_uReptCnt_ = 0;
+    }
+    return uRept;
 }
 
-
-/// ƒ}ƒEƒXƒ{ƒ^ƒ“‚Ì‘ã—p.
+/// ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã®ä»£ç”¨.
 ///
 void CKbdMouseCtrl::sendMouseButton(unsigned uTrig, unsigned uRel)
 {
-	if (uTrig & DIAKBDMOUSE_MOUSE_LBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 0]), sizeof(INPUT));
-	if (uRel  & DIAKBDMOUSE_MOUSE_LBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 1]), sizeof(INPUT));
-	if (uTrig & DIAKBDMOUSE_MOUSE_RBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 2]), sizeof(INPUT));
-	if (uRel  & DIAKBDMOUSE_MOUSE_RBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 3]), sizeof(INPUT));
-	if (uTrig & DIAKBDMOUSE_MOUSE_MBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 4]), sizeof(INPUT));
-	if (uRel  & DIAKBDMOUSE_MOUSE_MBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 5]), sizeof(INPUT));
-	if (uTrig & DIAKBDMOUSE_MOUSE_XBUTTON1) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 6]), sizeof(INPUT));
-	if (uRel  & DIAKBDMOUSE_MOUSE_XBUTTON1) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 7]), sizeof(INPUT));
-	if (uTrig & DIAKBDMOUSE_MOUSE_XBUTTON2) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 8]), sizeof(INPUT));
-	if (uRel  & DIAKBDMOUSE_MOUSE_XBUTTON2) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[ 9]), sizeof(INPUT));
+    if (uTrig & DIAKBDMOUSE_MOUSE_LBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[0]), sizeof(INPUT));
+    if (uRel  & DIAKBDMOUSE_MOUSE_LBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[1]), sizeof(INPUT));
+    if (uTrig & DIAKBDMOUSE_MOUSE_RBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[2]), sizeof(INPUT));
+    if (uRel  & DIAKBDMOUSE_MOUSE_RBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[3]), sizeof(INPUT));
+    if (uTrig & DIAKBDMOUSE_MOUSE_MBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[4]), sizeof(INPUT));
+    if (uRel  & DIAKBDMOUSE_MOUSE_MBUTTON)  ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[5]), sizeof(INPUT));
+    if (uTrig & DIAKBDMOUSE_MOUSE_XBUTTON1) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[6]), sizeof(INPUT));
+    if (uRel  & DIAKBDMOUSE_MOUSE_XBUTTON1) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[7]), sizeof(INPUT));
+    if (uTrig & DIAKBDMOUSE_MOUSE_XBUTTON2) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[8]), sizeof(INPUT));
+    if (uRel  & DIAKBDMOUSE_MOUSE_XBUTTON2) ::SendInput(1, const_cast<LPINPUT>(&s_input_mouseSendTbl_[9]), sizeof(INPUT));
 }
-

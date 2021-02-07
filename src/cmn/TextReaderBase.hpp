@@ -1,10 +1,10 @@
-/**
- *	@file	TextReaderBase.h
- *	@brief	ƒoƒCƒg—ñ‚ğƒeƒLƒXƒg‚Æ‚µ‚Ä •¶šEs“Ç‚İ‚İ‚·‚é‚½‚ß‚ÌŠî’êƒNƒ‰ƒX
- *	@note
- *	- \r\n ‚ğ \n ‰»‚·‚é.
- *	- ƒNƒ‰ƒXŒp³‚µ‚Ä raw_close(), raw_read() (ê‡‚É‚æ‚Á‚Ä‚Í raw_malloc, raw_free)
- *	  ‚ğ ƒI[ƒo[ƒ‰ƒCƒh‚µ‚ÄÀ‘•‚Ì‚±‚Æ.
+ï»¿/**
+ *  @file   TextReaderBase.h
+ *  @brief  ãƒã‚¤ãƒˆåˆ—ã‚’ãƒ†ã‚­ã‚¹ãƒˆã¨ã—ã¦ æ–‡å­—ãƒ»è¡Œèª­ã¿è¾¼ã¿ã™ã‚‹ãŸã‚ã®åŸºåº•ã‚¯ãƒ©ã‚¹
+ *  @note
+ *  - \r\n ã‚’ \n åŒ–ã™ã‚‹.
+ *  - ã‚¯ãƒ©ã‚¹ç¶™æ‰¿ã—ã¦ raw_close(), raw_read() (å ´åˆã«ã‚ˆã£ã¦ã¯ raw_malloc, raw_free)
+ *    ã‚’ ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã—ã¦å®Ÿè£…ã®ã“ã¨.
  */
 #ifndef TEXTREADERBASE_H
 #define TEXTREADERBASE_H
@@ -12,222 +12,222 @@
 #include <cstddef>
 #include <cassert>
 
-// ƒoƒCƒg—ñ‚ğƒeƒLƒXƒg‚Æ‚µ‚Ä •¶šEs“Ç‚İ‚İ‚·‚é‚½‚ß‚ÌŠî’êƒNƒ‰ƒX
+// ãƒã‚¤ãƒˆåˆ—ã‚’ãƒ†ã‚­ã‚¹ãƒˆã¨ã—ã¦ æ–‡å­—ãƒ»è¡Œèª­ã¿è¾¼ã¿ã™ã‚‹ãŸã‚ã®åŸºåº•ã‚¯ãƒ©ã‚¹
 class TextReaderBase {
-	enum { INNER_BUF_SZ = 3 };	// Œ»óƒpƒfƒBƒ“ƒO—˜—p‚Ì‚İ.
+    enum { INNER_BUF_SZ = 3 };  // ç¾çŠ¶ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°åˆ©ç”¨ã®ã¿.
 public:
-	typedef std::size_t		size_t;
-	TextReaderBase() { init(); }
-	TextReaderBase(char* buf, unsigned sz) { init(); setbuf(buf,sz); }
-	~TextReaderBase() { close(); }
+    typedef std::size_t     size_t;
+    TextReaderBase() { init(); }
+    TextReaderBase(char* buf, unsigned sz) { init(); setbuf(buf,sz); }
+    ~TextReaderBase() { close(); }
 
-	void		close() {
-					raw_close();
-					if (alcFlag_)
-						raw_free(buf_);
-				}
+    void        close() {
+                    raw_close();
+                    if (alcFlag_)
+                        raw_free(buf_);
+                }
 
-	size_t		read(void* readbuf, size_t size) {
-					return readEx(readbuf, size, false);
-				}
+    size_t      read(void* readbuf, size_t size) {
+                    return readEx(readbuf, size, false);
+                }
 
-	int 		getc() {
-					char	buf[2];
-					return read(buf, 1) > 0 ? buf[0] : -1;
-				}
+    int         getc() {
+                    char    buf[2];
+                    return read(buf, 1) > 0 ? buf[0] : -1;
+                }
 
-	char*		gets(char* buf, size_t bufSize) {
-				 #if 1
-					assert(buf && bufSize > 1);
-					std::size_t rdsz = readEx(buf, bufSize-1, true);
-					if (std::ptrdiff_t(rdsz) > 0) {
-						buf[rdsz] = 0;
-						return buf;
-					}
-					return NULL;
-				 #else
-					char*	d  = buf;
-					assert(buf);
-					if (bufSize > 0) {
-						char*	de = d + bufSize - 1;
-						if (d < de) {
-							char	buf[2];
-							int c;
-							do {
-								if (read(buf, 1) <= 0)
-									break;
-								c = buf[0];
-								*d++ = c;
-							} while (d < de && c != '\n' /*&& c != '\r'*/);
-						}
-						*d = 0;
-					}
-					return buf;
-				 #endif
-				}
+    char*       gets(char* buf, size_t bufSize) {
+                 #if 1
+                    assert(buf && bufSize > 1);
+                    std::size_t rdsz = readEx(buf, bufSize-1, true);
+                    if (std::ptrdiff_t(rdsz) > 0) {
+                        buf[rdsz] = 0;
+                        return buf;
+                    }
+                    return NULL;
+                 #else
+                    char*   d  = buf;
+                    assert(buf);
+                    if (bufSize > 0) {
+                        char*   de = d + bufSize - 1;
+                        if (d < de) {
+                            char    buf[2];
+                            int c;
+                            do {
+                                if (read(buf, 1) <= 0)
+                                    break;
+                                c = buf[0];
+                                *d++ = c;
+                            } while (d < de && c != '\n' /*&& c != '\r'*/);
+                        }
+                        *d = 0;
+                    }
+                    return buf;
+                 #endif
+                }
 
-	int			setbuf(char* buf, size_t size) {
-					int		rc = 0;
-					if (buf_) {
-						// flush();
-						if (alcFlag_)
-							raw_free(buf_);
-						buf_ 	 = 0;
-						alcFlag_ = 0;
-					}
-					if (size >= 0x80000000)	// ƒoƒbƒtƒ@ƒTƒCƒY‚Íint‚Ì®””ÍˆÍ.
-						goto ERR;
-					if (buf) {	// ŒÄ‚ÑŒ³‚ª—pˆÓ‚µ‚½ƒoƒbƒtƒ@‚ª‚ ‚é‚Æ‚«
-						if (size < 2)	// 2–¢–‚È‚ç“à‘ ‚Ì‚ğg‚¤.
-							goto ERR;
-					} else if (size <= INNER_BUF_SZ) {
-						buf			= innerBuf_;
-						size 		= INNER_BUF_SZ;
-					} else {
-						size		= size;
-						buf			= (char*) raw_malloc( size );
-						if (buf) {
-							alcFlag_ = 1;
-						} else {	// allocate‚É¸”s‚µ‚½‚ç“à‘ ƒoƒbƒtƒ@‚ğg‚¤.
-				  ERR:
-							buf		= innerBuf_;
-							size 	= INNER_BUF_SZ;
-							rc 		= -1;
-						}
-					}
-					buf_		= buf;
-					bufCapa_	= size;
-					bufCur_		= 0;
-					bufSize_	= 0;
-					return rc;
-				}
+    int         setbuf(char* buf, size_t size) {
+                    int     rc = 0;
+                    if (buf_) {
+                        // flush();
+                        if (alcFlag_)
+                            raw_free(buf_);
+                        buf_     = 0;
+                        alcFlag_ = 0;
+                    }
+                    if (size >= 0x80000000) // ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã¯intã®æ•´æ•°ç¯„å›².
+                        goto ERR;
+                    if (buf) {  // å‘¼ã³å…ƒãŒç”¨æ„ã—ãŸãƒãƒƒãƒ•ã‚¡ãŒã‚ã‚‹ã¨ã
+                        if (size < 2)   // 2æœªæº€ãªã‚‰å†…è”µã®ã‚’ä½¿ã†.
+                            goto ERR;
+                    } else if (size <= INNER_BUF_SZ) {
+                        buf         = innerBuf_;
+                        size        = INNER_BUF_SZ;
+                    } else {
+                        size        = size;
+                        buf         = (char*) raw_malloc( size );
+                        if (buf) {
+                            alcFlag_ = 1;
+                        } else {    // allocateã«å¤±æ•—ã—ãŸã‚‰å†…è”µãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ã†.
+                  ERR:
+                            buf     = innerBuf_;
+                            size    = INNER_BUF_SZ;
+                            rc      = -1;
+                        }
+                    }
+                    buf_        = buf;
+                    bufCapa_    = size;
+                    bufCur_     = 0;
+                    bufSize_    = 0;
+                    return rc;
+                }
 
 private:
-	size_t		readEx(void* readbuf, size_t size, bool crFlag) {
-					assert(readbuf != NULL);
-					assert(buf_ != NULL);
-					assert(bufCapa_ > 0);
-					assert(bufSize_ <= bufCapa_);
-					assert(bufCur_  <= bufSize_);
+    size_t      readEx(void* readbuf, size_t size, bool crFlag) {
+                    assert(readbuf != NULL);
+                    assert(buf_ != NULL);
+                    assert(bufCapa_ > 0);
+                    assert(bufSize_ <= bufCapa_);
+                    assert(bufCur_  <= bufSize_);
 
-					error_	= 0;
+                    error_  = 0;
 
-					size_t	total 		= 0;
-					char*	dst			= (char*)readbuf;
-					char*	buf			= buf_;
-					size_t	bufCapa		= bufCapa_;
-					while (size > 0) {
-						std::ptrdiff_t	r = bufSize_ - bufCur_;
-						assert(r >= 0);
-						if (r > 0) {	// ƒoƒbƒtƒ@‚Éƒf[ƒ^‚ª‚ ‚ê‚Î‚Ü‚¸‚Í‚»‚±‚©‚çæ“¾.
-							size_t l;
-							l = size;
-							if (l > size_t(r))
-								l = r;
-							if (crFlag == 0) {
-								std::memcpy(dst, buf+bufCur_, l);
-								//std::copy(dst, dst+l, buf+bufCur_);
-								dst 		+= l;
-							} else {
-								char* s  = buf+bufCur_;
-								char* se = s + l;
-								while (s < se) {
-									int c  = *s++;
-									*dst++ = c;
-									if (c == '\n') {
-										l    = s - (buf+bufCur_);
-										size = l;
-										break;
-									}
-								}
-							}
-							bufCur_ 	+= l;
-							total		+= l;
-							size		-= l;
-							if (size == 0)
-								break;
-						}
-						bufCur_  		= 0;
-						bufSize_ 		= 0;
-						if (eof_) {	// ÅŒã‚Ü‚Å“Ç‚İI‚í‚Á‚Ä‚¢‚½ê‡‚ÍI—¹.
-							break;
-						}
+                    size_t  total       = 0;
+                    char*   dst         = (char*)readbuf;
+                    char*   buf         = buf_;
+                    size_t  bufCapa     = bufCapa_;
+                    while (size > 0) {
+                        std::ptrdiff_t  r = bufSize_ - bufCur_;
+                        assert(r >= 0);
+                        if (r > 0) {    // ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°ã¾ãšã¯ãã“ã‹ã‚‰å–å¾—.
+                            size_t l;
+                            l = size;
+                            if (l > size_t(r))
+                                l = r;
+                            if (crFlag == 0) {
+                                std::memcpy(dst, buf+bufCur_, l);
+                                //std::copy(dst, dst+l, buf+bufCur_);
+                                dst         += l;
+                            } else {
+                                char* s  = buf+bufCur_;
+                                char* se = s + l;
+                                while (s < se) {
+                                    int c  = *s++;
+                                    *dst++ = c;
+                                    if (c == '\n') {
+                                        l    = s - (buf+bufCur_);
+                                        size = l;
+                                        break;
+                                    }
+                                }
+                            }
+                            bufCur_     += l;
+                            total       += l;
+                            size        -= l;
+                            if (size == 0)
+                                break;
+                        }
+                        bufCur_         = 0;
+                        bufSize_        = 0;
+                        if (eof_) { // æœ€å¾Œã¾ã§èª­ã¿çµ‚ã‚ã£ã¦ã„ãŸå ´åˆã¯çµ‚äº†.
+                            break;
+                        }
 
-						// ƒtƒ@ƒCƒ‹‚©‚çƒoƒbƒtƒ@‚É“Ç‚İ‚Ş.
-						if (restCR_) {	// ‘O‰ñ‚ÌÅŒã‚ªCR‚¾‚Á‚½ê‡‚Ì’²®.
-							restCR_ = 0;
-							buf[0]	= '\r';
-							r = raw_read(buf+1, bufCapa-1);
-							if (r >= 0)
-								++r;
-						} else {
-							r = raw_read(buf, bufCapa);
-						}
-						if (r <= 0) {		// “Ç‚İ‚ß‚È‚©‚Á‚½.
-							if (r < 0) {	// •‰‚È‚çƒGƒ‰[”­¶.
-								error_	= 1;
-								total	= (size_t)-1;
-							}
-							break;
-						}
-						if (r < std::ptrdiff_t(bufCapa)) {
-							eof_	= 1;
-						}
-						bufSize_	= r;
-						if (r > 0) {	// ƒf[ƒ^‚ğ“Ç‚İ‚ß‚Ä‚¢‚½‚ç ‰üsƒR[ƒh‚Ì•ÏŠ·‚ğs‚¤.
-							const char* s  = buf;
-							const char* se = buf + r;
-							char*		d  = buf;
-							do {
-								int c = *s++;
-								if (c == '\r') {		 // \r‚ª‚ ‚Á‚½‚ç ’¼Œã‚Ì\n‚Æˆê‘Ì‰»‚·‚é.
-									if (s < se) {
-										if (*s == '\n') {	// \r\n‚È‚ç \n‰».
-											c = '\n';
-											++s;
-										}
-									} else {			 // ƒoƒbƒtƒ@‚ÌÅŒã1ƒoƒCƒg‚ª\r‚Ì‚Æ‚«.
-										if (eof_ == 0) { // EOF‚ª‚Ü‚¾‚È‚ç
-											restCR_ = 1; // \r‚ğŸ‰ñ‚É‚¿‰z‚·.
-											break;
-										}				 // EOF‚Í‚»‚Ì‚Ü‚Üˆ—.
-									}
-								}
-								*d++ = c;
-							} while (s < se);
-							bufSize_ = d - buf;
-						}
-					}
-					return total;
-				}
+                        // ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ãƒãƒƒãƒ•ã‚¡ã«èª­ã¿è¾¼ã‚€.
+                        if (restCR_) {  // å‰å›ã®æœ€å¾ŒãŒCRã ã£ãŸå ´åˆã®èª¿æ•´.
+                            restCR_ = 0;
+                            buf[0]  = '\r';
+                            r = raw_read(buf+1, bufCapa-1);
+                            if (r >= 0)
+                                ++r;
+                        } else {
+                            r = raw_read(buf, bufCapa);
+                        }
+                        if (r <= 0) {       // èª­ã¿è¾¼ã‚ãªã‹ã£ãŸ.
+                            if (r < 0) {    // è² ãªã‚‰ã‚¨ãƒ©ãƒ¼ç™ºç”Ÿ.
+                                error_  = 1;
+                                total   = (size_t)-1;
+                            }
+                            break;
+                        }
+                        if (r < std::ptrdiff_t(bufCapa)) {
+                            eof_    = 1;
+                        }
+                        bufSize_    = r;
+                        if (r > 0) {    // ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚ã¦ã„ãŸã‚‰ æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®å¤‰æ›ã‚’è¡Œã†.
+                            const char* s  = buf;
+                            const char* se = buf + r;
+                            char*       d  = buf;
+                            do {
+                                int c = *s++;
+                                if (c == '\r') {         // \rãŒã‚ã£ãŸã‚‰ ç›´å¾Œã®\nã¨ä¸€ä½“åŒ–ã™ã‚‹.
+                                    if (s < se) {
+                                        if (*s == '\n') {   // \r\nãªã‚‰ \nåŒ–.
+                                            c = '\n';
+                                            ++s;
+                                        }
+                                    } else {             // ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œ1ãƒã‚¤ãƒˆãŒ\rã®ã¨ã.
+                                        if (eof_ == 0) { // EOFãŒã¾ã ãªã‚‰
+                                            restCR_ = 1; // \rã‚’æ¬¡å›ã«æŒã¡è¶Šã™.
+                                            break;
+                                        }                // EOFæ™‚ã¯ãã®ã¾ã¾å‡¦ç†.
+                                    }
+                                }
+                                *d++ = c;
+                            } while (s < se);
+                            bufSize_ = d - buf;
+                        }
+                    }
+                    return total;
+                }
 
-	void		init() {
-					buf_ 	 = NULL;
-					bufSize_ = 0;
-					bufCur_  = 0;
-					bufCapa_ = 0;
-					alcFlag_ = 0;
-					error_   = 0;
-					eof_	 = 0;
-					restCR_	 = 0;
-				}
+    void        init() {
+                    buf_     = NULL;
+                    bufSize_ = 0;
+                    bufCur_  = 0;
+                    bufCapa_ = 0;
+                    alcFlag_ = 0;
+                    error_   = 0;
+                    eof_     = 0;
+                    restCR_  = 0;
+                }
 
 protected:
-	virtual void 	raw_close() {}	// = 0;
-	virtual size_t	raw_read(void* buf, size_t size) = 0;
-	virtual void*	raw_malloc(size_t) { return NULL; }
-	virtual void    raw_free(void*) { }
+    virtual void    raw_close() {}  // = 0;
+    virtual size_t  raw_read(void* buf, size_t size) = 0;
+    virtual void*   raw_malloc(size_t) { return NULL; }
+    virtual void    raw_free(void*) { }
 
 private:
-	char*			buf_;						// ƒoƒbƒtƒ@æ“ª
-	unsigned		bufSize_;					// “Ç‚İ‚ñ‚Å‚¢‚éƒf[ƒ^‚ÌƒTƒCƒY
-	unsigned		bufCur_;					// Œ»İ‚Ìˆ—ˆÊ’u
-	unsigned		bufCapa_;					// ƒoƒbƒtƒ@‚Ì—ÌˆæƒTƒCƒY
-	unsigned char	alcFlag_: 1;
-	unsigned char	error_	: 1;
-	unsigned char	eof_	: 1;
-	unsigned char	restCR_ : 1;
-	char			innerBuf_[INNER_BUF_SZ];	// “à‘ ƒoƒbƒtƒ@. Œ»óƒGƒ‰[‚ÌÅˆ«‰ñ”ğ—p.
+    char*           buf_;                       // ãƒãƒƒãƒ•ã‚¡å…ˆé ­
+    unsigned        bufSize_;                   // èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ãƒ‡ãƒ¼ã‚¿ã®ã‚µã‚¤ã‚º
+    unsigned        bufCur_;                    // ç¾åœ¨ã®å‡¦ç†ä½ç½®
+    unsigned        bufCapa_;                   // ãƒãƒƒãƒ•ã‚¡ã®é ˜åŸŸã‚µã‚¤ã‚º
+    unsigned char   alcFlag_: 1;
+    unsigned char   error_  : 1;
+    unsigned char   eof_    : 1;
+    unsigned char   restCR_ : 1;
+    char            innerBuf_[INNER_BUF_SZ];    // å†…è”µãƒãƒƒãƒ•ã‚¡. ç¾çŠ¶ã‚¨ãƒ©ãƒ¼æ™‚ã®æœ€æ‚ªå›é¿ç”¨.
 };
 
 #endif
