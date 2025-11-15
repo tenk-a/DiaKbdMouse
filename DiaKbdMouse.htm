@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
-<title>DiaKbdMouse v0.8d</title>
+<title>DiaKbdMouse v0.8e</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <style><!--
@@ -27,7 +27,7 @@ ul,ol,li,table{line-height : 135%;}
 
 <body>
 
-<h1>DiaKbdMouse  v0.8d</h1>
+<h1>DiaKbdMouse  v0.8e</h1>
 <h3>for (日本語版) Windows Vista/7/8/8.1/10 x86/x64  (2K/Xp x86)</h3>
 
 <p>
@@ -36,7 +36,7 @@ ul,ol,li,table{line-height : 135%;}
 <dt>■モノ</dt>
 <dd>
 <p>
-Appsキー同時押しで、カーソルでマウス操作したり、古のダイヤモンドカーソル(SDEX等)でカーソル移動したりするために作成したソフトです。
+Appsキー同時押しで、カーソルでマウス操作したり、古のダイヤモンドカーソル(SDEX等)でカーソル移動したりするために作成したソフトです。<br>
 ※ AppsキーはJP109系だと右Ctrlの隣にある、普段マウス右クリックのメニューが出るキー
 <p>
 v0.8からは定義ファイルでキー設定するようになっているので、ダイヤモンドカーソル以外も設定可能です(Appsでなく別のキー同時押しでもよく)。
@@ -68,7 +68,14 @@ Program Files や Program Files (x86) 等の UAC でガードされるフォル�
 <li>config_etc/*</li>
 </ul>
 <p>
-がある状態で、install.bat を実行、お使いの環境に合わせて 1,2,3 いずれかを選んでください (実のところ3なら何れの環境でも動くはず)
+がある状態で、install.bat を実行、<br>
+<ol>
+<li> Windows Vista/7/8/8.1/10 x64 用に設定.
+<li> Windows Vista/7/8/8.1/10 x86 用に設定.
+<li> Windows 2k/xp x86 用に設定.
+</ol>
+<p>
+お使いの環境に合わせて 1,2,3 いずれかを選んでください (実のところ3なら何れの環境でも動くはず)
 <ul>
 <li>DiaKbdMouse.exe</li>
 <li>DiaKbdMouseHook.dll</li>
@@ -176,6 +183,10 @@ MS の TweakUI や各種キーバインディングツールで設定できる�
 
 <dt>■ 管理者権限での使用/自動起動設定について
 <dd>
+付属の regist_startup.bat を実行すると、管理者権限求められるので、よければOKしてください。<br>
+次回ログイン時に、30秒ほど遅れてから DiaKbdMouse.exe が 自動起動するようになります。
+
+<!--
 (以下、操作は windows8,10 で確認)
 <p>
 管理者権限でも、DiaKbdMouse を有効にするには、DiaKbdMouse.exe を管理者権限で実行できるように設定する必要があります。
@@ -231,6 +242,7 @@ c:\tool\DiaKbdMouse\DiaKbdMouse.exe
 </ul>
 <li>→設定すんだら OK を押し、完了<br>
 </ul>
+-->
 
 <p><br>
 </dd>
@@ -351,6 +363,13 @@ IMEの設定とか諸々、他のキーボードがらみのソフトとの相�
 </ul>
 </dd>
 
+<dt>2025-11-16 v0.8e</dt>
+<dd>
+<ul>
+<li> regist_startup.bat 追加</li>
+</ul>
+</dd>
+
 </dl>
 
 <p>
@@ -360,7 +379,7 @@ IMEの設定とか諸々、他のキーボードがらみのソフトとの相�
 
 <hr>
 <div>
-<a href="http://www.6809.net/tenk/">6809.net</a> tenk*
+<a href="https://github.com/tenk-a">tenk*</a>
 </div>
 
 </body>
