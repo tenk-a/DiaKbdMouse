@@ -3,8 +3,7 @@
  *  @brief  トレイ常駐アイコン処理用クラス
  *  @author Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 #ifndef TRAYICON_H
 #define TRAYICON_H

@@ -3,8 +3,7 @@
  *  @brief  キーボードでマウス操作するためのキーのフック用DLL
  *  @auther Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 #ifndef DIAKBDMOUSEHOOK_H
 #define DIAKBDMOUSEHOOK_H

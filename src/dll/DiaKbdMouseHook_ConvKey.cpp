@@ -3,8 +3,7 @@
  *  @brief  APPS+でのキー変換テーブル
  *  @auther Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 
 #include "stdafx.h"

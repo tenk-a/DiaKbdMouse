@@ -3,8 +3,7 @@
  *  @brief  デジタル十字ボタン入力をアナログ値に変換
  *  @author Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 #ifndef DGTXY2ANLGXY_HPP
 #define DGTXY2ANLGXY_HPP

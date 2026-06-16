@@ -1,6 +1,7 @@
 /**
  *  @file   TextReaderBase.h
  *  @brief  バイト列をテキストとして 文字・行読み込みするための基底クラス
+ *  @license Boost Software License Version 1.0
  *  @note
  *  - \r\n を \n 化する.
  *  - クラス継承して raw_close(), raw_read() (場合によっては raw_malloc, raw_free)

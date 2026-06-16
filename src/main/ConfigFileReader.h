@@ -3,6 +3,7 @@
  *  @brief  定義ファイルからキー定義を取得する.
  *  @author Masashi Kitamura
  *  @date   2013-09
+ *  @license Boost Software License Version 1.0
  */
 #ifndef CONFIGFILE_READER_H
 #define CONFIGFILE_READER_H

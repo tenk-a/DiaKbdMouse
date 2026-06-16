@@ -1,6 +1,7 @@
 /**
  *  @file   FileTextReader.hpp
  *  @brief  バイナリファイルをテキストファイルとして文字・行読み込みするためのクラス
+ *  @license Boost Software License Version 1.0
  *  @note
  *  - \r\n を \n 化する.
  */

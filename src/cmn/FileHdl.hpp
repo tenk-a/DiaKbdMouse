@@ -1,6 +1,7 @@
 /**
  *  @file   FileHdl.h
  *  @brief  win-api をc標準ライブラリぽくしたラッパークラス.
+ *  @license Boost Software License Version 1.0
  */
 #ifndef FILEHDL_H
 #define FILEHDL_H

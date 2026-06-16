@@ -3,8 +3,7 @@
  *  @brief  キーボードでマウス操作する処理(別スレッド)
  *  @auther Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 #ifndef KBDMOUSECTRL_H
 #define KBDMOUSECTRL_H

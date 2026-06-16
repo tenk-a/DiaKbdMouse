@@ -1,3 +1,8 @@
+/**
+ *  @file binary_tbl_n.hpp
+ *  @breaf binary search table
+ *  @license Boost Software License Version 1.0
+ */
 #ifndef BINARY_TBL_HPP
 #define BINARY_TBL_HPP
 

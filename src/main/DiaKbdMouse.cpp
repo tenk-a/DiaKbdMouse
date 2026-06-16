@@ -3,9 +3,7 @@
  *  @brief  キーボードでマウスを制御.
  *  @author Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
- *      HACK HACK MORE HACK
+ *  @license Boost Software License Version 1.0
  */
 
 #include "stdafx.h"

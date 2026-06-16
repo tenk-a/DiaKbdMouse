@@ -3,8 +3,7 @@
  *  @brief  APPS+を用いたダイアモンドカーソル操作するためのキーのフック側処理
  *  @auther Masashi KITAMURA
  *  @date   2006
- *  @note
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 
 #include "stdafx.h"

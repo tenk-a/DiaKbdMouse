@@ -3,12 +3,7 @@
  *  @brief  キーボードでマウス操作する処理(別スレッド)
  *  @auther Masashi KITAMURA
  *  @date   2006
- *  @note
- *      別にスレッドわける必要なかったかも...
- *      だし、timeBeginPeriod()とかもいらんか...
- *      が、チェックしなおすの面倒なんでそのまま
- *
- *      フリーソース
+ *  @license Boost Software License Version 1.0
  */
 
 #include "stdafx.h"
