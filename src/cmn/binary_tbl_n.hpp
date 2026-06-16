@@ -1,4 +1,4 @@
-﻿#ifndef BINARY_TBL_HPP
+#ifndef BINARY_TBL_HPP
 #define BINARY_TBL_HPP
 
 /** num個のテーブルtblから key を探す.

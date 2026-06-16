@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DiaKbdMouseHook.h
  *  @brief  APPS+を用いたダイアモンドカーソル操作するためのキーのフック用DLL
  *  @auther Masashi KITAMURA

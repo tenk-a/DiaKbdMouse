@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   TextReaderBase.h
  *  @brief  バイト列をテキストとして 文字・行読み込みするための基底クラス
  *  @note

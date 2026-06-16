@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DiaKbdMouseHook_ConvKey.h
  *  @brief  APPS+でのキー変換テーブル
  *  @auther Masashi KITAMURA

@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   FileHdl.h
  *  @brief  win-api をc標準ライブラリぽくしたラッパークラス.
  */

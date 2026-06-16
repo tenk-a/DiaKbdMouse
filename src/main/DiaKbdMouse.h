@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DiaKbdMouse.h
  *  @brief  キーボードでマウスを制御
  *  @author Masashi KITAMURA

@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DiaKbdMouseHook.h
  *  @brief  キーボードでマウス操作するためのキーのフック用DLL
  *  @auther Masashi KITAMURA

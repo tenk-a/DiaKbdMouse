@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   ConfigFileReader.h
  *  @brief  定義ファイルからキー定義を取得する.
  *  @author Masashi Kitamura

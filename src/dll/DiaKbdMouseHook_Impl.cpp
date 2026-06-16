@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DiaKbdMouseHook_Impl.cpp
  *  @brief  APPS+を用いたダイアモンドカーソル操作するためのキーのフック側処理
  *  @auther Masashi KITAMURA

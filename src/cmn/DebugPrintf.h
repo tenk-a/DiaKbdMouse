@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DebugPrintf.h
  *  @brief  win-api を用いた簡易なdebugログ出力用printf
  */

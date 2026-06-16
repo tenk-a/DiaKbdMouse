@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   TrayIcon.h
  *  @brief  トレイ常駐アイコン処理用クラス
  *  @author Masashi KITAMURA

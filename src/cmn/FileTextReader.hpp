@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   FileTextReader.hpp
  *  @brief  バイナリファイルをテキストファイルとして文字・行読み込みするためのクラス
  *  @note

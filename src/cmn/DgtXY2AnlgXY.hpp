@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   DbgXY2AnlgXY.hpp
  *  @brief  デジタル十字ボタン入力をアナログ値に変換
  *  @author Masashi KITAMURA

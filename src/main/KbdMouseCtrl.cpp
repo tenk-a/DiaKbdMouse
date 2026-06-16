@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   KbdMouseCtrl.cpp
  *  @brief  キーボードでマウス操作する処理(別スレッド)
  *  @auther Masashi KITAMURA

@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  @file   TrayIcon.cpp
  *  @brief  トレイ常駐アイコン処理用クラス
  *  @author Masashi KITAMURA
