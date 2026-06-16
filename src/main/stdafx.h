@@ -7,7 +7,9 @@
 
 #include <windows.h>
 #include <MMSystem.h>           // timeBeginPeriodのため.
+#ifdef _MSC_VER
 #pragma comment( lib, "WinMM" )
+#endif
 #include <ShellAPI.h>
 
 #include <stdlib.h>

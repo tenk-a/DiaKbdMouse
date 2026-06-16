@@ -13,7 +13,7 @@
 #include "DiaKbdMouseHook.h"
 #include "../cmn/DebugPrintf.h"
 
-#if 0 //def NDEBUG   // 実行時の使用メモリを減らす.
+#if 0 && defined(_MSC_VER)  // 実行時の使用メモリを減らす.
 //#pragma comment(linker, "/opt:nowin98")
 //#pragma comment(linker, "/ignore:4078")
 #pragma comment(linker, "/entry:\"DllMain\"")
@@ -23,10 +23,14 @@
 #endif
 
 
+#ifdef _MSC_VER
 #pragma comment(linker, "/section:DIACURSO,rws")
 #pragma data_seg("DIACURSO")
+#endif
 volatile HHOOK  CDiaKbdMouseHook_Impl::s_hHook_LL_  = 0;
+#ifdef _MSC_VER
 #pragma data_seg()
+#endif
 
 
 CCriticalSection    CDiaKbdMouseHook_Impl::s_criticalSection_;
@@ -41,6 +45,7 @@ bool        CDiaKbdMouseHook_Impl::s_bConvModeStat_     = false;
 bool        CDiaKbdMouseHook_Impl::s_bTwoStStatQ_       = false;
 bool        CDiaKbdMouseHook_Impl::s_bShiftStat_        = false;
 bool        CDiaKbdMouseHook_Impl::s_bCtrlStat_         = false;
+bool        CDiaKbdMouseHook_Impl::s_bSentKeyDown_[CDiaKbdMouseHook_Impl::VK_NUM];
 
 #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
 bool        CDiaKbdMouseHook_Impl::s_bExShift_          = false;
@@ -71,6 +76,11 @@ bool CDiaKbdMouseHook_Impl::uninstall()
 {
     if (s_hHook_LL_ && UnhookWindowsHookEx(s_hHook_LL_) == 0)
         return false;
+
+    {
+        CCriticalSectionLock    lock(s_criticalSection_);
+        clearStat();
+    }
     s_criticalSection_.release();
     s_hHook_LL_ = 0;
     return true;
@@ -102,12 +112,11 @@ void CDiaKbdMouseHook_Impl::setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_Conv
  */
 unsigned CDiaKbdMouseHook_Impl::mouseButton() {
     CCriticalSectionLock    lock(s_criticalSection_);
-    // 拡張キー操作中にWin+L でロック画面に移り戻ると内部状態不正でマウス移動が暴発することがあるので.
+    // 拡張キー操作中にWin+L でロック画面に移り戻ると内部状態不正でマウス移動が暴発することがあるので,
     // 被害軽減のためタイマーを用意してクリア.
     if (s_iMouseButtonLife_) {
         if (--s_iMouseButtonLife_ <= 0) {
-            s_iMouseButtonLife_ = 0;
-            s_uMouseButton_     = 0;
+            clearStat();
         }
     }
     return s_uMouseButton_;
@@ -269,8 +278,10 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
     case CConvKey::MD_DIRECT:
         if (sw) {               // キーDOWN
             sendKey(rOne.u8Mode_, 0, rOne.u8VkCode_);
+            setSentKeyDown(rOne.u8VkCode_, true);
         } else {                // キーUP
             sendKey(rOne.u8Mode_, KEYEVENTF_KEYUP, rOne.u8VkCode_);
+            setSentKeyDown(rOne.u8VkCode_, false);
             s_bTwoStStatQ_ = 0;
         }
         break;
@@ -313,6 +324,7 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 ///
 void CDiaKbdMouseHook_Impl::clearStat()
 {
+    releaseSentKeys();
     s_bConvModeStat_    = false;
     s_bTwoStStatQ_      = false;
     s_bShiftStat_       = false;
@@ -386,7 +398,86 @@ void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsign
     rInput.ki.wScan         = WORD( ::MapVirtualKey(uVk, 0) );
     rInput.ki.time          = 0;
     rInput.ki.dwExtraInfo   = DWORD(DiaKbdMouseHook_EXTRAINFO);
-    rInput.ki.dwFlags       = uFlags | KEYEVENTF_EXTENDEDKEY;
+    rInput.ki.dwFlags       = uFlags | (isExtendedKey(uVk) ? KEYEVENTF_EXTENDEDKEY : 0);
+}
+
+
+/// KEYEVENTF_EXTENDEDKEY が必要なキーかを判定.
+///
+bool CDiaKbdMouseHook_Impl::isExtendedKey(unsigned uVk)
+{
+    switch (uVk) {
+    case VK_RCONTROL:
+    case VK_RMENU:
+    case VK_INSERT:
+    case VK_DELETE:
+    case VK_HOME:
+    case VK_END:
+    case VK_PRIOR:
+    case VK_NEXT:
+    case VK_LEFT:
+    case VK_UP:
+    case VK_RIGHT:
+    case VK_DOWN:
+    case VK_NUMLOCK:
+    case VK_CANCEL:
+    case VK_SNAPSHOT:
+    case VK_DIVIDE:
+    case VK_LWIN:
+    case VK_RWIN:
+    case VK_APPS:
+    case VK_BROWSER_BACK:
+    case VK_BROWSER_FORWARD:
+    case VK_BROWSER_REFRESH:
+    case VK_BROWSER_STOP:
+    case VK_BROWSER_SEARCH:
+    case VK_BROWSER_FAVORITES:
+    case VK_BROWSER_HOME:
+    case VK_VOLUME_MUTE:
+    case VK_VOLUME_DOWN:
+    case VK_VOLUME_UP:
+    case VK_MEDIA_NEXT_TRACK:
+    case VK_MEDIA_PREV_TRACK:
+    case VK_MEDIA_STOP:
+    case VK_MEDIA_PLAY_PAUSE:
+    case VK_LAUNCH_MAIL:
+    case VK_LAUNCH_MEDIA_SELECT:
+    case VK_LAUNCH_APP1:
+    case VK_LAUNCH_APP2:
+        return true;
+    default:
+        return false;
+    }
+}
+
+
+/// SendInputで押したままのキーを記録.
+///
+void CDiaKbdMouseHook_Impl::setSentKeyDown(unsigned uVk, bool sw)
+{
+    if (uVk < VK_NUM)
+        s_bSentKeyDown_[uVk] = sw;
+}
+
+
+/// SendInputで押したままのキーをすべて解放.
+///
+void CDiaKbdMouseHook_Impl::releaseSentKeys()
+{
+    INPUT       input[16];
+    unsigned    n = 0;
+    for (unsigned i = 0; i < VK_NUM; ++i) {
+        if (s_bSentKeyDown_[i]) {
+            setInputParam(input[n++], KEYEVENTF_KEYUP, i);
+            s_bSentKeyDown_[i] = false;
+            if (n == sizeof(input)/sizeof(input[0])) {
+                ::SendInput(n, &input[0], sizeof(INPUT));
+                n = 0;
+            }
+        }
+    }
+    if (n)
+        ::SendInput(n, &input[0], sizeof(INPUT));
 }
 
 

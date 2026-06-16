@@ -44,6 +44,9 @@ private:
     static void sendConvKey(bool sw, unsigned uKey );
     static void sendKey(int mode, unsigned uFlags, unsigned uVk );
     static void setInputParam(INPUT& rImput, unsigned uFlags, unsigned uVk );
+    static bool isExtendedKey(unsigned uVk);
+    static void setSentKeyDown(unsigned uVk, bool sw);
+    static void releaseSentKeys();
 
     static bool makeMouseButton( bool sw, unsigned uVk );
     static bool setMouseButton(unsigned btn, bool sw);
@@ -58,18 +61,19 @@ private:
     enum { DiaKbdMouseHook_EXTRAINFO = 0xD1AC };
 
     static CCriticalSection     s_criticalSection_;
-    static HINSTANCE            s_hInst_;           ///< Windowインスタンス.
-    static volatile HHOOK       s_hHook_LL_;        ///< フック.
-    static unsigned             s_uModeKey_;        ///< モード切替キーのキーコード.
-    static unsigned             s_uMouseButton_;    ///< マウス操作用のボタン情報.
-    static int                  s_iMouseButtonLife_; ///< (Win+Lでの)暴発時の被害軽減用.
-    static bool                 s_bConvModeStat_;   ///< キー操作によるモードon/off
-    static bool                 s_bTwoStStatQ_;     ///< 2ストロークキーモードか.
-    static bool                 s_bShiftStat_;      ///< SHIFTが押されてるとき.
-    static bool                 s_bCtrlStat_;       ///< CTRLが押されてるとき.
-    static bool                 s_bDiaMouse_;       ///< ダイアモンドカーソルでマウスを動かす.
+    static HINSTANCE            s_hInst_;           	///< Windowインスタンス.
+    static volatile HHOOK       s_hHook_LL_;        	///< フック.
+    static unsigned             s_uModeKey_;        	///< モード切替キーのキーコード.
+    static unsigned             s_uMouseButton_;    	///< マウス操作用のボタン情報.
+    static int                  s_iMouseButtonLife_;	///< (Win+Lでの)暴発時の被害軽減用.
+    static bool                 s_bConvModeStat_;   	///< キー操作によるモードon/off
+    static bool                 s_bTwoStStatQ_;     	///< 2ストロークキーモードか.
+    static bool                 s_bShiftStat_;      	///< SHIFTが押されてるとき.
+    static bool                 s_bCtrlStat_;       	///< CTRLが押されてるとき.
+    static bool                 s_bDiaMouse_;       	///< ダイアモンドカーソルでマウスを動かす.
+    static bool                 s_bSentKeyDown_[VK_NUM];///< SendInputで押したままのキー.
   #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-    static bool                 s_bExShift_;        ///< カーソル移動での自動シフト押し.
+    static bool                 s_bExShift_;        	///< カーソル移動での自動シフト押し.
   #endif
 
     static CDiaKbdMouseHook_ConvKeyTbl  s_convKeys_;

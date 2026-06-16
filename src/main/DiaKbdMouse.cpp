@@ -353,11 +353,7 @@ void CDiaKbdMouseApp::setMinmumWorkingSetSize()
             = reinterpret_cast< fn_t_SetProcessWorkingSetSize >( ::GetProcAddress( hDll, "SetProcessWorkingSetSize" ) );
         if ( fn_SetProcessWorkingSetSize ) {
             HANDLE hCurrentProcess = ::GetCurrentProcess();
-          #ifdef _WIN64
-            fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL );
-          #else
-            fn_SetProcessWorkingSetSize(hCurrentProcess, 0xFFFFFFFF, 0xFFFFFFFF );
-          #endif
+            fn_SetProcessWorkingSetSize(hCurrentProcess, SIZE_T(-1), SIZE_T(-1));
         }
         ::FreeLibrary( hDll );
     }
@@ -368,7 +364,7 @@ void CDiaKbdMouseApp::setMinmumWorkingSetSize()
 /** 起動エントリ.
  */
 // ===========================================================================
-int APIENTRY ::_tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
     CDiaKbdMouseApp     diaCursorApp;
     return diaCursorApp.winMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
