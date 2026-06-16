@@ -133,7 +133,7 @@ private:
                                 char* s  = buf+bufCur_;
                                 char* se = s + l;
                                 while (s < se) {
-                                    int c  = *s++;
+                                    char c = *s++;
                                     *dst++ = c;
                                     if (c == '\n') {
                                         l    = s - (buf+bufCur_);
@@ -194,7 +194,7 @@ private:
                                         }                // EOF時はそのまま処理.
                                     }
                                 }
-                                *d++ = c;
+                                *d++ = (char)c;
                             } while (s < se);
                             bufSize_ = d - buf;
                         }
@@ -221,9 +221,9 @@ protected:
 
 private:
     char*           buf_;                       // バッファ先頭.
-    unsigned        bufSize_;                   // 読み込んでいるデータのサイズ.
-    unsigned        bufCur_;                    // 現在の処理位置.
-    unsigned        bufCapa_;                   // バッファの領域サイズ.
+    size_t          bufSize_;                   // 読み込んでいるデータのサイズ.
+    size_t          bufCur_;                    // 現在の処理位置.
+    size_t          bufCapa_;                   // バッファの領域サイズ.
     unsigned char   alcFlag_: 1;
     unsigned char   error_  : 1;
     unsigned char   eof_    : 1;

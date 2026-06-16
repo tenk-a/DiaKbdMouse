@@ -59,7 +59,9 @@ DgtXY2AnlgXY<ANALOG_T,MAX_VAL,HIS_USE_NUM>::DgtXY2AnlgXY()
 template<typename ANALOG_T, unsigned MAX_VAL, unsigned HIS_USE_NUM>
 inline ANALOG_T
 DgtXY2AnlgXY<ANALOG_T,MAX_VAL,HIS_USE_NUM>::mySqrt(ANALOG_T val) {
-    return ANALOG_T( std::sqrtf(val) );
+    using namespace std;
+    //return ANALOG_T( sqrtf(val) );
+    return ANALOG_T( sqrt(val) );
 }
 
 

@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include <cstring>
+#include <stdio.h>
 #include "DiaKbdMouse.h"
 #include "ConfigFileReader.h"
 #include "../cmn/FileTextReader.hpp"
@@ -94,12 +95,12 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     else if (flags == (F_SHIFT|F_CTRL)) tgtMode = CDiaKbdMouseHook_ConvKey::MD_CTRLSHIFT;
     else if (tgtMode == 0)              tgtMode = CDiaKbdMouseHook_ConvKey::MD_USE;
     CDiaKbdMouseHook_ConvKey& rConvKey = rTbl_[ keyCode & 0xff ];
-    rConvKey.oneKey_[qmode].u8VkCode_  = tgtKey;
-    rConvKey.oneKey_[qmode].u8Mode_    = tgtMode;
+    rConvKey.oneKey_[qmode].u8VkCode_  = (unsigned char)tgtKey;
+    rConvKey.oneKey_[qmode].u8Mode_    = (unsigned char)tgtMode;
 
     if (tgtMode == CDiaKbdMouseHook_ConvKey::MD_2ST_Q && qmode == 0) {
-        rConvKey.oneKey_[1].u8VkCode_  = tgtKey;
-        rConvKey.oneKey_[1].u8Mode_    = tgtMode;
+        rConvKey.oneKey_[1].u8VkCode_  = (unsigned char)tgtKey;
+        rConvKey.oneKey_[1].u8Mode_    = (unsigned char)tgtMode;
     }
 
     s = skip_spc(s);
@@ -181,8 +182,9 @@ void CConfigFileReader::errOpen() {
         std::strncpy(&buf[0], pFName_, l); buf[l] = 0;
         std::strncpy(&buf[l-4], ".err", 5);
         errFh_.open(buf, FileHdl::WP);
-        if (errFh_.is_open() == false)
+        if (errFh_.is_open() == false) {
             DEBUGPRINTF("%sをオープンできなかった.\n", buf);
+        }
     }
 }
 

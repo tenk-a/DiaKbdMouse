@@ -17,6 +17,8 @@
 /// キーボードでマウス操作する処理(別スレッド)
 class CKbdMouseCtrl {
 public:
+    enum { HIS_NUM    = 12 };
+
     /// 作成.
     static void     create();
 
@@ -37,7 +39,6 @@ private:
 private:
     enum {SLEEP_COUNT =  8 };
     enum { DLT        =  4 };
-    enum { HIS_NUM    = 12 };
     static HANDLE                           s_hThread_;                 ///< スレッドハンドル.
     static unsigned                         s_uOld_;                    ///< 1フレーム前のボタン情報.
     static DgtXY2AnlgXY<float,256,HIS_NUM>  s_dgtXY2AnlgXY_;            ///< デジタルボタン情報をアナログ化.

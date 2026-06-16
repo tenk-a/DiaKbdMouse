@@ -77,14 +77,14 @@ public:
     size_t      read(void* b, size_t sz) {
                     unsigned long r = 0;
                     assert(fh_!=FH(-1) && b!=0 && sz > 0);
-                    if (! ::ReadFile(fh_,b,sz,&r,0)) r=0;
+                    if (! ::ReadFile(fh_,b,(DWORD)sz,&r,0)) r=0;
                     return r;
                 }
 
     size_t      write(const void* b, size_t sz) {
                     unsigned long r=0;
                     assert(fh_!=FH(-1) && b!=0 && sz > 0);
-                    if (! ::WriteFile(fh_,b,sz,&r,0))
+                    if (! ::WriteFile(fh_,b,(DWORD)sz,&r,0))
                         r = 0;
                     return r;
                 }
