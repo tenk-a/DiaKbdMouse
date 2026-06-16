@@ -1,0 +1,181 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vc-x64",
+      "displayName": "Visual Studio 2026 x64",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/cmake-vc-x64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win64"
+      }
+    },
+    {
+      "name": "vc-win32",
+      "displayName": "Visual Studio 2026 Win32",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/build/cmake-vc-win32",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32"
+      }
+    },
+    {
+      "name": "nmake",
+      "displayName": "NMake Release",
+      "generator": "NMake Makefiles",
+      "binaryDir": "${sourceDir}/build/cmake-nmake",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "vc-xp",
+      "displayName": "NMake Release XP Win32",
+      "generator": "NMake Makefiles",
+      "binaryDir": "${sourceDir}/build/cmake-vc-xp",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-vc-xp",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_SYSTEM_VERSION": "5.1",
+        "DIA_WINDOWS_SUBSYSTEM_VERSION": "5.01",
+        "DIA_PACKAGE_SUFFIX": "-xp"
+      }
+    },
+    {
+      "name": "msys2-ucrt64",
+      "displayName": "MSYS2 UCRT64 Makefiles",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/cmake-msys2-ucrt64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-msys2-ucrt64",
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "PATH": "C:/msys64/ucrt64/bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "watcom",
+      "displayName": "Watcom WMake",
+      "generator": "Watcom WMake",
+      "binaryDir": "${sourceDir}/build/cmake-watcom",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-watcom",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vc-x64-debug",
+      "configurePreset": "vc-x64",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vc-x64-release",
+      "configurePreset": "vc-x64",
+      "configuration": "Release"
+    },
+    {
+      "name": "vc-x64-install",
+      "configurePreset": "vc-x64",
+      "configuration": "Release",
+      "targets": [
+        "INSTALL"
+      ]
+    },
+    {
+      "name": "vc-x64-package",
+      "configurePreset": "vc-x64",
+      "configuration": "Release",
+      "targets": [
+        "PACKAGE"
+      ]
+    },
+    {
+      "name": "vc-win32-debug",
+      "configurePreset": "vc-win32",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vc-win32-release",
+      "configurePreset": "vc-win32",
+      "configuration": "Release"
+    },
+    {
+      "name": "vc-win32-install",
+      "configurePreset": "vc-win32",
+      "configuration": "Release",
+      "targets": [
+        "INSTALL"
+      ]
+    },
+    {
+      "name": "vc-win32-package",
+      "configurePreset": "vc-win32",
+      "configuration": "Release",
+      "targets": [
+        "PACKAGE"
+      ]
+    },
+    {
+      "name": "nmake",
+      "configurePreset": "nmake"
+    },
+    {
+      "name": "nmake-install",
+      "configurePreset": "nmake",
+      "targets": [
+        "install"
+      ]
+    },
+    {
+      "name": "vc-xp",
+      "configurePreset": "vc-xp"
+    },
+    {
+      "name": "vc-xp-install",
+      "configurePreset": "vc-xp",
+      "targets": [
+        "install"
+      ]
+    },
+    {
+      "name": "vc-xp-package",
+      "configurePreset": "vc-xp",
+      "targets": [
+        "package"
+      ]
+    },
+    {
+      "name": "msys2-ucrt64",
+      "configurePreset": "msys2-ucrt64"
+    },
+    {
+      "name": "msys2-ucrt64-install",
+      "configurePreset": "msys2-ucrt64",
+      "targets": [
+        "install"
+      ]
+    },
+    {
+      "name": "watcom",
+      "configurePreset": "watcom"
+    },
+    {
+      "name": "watcom-install",
+      "configurePreset": "watcom",
+      "targets": [
+        "install"
+      ]
+    }
+  ]
+}

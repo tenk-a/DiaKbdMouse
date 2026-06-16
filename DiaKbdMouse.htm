@@ -27,8 +27,8 @@ ul,ol,li,table{line-height : 135%;}
 
 <body>
 
-<h1>DiaKbdMouse  v0.8e</h1>
-<h3>for (日本語版) Windows Vista/7/8/8.1/10 x86/x64  (2K/Xp x86)</h3>
+<h1>DiaKbdMouse  v0.9</h1>
+<h3>for (日本語版) Windows x86/x64</h3>
 
 <p>
 
@@ -43,7 +43,6 @@ v0.8からは定義ファイルでキー設定するようになっているの�
 <p>
 いわゆるキーバインディングソフトの一種ですが、
 なるべくWindows標準キーをイジらずに使いたいキーを少し追加するという代物で、実装も本格的なキーの乗っ取りではなく簡易なものでOS標準のWINキー操作を乗っ取れません。
-（こだわりのある向きは他の本格的なキーバインディングソフトを使われるほうが吉でしょう）
 <br>
 <p>
 できれば Appsでなく CapsLock キーを直接拡張キーとして使いたかったのですが、手に余る類だったのであきらめました。<br>
@@ -56,32 +55,20 @@ CapsLockキー(の位置)を拡張キーにしたい場合は、レジストリ�
 <dt>■インストール</dt>
 <dd>
 <p>
-解凍したファイル群を任意のフォルダを作って入れてください。たとえば c:\tool\DiaKbdMouse 等。<br>
+使用する環境に合う配布ZIPを、任意のフォルダを作って展開してください。たとえば c:\tool\DiaKbdMouse 等。<br>
 Program Files や Program Files (x86) 等の UAC でガードされるフォルダ<strong>以外</strong>に作成してください。
 (キー定義ファイルにミスが有った場合 DiaKbdMouse.exe と同じフォルダに DiaKbdMouse.err ファイルに出力するため)
 <ul>
+<li>DiaKbdMouse.exe</li>
+<li>DiaKbdMouseHook.dll</li>
 <li>README.md</li>
 <li>DiaKbdMouse.cfg</li>
 <li>DiaKbdMouse.htm</li>
-<li>install.bat</li>
-<li>inst/*</li>
+<li>regist_startup.bat</li>
 <li>config_etc/*</li>
 </ul>
 <p>
-がある状態で、install.bat を実行、<br>
-<ol>
-<li> Windows Vista/7/8/8.1/10 x64 用に設定.
-<li> Windows Vista/7/8/8.1/10 x86 用に設定.
-<li> Windows 2k/xp x86 用に設定.
-</ol>
-<p>
-お使いの環境に合わせて 1,2,3 いずれかを選んでください (実のところ3なら何れの環境でも動くはず)
-<ul>
-<li>DiaKbdMouse.exe</li>
-<li>DiaKbdMouseHook.dll</li>
-</ul>
-<p>
-がコピーされます。
+展開後、DiaKbdMouse.exe を実行してください。
 <p>
 いらなくなったら削除。<br>
 レジストリは使ってません。<br>
@@ -367,6 +354,14 @@ IMEの設定とか諸々、他のキーボードがらみのソフトとの相�
 <dd>
 <ul>
 <li> regist_startup.bat 追加</li>
+</ul>
+</dd>
+
+<dt>2026-06-16 v0.9</dt>
+<dd>
+<ul>
+<li> 同時押し関係の改善</li>
+<li> ビルドは CMake を用いるように変更</li>
 </ul>
 </dd>
 

@@ -1,5 +1,13 @@
 # DiaKbdMouse
 
-Windows機にて、 Appsキー同時押しで、カーソルでマウス操作したり、古のダイヤモンドカーソル(SDEX等)移動したりするためのソフト。
+Appsキー同時押しでマウス操作やダイヤモンドカーソル風のカーソル移動を行うためのWindows用ツールです。
 
-DiaKbdMouse.htm を参照のこと
+## 配布パッケージ
+
+通常は使用する環境に合うZIPを展開して使います。
+
+- `DiaKbdMouse-*-win64.zip`: Windows x64用
+- `DiaKbdMouse-*-win32.zip`: Windows 32bit用
+- `DiaKbdMouse-*-win32-xp.zip`: Windows XP 32bit用
+
+インストールや使い方、や設定ファイルの詳細は `DiaKbdMouse.htm` を参照してください。

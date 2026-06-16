@@ -10,7 +10,13 @@ bak
 tmp_*
 obj_*
 exe_*
+my_*
+err_*
+err.txt
 .vs
+build/cmake-*
+dist
+inst
 
 *.user
 *.o
@@ -22,4 +28,3 @@ exe_*
 *.lib
 *.db
 *.opendb
-inst
