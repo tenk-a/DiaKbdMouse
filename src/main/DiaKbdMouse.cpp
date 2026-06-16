@@ -52,8 +52,8 @@ private:
     CTrayIcon   trayIcon_;
     TCHAR       szTitle_[MAX_LOADSTRING];       ///< タイトル バーのテキスト.
     TCHAR       szWindowClass_[MAX_LOADSTRING]; ///< メイン ウィンドウ クラス名.
-    //TCHAR     szIniName_[0x4000];             ///< モジュール名
-    static CDiaKbdMouseApp* s_pSelf_;           ///< 自分自身の変数(インスタンス)へのポインタ
+    //TCHAR     szIniName_[0x4000];             ///< モジュール名.
+    static CDiaKbdMouseApp* s_pSelf_;           ///< 自分自身の変数(インスタンス)へのポインタ.
 };
 
 /// 自分自身へのポインタ.
@@ -113,7 +113,7 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
         ::Sleep(33);        // 適当に寝とく.
     }
 
-    // DLL終了
+    // DLL終了.
     DiaKbdMouseHook_uninstall();
 
     return (int) msg.wParam;

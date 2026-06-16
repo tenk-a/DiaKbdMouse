@@ -35,7 +35,7 @@ private:
     ANALOG_T    analogX_;
     ANALOG_T    analogY_;
     struct xy_t { signed char x_, y_; };
-    xy_t        his_[ HIS_USE_NUM + 1 ];        ///< 入力の履歴
+    xy_t        his_[ HIS_USE_NUM + 1 ];        ///< 入力の履歴.
 };
 
 
@@ -88,7 +88,7 @@ void DgtXY2AnlgXY<ANALOG_T,MAX_VAL,HIS_USE_NUM>::set(int dx, int dy)
     ANALOG_T    r = l;
     if (r >= K*HIS_USE_NUM)
         r = K*HIS_USE_NUM;
-    if (l > ANALOG_T(0.0001f) && (dx | dy)) {   // dx,dyもチェックして、余分な慣性を無くす
+    if (l > ANALOG_T(0.0001f) && (dx | dy)) {   // dx,dyもチェックして、余分な慣性を無くす.
         x = x * r * MAX_VAL / (l * K*HIS_USE_NUM);
         y = y * r * MAX_VAL / (l * K*HIS_USE_NUM);
     } else {

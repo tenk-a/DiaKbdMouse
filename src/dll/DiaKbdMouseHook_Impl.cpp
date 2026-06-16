@@ -14,7 +14,7 @@
 #include "DiaKbdMouseHook.h"
 #include "../cmn/DebugPrintf.h"
 
-#if 0 //def NDEBUG   // 実行時の使用メモリを減らす
+#if 0 //def NDEBUG   // 実行時の使用メモリを減らす.
 //#pragma comment(linker, "/opt:nowin98")
 //#pragma comment(linker, "/ignore:4078")
 #pragma comment(linker, "/entry:\"DllMain\"")
@@ -103,7 +103,7 @@ void CDiaKbdMouseHook_Impl::setModeKeyTbl(unsigned vkMode, CDiaKbdMouseHook_Conv
  */
 unsigned CDiaKbdMouseHook_Impl::mouseButton() {
     CCriticalSectionLock    lock(s_criticalSection_);
-    // 拡張キー操作中にWin+L でロック画面に移り戻ると内部状態不正でマウス移動が暴発することがあるので
+    // 拡張キー操作中にWin+L でロック画面に移り戻ると内部状態不正でマウス移動が暴発することがあるので.
     // 被害軽減のためタイマーを用意してクリア.
     if (s_iMouseButtonLife_) {
         if (--s_iMouseButtonLife_ <= 0) {
@@ -115,7 +115,7 @@ unsigned CDiaKbdMouseHook_Impl::mouseButton() {
 }
 
 
-/// マウス向けボタンを設定
+/// マウス向けボタンを設定.
 ///
 inline bool CDiaKbdMouseHook_Impl::setMouseButton(unsigned btn, bool sw)
 {
@@ -193,10 +193,10 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
     }
  #endif
 
-    // モード切替キーだったら、全くWinのデフォルト動作をさせない
+    // モード切替キーだったら、全くWinのデフォルト動作をさせない.
     if (vkCode == s_uModeKey_ && s_uModeKey_ != 0) {
       #if 0 // SHIFT+APPS をCapsLockにしている場合... 微妙な判定でいやな状態ありそうなのでやめ(右WIN+TABに変更)
-        if (s_bShiftStat_) {            // シフトが押されてたら、CapsLock扱い
+        if (s_bShiftStat_) {            // シフトが押されてたら、CapsLock扱い.
             sendKey(1, sw?0:KEYEVENTF_KEYUP, VK_CAPITAL);
 
         } else
@@ -204,7 +204,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
         {
             s_bConvModeStat_ = sw;
 
-            if (sw) {   // CapsLock もどきのフリをする
+            if (sw) {   // CapsLock もどきのフリをする.
              #if 0
                 //INPUT input   = { INPUT_KEYBOARD, { 0xF0, 0, 0, 0, 0, 0, }};
                 INPUT input = { INPUT_KEYBOARD, { 0xF0, 0, 0, 0, DiaKbdMouseHook_EXTRAINFO, }};
@@ -217,12 +217,12 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
         return true;
     } else
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_SHIFT || vkCode == VK_RSHIFT || vkCode == VK_LSHIFT)) {
-        // Shiftキーの状態設定
+        // Shiftキーの状態設定.
         s_bShiftStat_ = sw;
         //return true;
     } else
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_CONTROL || vkCode == VK_RCONTROL || vkCode == VK_LCONTROL)) {
-        // Ctrlキーの状態設定
+        // Ctrlキーの状態設定.
         s_bCtrlStat_  = sw;
         //return true;
     } else
@@ -230,9 +230,9 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
         // IME 対策でスルーしとく...
     } else {
         if (s_bConvModeStat_) {
-            // この場でキーを変換してしまう
+            // この場でキーを変換してしまう.
             sendConvKey(sw, vkCode);
-            // モード切替キーが押されている間は、他のキーもWinのデフォルト動作をさせちゃ駄目
+            // モード切替キーが押されている間は、他のキーもWinのデフォルト動作をさせちゃ駄目.
             return true;
         }
     }
@@ -240,7 +240,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
 }
 
 
-/// APPS+で入力されたキーを変換してSendInputする
+/// APPS+で入力されたキーを変換してSendInput
 ///
 void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 {
@@ -252,17 +252,17 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
     const CConvKey::COne&   rOne = s_convKeys_[uKey].oneKey_[ s_bTwoStStatQ_ ];
 
     switch (rOne.u8Mode_) {
-    case CConvKey::MD_NONE:     // 変換無しのとき
+    case CConvKey::MD_NONE:     // 変換無しのとき.
         if (uKey != s_uModeKey_) {
             s_bTwoStStatQ_ = 0;
         }
         break;
 
-    case CConvKey::MD_USE:      // 変換を行うキーの場合
+    case CConvKey::MD_USE:      // 変換を行うキーの場合.
     case CConvKey::MD_CTRL:
     case CConvKey::MD_SHIFT:
     case CConvKey::MD_CTRLSHIFT:
-        if (s_bDiaMouse_) {     // 強制的にダイアモンドカーソルでマウスを動かす
+        if (s_bDiaMouse_) {     // 強制的にダイアモンドカーソルでマウスを動かす.
             makeMouseButton(sw, rOne.u8VkCode_);
             break;
         }
@@ -276,8 +276,8 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
         }
         break;
 
-    case CConvKey::MD_2ST_Q:    // 2ストロークキーのトリガーキーだったら
-        if (sw)                 // 押したときのみ
+    case CConvKey::MD_2ST_Q:    // 2ストロークキーのトリガーキーだったら,
+        if (sw)                 // 押したときのみ.
             s_bTwoStStatQ_ = 1;
         break;
 
@@ -296,8 +296,8 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
  #endif
 
     case CConvKey::MD_MOUSE:
-        if (sw == 0 && rOne.u8VkCode_ == 0xff) {    // 手抜きでリリース時でチェック
-            s_bDiaMouse_ = !s_bDiaMouse_;           // ダイアモンドカーソルでマウス移動するかどうかを切替
+        if (sw == 0 && rOne.u8VkCode_ == 0xff) {    // 手抜きでリリース時でチェック.
+            s_bDiaMouse_ = !s_bDiaMouse_;           // ダイアモンドカーソルでマウス移動するかどうかを切替.
         } else {
             unsigned vk = rOne.u8VkCode_;
             makeMouseButton(sw, vk);
@@ -319,7 +319,7 @@ void CDiaKbdMouseHook_Impl::clearStat()
     s_bShiftStat_       = false;
     s_bCtrlStat_        = false;
     //s_bDiaMouse_      = false;
-    s_uMouseButton_     = 0;        // マウス情報クリア
+    s_uMouseButton_     = 0;        // マウス情報クリア.
     s_iMouseButtonLife_ = 0;
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
     clearExShift();
@@ -328,16 +328,16 @@ void CDiaKbdMouseHook_Impl::clearStat()
 
 
 #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
-/// 拡張シフト状態をクリア
+/// 拡張シフト状態をクリア.
 ///
 void CDiaKbdMouseHook_Impl::clearExShift()
 {
     if (s_bExShift_) {
-        //X s_uMouseButton_ = 0;        // マウス情報クリア
+        //X s_uMouseButton_ = 0;        // マウス情報クリア.
         s_bExShift_     = false;
         sendKey(1, KEYEVENTF_KEYUP, VK_LSHIFT);
       #if 0
-        // 拡張シフトの終わりの合図として0xF0(CapsLock)が放されたことにする
+        // 拡張シフトの終わりの合図として0xF0(CapsLock)が放されたことにする.
         INPUT input = { INPUT_KEYBOARD, { 0xF0, 0, KEYEVENTF_KEYUP, 0, DiaKbdMouseHook_EXTRAINFO, }};
         ::SendInput(1, &input, sizeof(INPUT));
       #endif
@@ -346,7 +346,7 @@ void CDiaKbdMouseHook_Impl::clearExShift()
 #endif
 
 
-/// SendInputする
+/// SendInput
 ///
 void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 {
@@ -360,16 +360,16 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 
     INPUT       input[8];
     unsigned    n = 0;
-    if (bCtrl)  // CTRLが押されたことにする
+    if (bCtrl)  // CTRLが押されたことにする.
         setInputParam( input[n++], 0, VK_LCONTROL);
-    if (bShift) // Shiftが押されたことにする
+    if (bShift) // Shiftが押されたことにする.
         setInputParam( input[n++], 0, VK_LSHIFT  );
 
     setInputParam( input[n++], uFlags, uVk );
 
-    if (bCtrl)  // CTRLが放されたことにする
+    if (bCtrl)  // CTRLが放されたことにする.
         setInputParam( input[n++], KEYEVENTF_KEYUP, VK_LCONTROL);
-    if (bShift) // Shiftが放されたことにする
+    if (bShift) // Shiftが放されたことにする.
         setInputParam( input[n++], KEYEVENTF_KEYUP, VK_LSHIFT  );
 
     ::SendInput(n, &input[0], sizeof(INPUT));
@@ -378,7 +378,7 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 }
 
 
-/// SendInputのパラメータをキーボード向けに設定
+/// SendInputのパラメータをキーボード向けに設定.
 ///
 void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsigned uVk )
 {
@@ -391,7 +391,7 @@ void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsign
 }
 
 
-/// マウス操作用のボタンを生成
+/// マウス操作用のボタンを生成.
 ///
 bool CDiaKbdMouseHook_Impl::makeMouseButton( bool sw, unsigned uVk )
 {

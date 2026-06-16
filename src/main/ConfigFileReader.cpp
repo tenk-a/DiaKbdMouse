@@ -70,7 +70,7 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
         if      (*s == ':') flags |= F_DIRECT;
         else if (*s == '^') flags |= F_CTRL;
         else if (*s == '!') flags |= F_SHIFT;
-     #if 0 //あとで
+     #if 0 //あとで.
         else if (*s == '@') flags |= F_ALT;
         else if (*s == '%') flags |= F_WIN;
      #endif

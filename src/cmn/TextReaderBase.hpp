@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <cassert>
 
-// バイト列をテキストとして 文字・行読み込みするための基底クラス
+// バイト列をテキストとして 文字・行読み込みするための基底クラス.
 class TextReaderBase {
     enum { INNER_BUF_SZ = 3 };  // 現状パディング利用のみ.
 public:
@@ -77,7 +77,7 @@ public:
                     }
                     if (size >= 0x80000000) // バッファサイズはintの整数範囲.
                         goto ERR;
-                    if (buf) {  // 呼び元が用意したバッファがあるとき
+                    if (buf) {  // 呼び元が用意したバッファがあるとき.
                         if (size < 2)   // 2未満なら内蔵のを使う.
                             goto ERR;
                     } else if (size <= INNER_BUF_SZ) {
@@ -187,7 +187,7 @@ private:
                                             ++s;
                                         }
                                     } else {             // バッファの最後1バイトが\rのとき.
-                                        if (eof_ == 0) { // EOFがまだなら
+                                        if (eof_ == 0) { // EOFがまだなら,
                                             restCR_ = 1; // \rを次回に持ち越す.
                                             break;
                                         }                // EOF時はそのまま処理.
@@ -219,10 +219,10 @@ protected:
     virtual void    raw_free(void*) { }
 
 private:
-    char*           buf_;                       // バッファ先頭
-    unsigned        bufSize_;                   // 読み込んでいるデータのサイズ
-    unsigned        bufCur_;                    // 現在の処理位置
-    unsigned        bufCapa_;                   // バッファの領域サイズ
+    char*           buf_;                       // バッファ先頭.
+    unsigned        bufSize_;                   // 読み込んでいるデータのサイズ.
+    unsigned        bufCur_;                    // 現在の処理位置.
+    unsigned        bufCapa_;                   // バッファの領域サイズ.
     unsigned char   alcFlag_: 1;
     unsigned char   error_  : 1;
     unsigned char   eof_    : 1;

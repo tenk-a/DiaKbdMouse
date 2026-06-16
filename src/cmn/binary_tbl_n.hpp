@@ -42,15 +42,15 @@ unsigned binary_insert_tbl_n(T* pTbl, unsigned& rNum, const T& key) {
         }
     }
 
-    // 新規登録
+    // 新規登録.
     ++rNum;
 
-    // 登録箇所のメモリを空ける
+    // 登録箇所のメモリを空ける.
     for (hi = rNum; --hi > mid;) {
         pTbl[hi] = pTbl[hi-1];
     }
 
-    // 登録
+    // 登録.
     pTbl[mid] = key;
     return mid;
 }

@@ -15,20 +15,20 @@
 CDiaKbdMouseHook_ConvKeyTbl CDiaKbdMouseHook_Impl::s_convKeys_;
 #else
 
-#define XX(a,b)         {{ a , b }}     // a:APPS+時  b:APPS+Q+時
+#define XX(a,b)         {{ a , b }}     // a:APPS+時  b:APPS+Q+時.
 
 #define CLS             CDiaKbdMouseHook_ConvKey
-#define NOUSE           {CLS::MD_NONE     ,0}           // 使わない
-#define K(k)            {CLS::MD_USE      ,k}           // kのみ
+#define NOUSE           {CLS::MD_NONE     ,0}           // 使わない.
+#define K(k)            {CLS::MD_USE      ,k}           // kのみ.
 #define C(k)            {CLS::MD_CTRL     ,k}           // CTRL+k
 #define S(k)            {CLS::MD_SHIFT    ,k}           // SHIFT+k
 #define CS(k)           {CLS::MD_CTRLSHIFT,k}           // CTRL+SHIFT+k
-#define TWOST           {CLS::MD_2ST_Q    ,1}           // 2ストロークキー(Q)用
-#define EXSHIFT_SW      {CLS::MD_EX_SHIFT ,0}           // カーソル移動でシフト押し状態にするスイッチ
-#define M(k)            {CLS::MD_MOUSE    ,k}           // マウス. 255 はマウスカーソルと通常カーソルの切替
+#define TWOST           {CLS::MD_2ST_Q    ,1}           // 2ストロークキー(Q)用.
+#define EXSHIFT_SW      {CLS::MD_EX_SHIFT ,0}           // カーソル移動でシフト押し状態にするスイッチ.
+#define M(k)            {CLS::MD_MOUSE    ,k}           // マウス. 255 はマウスカーソルと通常カーソルの切替.
 
 
-/// キー変換テーブル
+/// キー変換テーブル.
 CDiaKbdMouseHook_ConvKeyTbl CDiaKbdMouseHook_Impl::s_convKeys_ = {{
     XX( NOUSE           , NOUSE            ),       // 0x00
     XX( NOUSE           , NOUSE            ),       // 0x01 LBUTTON
