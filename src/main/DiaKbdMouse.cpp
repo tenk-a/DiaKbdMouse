@@ -92,7 +92,10 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     ) {
         showMessageDialogEJ(
             L"Failed to load application resources.",
-            L"アプリケーション リソースの読み込みに失敗しました。"
+            // アプリケーション リソースの読み込みに失敗しました。
+            L"\x30A2\x30D7\x30EA\x30B1\x30FC\x30B7\x30E7\x30F3 "
+            L"\x30EA\x30BD\x30FC\x30B9\x306E\x8AAD\x307F\x8FBC\x307F"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002"
         );
         return -1;
     }
@@ -102,14 +105,19 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     if (hMutex == NULL) {
         showMessageDialogEJ(
             L"Failed to create the application mutex.",
-            L"アプリケーション ミューテックスの作成に失敗しました。"
+            // アプリケーション ミューテックスの作成に失敗しました。
+            L"\x30A2\x30D7\x30EA\x30B1\x30FC\x30B7\x30E7\x30F3 "
+            L"\x30DF\x30E5\x30FC\x30C6\x30C3\x30AF\x30B9\x306E\x4F5C\x6210"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002"
         );
         return -1;
     }
     if (::GetLastError() == ERROR_ALREADY_EXISTS) {
         showMessageDialogEJ(
             L"DiaKbdMouse is already running.",
-            L"DiaKbdMouse は既に起動しています。"
+            // DiaKbdMouse は既に起動しています。
+            L"DiaKbdMouse \x306F\x65E2\x306B\x8D77\x52D5\x3057\x3066"
+            L"\x3044\x307E\x3059\x3002"
         );
         return -2;
     }
@@ -118,7 +126,10 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     if (registerClass(hInstance) == 0) {
         showMessageDialogEJ(
             L"Failed to register the application window class.",
-            L"アプリケーションのウィンドウ クラス登録に失敗しました。"
+            // アプリケーションのウィンドウ クラス登録に失敗しました。
+            L"\x30A2\x30D7\x30EA\x30B1\x30FC\x30B7\x30E7\x30F3\x306E"
+            L"\x30A6\x30A3\x30F3\x30C9\x30A6 \x30AF\x30E9\x30B9\x767B\x9332"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002"
         );
         return -1;
     }
@@ -127,7 +138,10 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     if (initInstance(hInstance/*, nCmdShow*/) == 0) {
         showMessageDialogEJ(
             startupErrorEn_ ? startupErrorEn_ : L"Failed to initialize DiaKbdMouse.",
-            startupErrorJp_ ? startupErrorJp_ : L"DiaKbdMouse の初期化に失敗しました。"
+            // DiaKbdMouse の初期化に失敗しました。
+            startupErrorJp_ ? startupErrorJp_
+                : L"DiaKbdMouse \x306E\x521D\x671F\x5316\x306B\x5931\x6557"
+                  L"\x3057\x307E\x3057\x305F\x3002"
         );
         return -1;
     }
@@ -278,7 +292,10 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
         );
     if (rc == 0) {      // トレイアイコンの作成に失敗したら終了.
         startupErrorEn_ = L"Failed to create the notification area icon.";
-        startupErrorJp_ = L"通知領域アイコンの作成に失敗しました。";
+        // 通知領域アイコンの作成に失敗しました。
+        startupErrorJp_ =
+            L"\x901A\x77E5\x9818\x57DF\x30A2\x30A4\x30B3\x30F3\x306E\x4F5C\x6210"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002";
         return -1;
     }
 
@@ -288,12 +305,18 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
     DWORD   dwKeyCode = getConfigData(tbl); // VK_RWIN; // VK_RMENU;
     if (dwKeyCode == 0) {   // 定義ファイルでエラーがあった場合.
         startupErrorEn_ = L"Failed to load the configuration file.";
-        startupErrorJp_ = L"設定ファイルの読み込みに失敗しました。";
+        // 設定ファイルの読み込みに失敗しました。
+        startupErrorJp_ =
+            L"\x8A2D\x5B9A\x30D5\x30A1\x30A4\x30EB\x306E\x8AAD\x307F\x8FBC\x307F"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002";
         return -1;
     }
     if (DiaKbdMouseHook_install(dwKeyCode, tbl) == 0) {
         startupErrorEn_ = L"Failed to install the keyboard hook.";
-        startupErrorJp_ = L"キーボード フックの設定に失敗しました。";
+        // キーボード フックの設定に失敗しました。
+        startupErrorJp_ =
+            L"\x30AD\x30FC\x30DC\x30FC\x30C9 \x30D5\x30C3\x30AF\x306E\x8A2D\x5B9A"
+            L"\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002";
         return -1;
     }
 
@@ -301,7 +324,10 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
     if (!CKbdMouseCtrl::create()) {
         DiaKbdMouseHook_uninstall();
         startupErrorEn_ = L"Failed to start the keyboard control thread.";
-        startupErrorJp_ = L"キーボード制御スレッドの起動に失敗しました。";
+        // キーボード制御スレッドの起動に失敗しました。
+        startupErrorJp_ =
+            L"\x30AD\x30FC\x30DC\x30FC\x30C9\x5236\x5FA1\x30B9\x30EC\x30C3\x30C9"
+            L"\x306E\x8D77\x52D5\x306B\x5931\x6557\x3057\x307E\x3057\x305F\x3002";
         return -1;
     }
 

@@ -47,14 +47,16 @@ unsigned CConfigFileReader::getData()
             if (keyCode == 0) {
                 keyCode = getKey1(s, 0);
             } else {
-                logPuts("拡張キーの指定が複数ある.\n");
+                // 拡張キーの指定が複数ある.
+                logPuts("Multiple mode keys are specified.\n");
             }
         } else if (*s == '+') {
             set1Data(0, s+1);
         } else if (*s == '*') {
             set1Data(1, s+1);
         } else {
-            logPuts("余分な文字がある.\n");
+            // 余分な文字がある.
+            logPuts("Unexpected characters were found.\n");
         }
     }
     std::fclose(file);
@@ -65,7 +67,8 @@ unsigned CConfigFileReader::getData()
 void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     unsigned keyCode = getKey1(s, 1);
     if (keyCode == 0) {
-        //logPuts("設定するキー名が指定されていない.\n");
+        // 設定するキー名が指定されていない.
+        //logPuts("No source key is specified.\n");
         return;
     }
     unsigned flags = 0;
@@ -83,12 +86,14 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     }
     unsigned tgtKey = getKey1(s, 2);
     if (tgtKey == 0) {
-        //logPuts("発生させるキーが指定されていない.\n");
+        // 発生させるキーが指定されていない.
+        //logPuts("No output key is specified.\n");
         return;
     }
     unsigned tgtMode = tgtKey >> 8;
     if (tgtMode == CDiaKbdMouseHook_ConvKey::MD_MOUSE && flags) {
-        logPuts("マウス化キーに修飾キーを設定することはできない.\n");
+        // マウス化キーに修飾キーを設定することはできない.
+        logPuts("Modifier keys cannot be assigned to a mouse key.\n");
         return;
     }
     if      (flags == F_DIRECT)         tgtMode = CDiaKbdMouseHook_ConvKey::MD_DIRECT;
@@ -106,19 +111,24 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     }
 
     s = skip_spc(s);
-    if (*s != '\0' && *s != '#')
-        logPuts("行末に余計な文字がある.\n");
+    if (*s != '\0' && *s != '#') {
+        // 行末に余計な文字がある.
+        logPuts("Extra characters were found at the end of the line.\n");
+    }
 }
 
 /// 1キー取得.
 unsigned CConfigFileReader::getKey1(const char*& rStr, unsigned mode) {
-    static const char* s_modeStr[] = { "拡張キー", "元キー", "発生キー" };
+    // { "拡張キー", "元キー", "発生キー" }
+    static const char* s_modeStr[] = { "mode key", "source key", "output key" };
     const char*        modeStr     = s_modeStr[mode];
     if (*rStr == 'x' && isxdigit(rStr[1])) {    // １６進数指定.
         unsigned n = strtol(rStr+1, (char**)&rStr, 16);
         if (n > 0 && n <= 255)
             return n;
-        LogPrintf("%s (%d): %s> キーコード 0x%02X(%d) は範囲外.\n", fileName_.c_str(), fline_, modeStr, n, n);
+        // %s (%d): %s> キーコード 0x%02X(%d) は範囲外.
+        LogPrintf("%s (%d): %s> Key code 0x%02X (%d) is out of range.\n",
+            fileName_.c_str(), fline_, modeStr, n, n);
     } else if (*rStr) {
         char name[1024];
         get_name(name, 1024, rStr);
@@ -128,15 +138,21 @@ unsigned CConfigFileReader::getKey1(const char*& rStr, unsigned mode) {
         if (n >= 0 && n < s_keyNameValTblSize_) {
             n =  s_keyNameValTbl_[n].val;
             if (mode < 2 && n > 0xff) {
-                LogPrintf("%s (%d): %s は %s として使えないキー名.\n", fileName_.c_str(), fline_, name, modeStr);
+                // %s (%d): %s は %s として使えないキー名.
+                LogPrintf("%s (%d): %s cannot be used as a %s.\n",
+                    fileName_.c_str(), fline_, name, modeStr);
                 n = 0;
             }
             return n;
         }
         if (name[0] == 0) {
-            LogPrintf("%s (%d): %s> キーが指定されていない.\n", fileName_.c_str(), fline_, modeStr);
+            // %s (%d): %s> キーが指定されていない.
+            LogPrintf("%s (%d): %s> No key is specified.\n",
+                fileName_.c_str(), fline_, modeStr);
         } else {
-            LogPrintf("%s (%d): %s> %s は知らないキー名.\n", fileName_.c_str(), fline_, modeStr, name);
+            // %s (%d): %s> %s は知らないキー名.
+            LogPrintf("%s (%d): %s> %s is an unknown key name.\n",
+                fileName_.c_str(), fline_, modeStr, name);
         }
     }
     return 0;
