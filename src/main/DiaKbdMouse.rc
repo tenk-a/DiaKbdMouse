@@ -15,12 +15,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 resources
+// English resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
-LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
-#pragma code_page(932)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
@@ -42,9 +41,9 @@ IDC_MENU MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-        MENUITEM "説明(&H)",                    IDM_HELP
-        MENUITEM "バージョン情報(&A)",          IDM_ABOUT
-        MENUITEM "終了(&X)",                    IDM_EXIT
+        MENUITEM "Help (&H)",                   IDM_HELP
+        MENUITEM "About (&A)",                  IDM_ABOUT
+        MENUITEM "Exit (&X)",                   IDM_EXIT
     END
 END
 
@@ -68,12 +67,12 @@ END
 
 IDD_ABOUTBOX DIALOGEX 22, 17, 172, 43
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
-CAPTION "バージョン情報"
+CAPTION "About DiaKbdMouse"
 FONT 9, "System", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON,IDC_MYICON,5,12,20,20
     LTEXT           "DiaKbdMouse Version 0.9",IDC_STATIC,31,8,100,8,SS_NOPREFIX
-    LTEXT           "  (C) 2006-2021 tenk*",IDC_STATIC,27,23,92,8
+    LTEXT           "  (C) 2006-2026 tenk*",IDC_STATIC,27,23,92,8
     DEFPUSHBUTTON   "OK",IDOK,140,15,30,11,WS_GROUP
 END
 
@@ -117,7 +116,7 @@ BEGIN
     IDS_APP_TITLE           "DiaKbdMouse"
 END
 
-#endif    // 日本語 resources
+#endif    // English resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -131,4 +130,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
