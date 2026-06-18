@@ -8,7 +8,7 @@
         char        ___stRbUf[1024];        \
         wsprintf(___stRbUf, __VA_ARGS__);   \
         ___stRbUf[1023] = 0;                \
-        OutputDebugString(___stRbUf);       \
+        OutputDebugStringA(___stRbUf);      \
     } while (0)
 #include <windows.h>
 #else

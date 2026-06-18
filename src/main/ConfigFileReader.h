@@ -8,14 +8,14 @@
 #ifndef CONFIGFILE_READER_H
 #define CONFIGFILE_READER_H
 
+#include <string>
 #include "../dll/DiaKbdMouseHook.h"
-#include "../cmn/FileHdl.hpp"
 
 /// 定義ファイル読み込み.
 class CConfigFileReader {
 public:
-    CConfigFileReader(TCHAR const fname[], CDiaKbdMouseHook_ConvKeyTbl& rTbl)
-        : pFName_(fname), errOpen_(0), fline_(0), rTbl_(rTbl) {}
+    CConfigFileReader(char const fname[], CDiaKbdMouseHook_ConvKeyTbl& rTbl)
+        : fileName_(fname ? fname : ""), fline_(0), rTbl_(rTbl) {}
 
     unsigned getData();
 
@@ -27,9 +27,7 @@ private:
     unsigned    getKey1(const char*& rStr, unsigned mode);
     void        get_name(char* name, std::size_t sz, const char*& rStr);
 
-    void errPuts(const char* str);
-    void errPrintf(const char* fmt, ...);
-    void errOpen();
+    void logPuts(const char* str);
 
 private:
     struct KeyNameVal {
@@ -49,12 +47,7 @@ private:
         F_DIRECT= 0x10,
     };
 private:
-    enum { FNAME_SZ = 2048 };
-    TCHAR const*                    pFName_;
-    FileHdl                         fh_;
-    FileHdl                         errFh_;
-    TCHAR                           errName_[FNAME_SZ];
-    bool                            errOpen_;
+    std::string                     fileName_;
     unsigned                        fline_;
     CDiaKbdMouseHook_ConvKeyTbl&    rTbl_;
     static unsigned const           s_keyNameValTblSize_;

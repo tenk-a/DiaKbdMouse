@@ -1,0 +1,2 @@
+#include "DiaKbdMouse.rc"
+#include "DiaKbdMouseManifest.rc"

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "../cmn/DgtXY2AnlgXY.hpp"
 
-
 /// キーボードでマウス操作する処理(別スレッド)
 class CKbdMouseCtrl {
 public:
@@ -44,7 +43,7 @@ private:
     static DgtXY2AnlgXY<float,256,HIS_NUM>  s_dgtXY2AnlgXY_;            ///< デジタルボタン情報をアナログ化.
     static bool                             s_bWin1st_;
     static unsigned                         s_uReptCnt_;
-    static const INPUT                      s_input_mouseSendTbl_[];    ///< マウス情報に変換するときに使う.
+    //static const INPUT                    s_input_mouseSendTbl_[];    ///< マウス情報に変換するときに使う.
 };
 
 

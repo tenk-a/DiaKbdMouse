@@ -62,11 +62,25 @@ add_library(DiaKbdMouseHook SHARED
     src/dll/stdafx.h
 )
 
+set(DIA_RESOURCE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/main")
+set(DIA_CANONICAL_RESOURCES
+    "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouse.rc"
+    "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouseManifest.rc"
+    "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouseWatcom.rc"
+)
+
+if(WATCOM)
+    set(DIA_MAIN_RESOURCES)
+else()
+    set(DIA_MAIN_RESOURCES
+        "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouse.rc"
+        "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouseManifest.rc"
+    )
+endif()
+
 target_compile_definitions(DiaKbdMouseHook PRIVATE
     WIN32
     _WINDOWS
-    _WIN32_WINNT=0x0500
-    _WIN32_IE=0x0500
     _USRDLL
     HOOKDLL_EXPORTS
     $<$<CONFIG:Debug>:_DEBUG>
@@ -79,12 +93,14 @@ target_include_directories(DiaKbdMouseHook PRIVATE
 )
 
 add_executable(DiaKbdMouse WIN32
+    src/cmn/misc.cpp
+    src/cmn/misc.h
     src/main/ConfigFileReader.cpp
     src/main/DiaKbdMouse.cpp
     src/main/KbdMouseCtrl.cpp
     src/main/stdafx.cpp
     src/main/TrayIcon.cpp
-    src/main/DiaKbdMouse.rc
+    ${DIA_MAIN_RESOURCES}
     src/main/ConfigFileReader.h
     src/main/DiaKbdMouse.h
     src/main/KbdMouseCtrl.h
@@ -96,8 +112,6 @@ add_executable(DiaKbdMouse WIN32
 target_compile_definitions(DiaKbdMouse PRIVATE
     WIN32
     _WINDOWS
-    _WIN32_WINNT=0x0500
-    _WIN32_IE=0x0500
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<NOT:$<CONFIG:Debug>>:NDEBUG>
 )
@@ -131,6 +145,7 @@ if(MSVC)
 
     target_link_options(DiaKbdMouse PRIVATE
         ${DIA_WINDOWS_SUBSYSTEM_OPTION}
+        /MANIFEST:NO
     )
 
     target_link_options(DiaKbdMouseHook PRIVATE
@@ -148,6 +163,25 @@ elseif(WATCOM)
     foreach(target DiaKbdMouse DiaKbdMouseHook)
         set_property(TARGET ${target} PROPERTY WATCOM_RUNTIME_LIBRARY MultiThreaded)
     endforeach()
+    find_program(DIA_WRC_EXECUTABLE wrc REQUIRED)
+    set(DIA_WATCOM_RESOURCE_FILE "${CMAKE_CURRENT_BINARY_DIR}/DiaKbdMouseWatcom.res")
+    set_property(TARGET DiaKbdMouse APPEND PROPERTY LINK_DEPENDS
+        ${DIA_CANONICAL_RESOURCES}
+        "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouse.manifest"
+        "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouse.ico"
+        "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouseSml.ico"
+    )
+    add_custom_command(TARGET DiaKbdMouse POST_BUILD
+        COMMAND "${DIA_WRC_EXECUTABLE}"
+            -q
+            -bt=nt
+            "-i=${DIA_RESOURCE_SOURCE_DIR}"
+            "-fo=${DIA_WATCOM_RESOURCE_FILE}"
+            "${DIA_RESOURCE_SOURCE_DIR}/DiaKbdMouseWatcom.rc"
+            "$<TARGET_FILE:DiaKbdMouse>"
+        VERBATIM
+        COMMENT "Attaching Watcom resources to DiaKbdMouse.exe"
+    )
     message(STATUS "Watcom C/C++ generator selected. Building with the static multithreaded CRT; DLL CRT flags (-br) are removed.")
 endif()
 

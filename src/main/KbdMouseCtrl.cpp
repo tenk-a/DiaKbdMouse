@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "../dll/DiaKbdMouseHook.h"
-#include "../cmn/DebugPrintf.h"
 #include "KbdMouseCtrl.h"
 
 HANDLE          CKbdMouseCtrl::s_hThread_       = 0;
@@ -18,9 +17,8 @@ unsigned        CKbdMouseCtrl::s_uReptCnt_      = 0;
 
 DgtXY2AnlgXY<float,256,CKbdMouseCtrl::HIS_NUM>  CKbdMouseCtrl::s_dgtXY2AnlgXY_;
 
-
 /// マウス化するための情報.
-const INPUT CKbdMouseCtrl::s_input_mouseSendTbl_[] = {
+static const INPUT /*CKbdMouseCtrl::*/ s_input_mouseSendTbl_[] = {
     { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_LEFTDOWN  , 0, 0, }},        // 0
     { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_LEFTUP    , 0, 0, }},        // 1
     { INPUT_MOUSE   , {        0, 0, 0       , MOUSEEVENTF_RIGHTDOWN , 0, 0, }},        // 2

@@ -11,9 +11,8 @@
 #include <stdio.h>
 #include "DiaKbdMouse.h"
 #include "ConfigFileReader.h"
-#include "../cmn/FileTextReader.hpp"
 #include "../cmn/binary_tbl_n.hpp"
-#include "../cmn/DebugPrintf.h"
+#include "../cmn/misc.h"
 
 /// 空白スキップ.
 char const* CConfigFileReader::skip_spc(char const* s) {
@@ -27,16 +26,18 @@ char const* CConfigFileReader::skip_spc(char const* s) {
 unsigned CConfigFileReader::getData()
 {
     unsigned keyCode = 0;
-    if (pFName_ == NULL || pFName_[0] == 0)
+    if (fileName_.empty())
         return 0;
-    FileTextReader  ftr;
-    if (ftr.open(pFName_) == false) {
-        errPrintf("%s をオープンできなかった.\n", pFName_);
+
+    FILE* file = std::fopen(fileName_.c_str(), "rt");
+    if (!file) {
+        LogPrintf("%s : File open error.\n", fileName_.c_str());
         return 0;
     }
+
     fline_ = 0;
-    char        lbuf[4096];
-    while (ftr.gets(lbuf, 4096)) {
+    char lbuf[4096];
+    while (std::fgets(lbuf, sizeof(lbuf), file)) {
         ++fline_;
         char const* s = skip_spc(lbuf);
         if (*s == '#' || *s == '\0' || *s == '\n')
@@ -46,16 +47,17 @@ unsigned CConfigFileReader::getData()
             if (keyCode == 0) {
                 keyCode = getKey1(s, 0);
             } else {
-                errPuts("拡張キーの指定が複数ある.\n");
+                logPuts("拡張キーの指定が複数ある.\n");
             }
         } else if (*s == '+') {
             set1Data(0, s+1);
         } else if (*s == '*') {
             set1Data(1, s+1);
         } else {
-            errPuts("余分な文字がある.\n");
+            logPuts("余分な文字がある.\n");
         }
     }
+    std::fclose(file);
     return keyCode;
 }
 
@@ -63,7 +65,7 @@ unsigned CConfigFileReader::getData()
 void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     unsigned keyCode = getKey1(s, 1);
     if (keyCode == 0) {
-        //errPuts("設定するキー名が指定されていない.\n");
+        //logPuts("設定するキー名が指定されていない.\n");
         return;
     }
     unsigned flags = 0;
@@ -81,12 +83,12 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
     }
     unsigned tgtKey = getKey1(s, 2);
     if (tgtKey == 0) {
-        //errPuts("発生させるキーが指定されていない.\n");
+        //logPuts("発生させるキーが指定されていない.\n");
         return;
     }
     unsigned tgtMode = tgtKey >> 8;
     if (tgtMode == CDiaKbdMouseHook_ConvKey::MD_MOUSE && flags) {
-        errPuts("マウス化キーに修飾キーを設定することはできない.\n");
+        logPuts("マウス化キーに修飾キーを設定することはできない.\n");
         return;
     }
     if      (flags == F_DIRECT)         tgtMode = CDiaKbdMouseHook_ConvKey::MD_DIRECT;
@@ -105,7 +107,7 @@ void    CConfigFileReader::set1Data(bool qmode, const char* s) {
 
     s = skip_spc(s);
     if (*s != '\0' && *s != '#')
-        errPuts("行末に余計な文字がある.\n");
+        logPuts("行末に余計な文字がある.\n");
 }
 
 /// 1キー取得.
@@ -116,7 +118,7 @@ unsigned CConfigFileReader::getKey1(const char*& rStr, unsigned mode) {
         unsigned n = strtol(rStr+1, (char**)&rStr, 16);
         if (n > 0 && n <= 255)
             return n;
-        errPrintf("%s (%d): %s> キーコード 0x%02X(%d) は範囲外.\n", pFName_, fline_, modeStr, n, n);
+        LogPrintf("%s (%d): %s> キーコード 0x%02X(%d) は範囲外.\n", fileName_.c_str(), fline_, modeStr, n, n);
     } else if (*rStr) {
         char name[1024];
         get_name(name, 1024, rStr);
@@ -126,15 +128,15 @@ unsigned CConfigFileReader::getKey1(const char*& rStr, unsigned mode) {
         if (n >= 0 && n < s_keyNameValTblSize_) {
             n =  s_keyNameValTbl_[n].val;
             if (mode < 2 && n > 0xff) {
-                errPrintf("%s (%d): %s は %s として使えないキー名.\n", pFName_, fline_, name, modeStr);
+                LogPrintf("%s (%d): %s は %s として使えないキー名.\n", fileName_.c_str(), fline_, name, modeStr);
                 n = 0;
             }
             return n;
         }
         if (name[0] == 0) {
-            errPrintf("%s (%d): %s> キーが指定されていない.\n", pFName_, fline_, modeStr);
+            LogPrintf("%s (%d): %s> キーが指定されていない.\n", fileName_.c_str(), fline_, modeStr);
         } else {
-            errPrintf("%s (%d): %s> %s は知らないキー名.\n", pFName_, fline_, modeStr, name);
+            LogPrintf("%s (%d): %s> %s は知らないキー名.\n", fileName_.c_str(), fline_, modeStr, name);
         }
     }
     return 0;
@@ -153,39 +155,8 @@ void CConfigFileReader::get_name(char* name, std::size_t sz, const char*& rStr) 
 }
 
 /// エラー出力.
-void CConfigFileReader::errPuts(const char* str) {
-    errPrintf("%s (%d) : %s", pFName_, fline_, str);
-}
-
-/// エラーprintf出力.
-void CConfigFileReader::errPrintf(const char* fmt, ...) {
-    if (!errFh_.is_open() && !errOpen_) {
-        errOpen();
-    }
-    char str[8192];
-    va_list a;
-    va_start(a, fmt);
-    vsprintf(str, fmt, a);
-    va_end(a);
-    if (errFh_.is_open()) {
-        errFh_.puts(str);
-    }
-    OutputDebugString(str);
-}
-
-/// エラー主食オープン.
-void CConfigFileReader::errOpen() {
-    errOpen_ = true;
-    char buf[FNAME_SZ+1];
-    std::size_t l = strlen(pFName_);
-    if (l < FNAME_SZ) {
-        std::strncpy(&buf[0], pFName_, l); buf[l] = 0;
-        std::strncpy(&buf[l-4], ".err", 5);
-        errFh_.open(buf, FileHdl::WP);
-        if (errFh_.is_open() == false) {
-            DEBUGPRINTF("%sをオープンできなかった.\n", buf);
-        }
-    }
+void CConfigFileReader::logPuts(const char* str) {
+    LogPrintf("%s (%d) : %s", fileName_.c_str(), fline_, str);
 }
 
 /// 定義で指定するキーの名前. 名前順にソート済みであること.

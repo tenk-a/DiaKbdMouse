@@ -37,16 +37,15 @@
       }
     },
     {
-      "name": "vc-xp",
+      "name": "nmake-xp",
       "displayName": "NMake Release XP Win32",
       "generator": "NMake Makefiles",
-      "binaryDir": "${sourceDir}/build/cmake-vc-xp",
+      "binaryDir": "${sourceDir}/build/cmake-nmake-xp",
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-vc-xp",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake-xp",
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_SYSTEM_VERSION": "5.1",
-        "DIA_WINDOWS_SUBSYSTEM_VERSION": "5.01",
-        "DIA_PACKAGE_SUFFIX": "-xp"
+        "DIA_WINDOWS_SUBSYSTEM_VERSION": "5.01"
       }
     },
     {
@@ -68,8 +67,9 @@
       "generator": "Watcom WMake",
       "binaryDir": "${sourceDir}/build/cmake-watcom",
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-watcom",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32w2k",
+        "CMAKE_BUILD_TYPE": "Release",
+        "DIA_PACKAGE_FLAVOR": "win32w2k"
       }
     }
   ],
@@ -138,21 +138,14 @@
       ]
     },
     {
-      "name": "vc-xp",
-      "configurePreset": "vc-xp"
+      "name": "nmake-xp",
+      "configurePreset": "nmake-xp"
     },
     {
-      "name": "vc-xp-install",
-      "configurePreset": "vc-xp",
+      "name": "nmake-xp-install",
+      "configurePreset": "nmake-xp",
       "targets": [
         "install"
-      ]
-    },
-    {
-      "name": "vc-xp-package",
-      "configurePreset": "vc-xp",
-      "targets": [
-        "package"
       ]
     },
     {
@@ -175,6 +168,13 @@
       "configurePreset": "watcom",
       "targets": [
         "install"
+      ]
+    },
+    {
+      "name": "watcom-package",
+      "configurePreset": "watcom",
+      "targets": [
+        "package"
       ]
     }
   ]

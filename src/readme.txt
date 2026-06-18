@@ -46,3 +46,4 @@ http://www.losttechnology.jp/Tips/keyscancodemap.html
 2015-04-20  ・SendInput するキー設定の dwFlag に KEYEVENTF_EXTENDEDKEY
 	      を付けてなかったのを修正.
 2021-02-07  ・ソースのUTF8化とかソース微修正. ビルド構成修正. 基本vs2019でビルド.
+2026-06-19  ・同時押し関係の改善. ビルドは CMake を用いるように変更.

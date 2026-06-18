@@ -10,7 +10,9 @@
 #include "DiaKbdMouse.h"
 #include <cstdlib>
 #include <cstring>
-#include "../cmn/DebugPrintf.h"
+#include <string>
+#include <utility>
+#include "../cmn/misc.h"
 #include "../dll/DiaKbdMouseHook.h"
 #include "KbdMouseCtrl.h"
 #include "TrayIcon.h"
@@ -38,7 +40,7 @@ private:
     LRESULT         wmUserTrayIcon(HWND hWnd, LPARAM lParam);
     void            checkMenuItem(int id, bool checkSw /*, int dispSw*/);
 
-    static void     setMinmumWorkingSetSize();
+    //static void     setMinmumWorkingSetSize();
 
 private:
     enum { MAX_LOADSTRING   = 100         };
@@ -86,7 +88,7 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     // 多重起動防止.
     ::CreateMutex(NULL, 1, szWindowClass_);
     if (::GetLastError() == ERROR_ALREADY_EXISTS) {
-        DEBUGPRINTF("多重起動\n");
+        LogPrintf("多重起動\n");
         return -2;
     }
 
@@ -95,7 +97,7 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
 
     // アプリケーションの初期化.
     if (initInstance(hInstance/*, nCmdShow*/) == 0) {
-        DEBUGPRINTF("起動時初期化で失敗\n");
+        LogPrintf("起動時初期化で失敗\n");
         return -1;
     }
 
@@ -204,13 +206,15 @@ LRESULT CALLBACK CDiaKbdMouseApp::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 DWORD   CDiaKbdMouseApp::getConfigData(CDiaKbdMouseHook_ConvKeyTbl& tbl)
 {
     DWORD   dwKeyCode = 0;
-    TCHAR   szIniName[0x1000];
-    ::GetModuleFileName(NULL, szIniName, 0x1000 );
-    std::size_t l = ::lstrlen(szIniName);
+    wchar_t moduleName[0x1000];
+    DWORD length = ::GetModuleFileNameW(NULL, moduleName, 0x1000);
+    std::wstring configName(moduleName, length);
+    std::size_t l = configName.size();
     if (l > 4) {
-        std::memcpy( &szIniName[l-3], _T("cfg"), 4 * sizeof(TCHAR) );   // 拡張子をcfgに.
+        configName.replace(l - 3, 3, L"cfg");
+        std::string configNameUtf8 = wcsToUtf8(configName);
         //x DEBUGPRINTF("%s\n", path);
-        CConfigFileReader   configData(szIniName, tbl);
+        CConfigFileReader   configData(configNameUtf8.c_str(), tbl);
         dwKeyCode   = configData.getData();
     }
     return dwKeyCode;
@@ -248,7 +252,7 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
     CKbdMouseCtrl::create();
 
     // ヒープメモリの調整.
-    setMinmumWorkingSetSize();
+    //setMinmumWorkingSetSize();
     return 0;
 }
 
@@ -269,7 +273,7 @@ LRESULT CDiaKbdMouseApp::wmCommand(HWND hWnd, WPARAM wParam, LPARAM /*lParam*/)
                 std::memcpy(&path[l-3], _T("htm"), 4*sizeof(TCHAR));    // 拡張子をhtmにしてそれを開くことにする.
                 //x DEBUGPRINTF("%s\n", path);
                 ::ShellExecute (hWnd, _T("open"), path, NULL, NULL, SW_SHOW);
-                setMinmumWorkingSetSize();
+                //setMinmumWorkingSetSize();
             }
         }
         return 0;
@@ -323,7 +327,7 @@ LRESULT CDiaKbdMouseApp::wmUserTrayIcon(HWND hWnd, LPARAM lParam)
 ///
 LRESULT CALLBACK CDiaKbdMouseApp::dlgProcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    lParam;
+    (void)lParam;
     switch (uMsg) {
     case WM_INITDIALOG:
         return TRUE;
@@ -331,7 +335,7 @@ LRESULT CALLBACK CDiaKbdMouseApp::dlgProcAbout(HWND hDlg, UINT uMsg, WPARAM wPar
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
             ::EndDialog(hDlg, LOWORD(wParam));
-            setMinmumWorkingSetSize();
+            //setMinmumWorkingSetSize();
             return TRUE;
         }
         break;
@@ -342,6 +346,7 @@ LRESULT CALLBACK CDiaKbdMouseApp::dlgProcAbout(HWND hDlg, UINT uMsg, WPARAM wPar
     return FALSE;
 }
 
+#if 0
 /// ヒープメモリの調整.
 ///
 void CDiaKbdMouseApp::setMinmumWorkingSetSize()
@@ -358,6 +363,7 @@ void CDiaKbdMouseApp::setMinmumWorkingSetSize()
         ::FreeLibrary( hDll );
     }
 }
+#endif
 
 
 // ===========================================================================
@@ -366,6 +372,7 @@ void CDiaKbdMouseApp::setMinmumWorkingSetSize()
 // ===========================================================================
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+    LogPrintfInit(fpath_getLocalAppDataA() + "\\tenk-a\\DiaKbdMouse\\Log\\DiaKbdMouse.Log");
     CDiaKbdMouseApp     diaCursorApp;
     return diaCursorApp.winMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

@@ -1,8 +1,10 @@
 #pragma once
 
 
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500     // WIN2000以降.
 #define _WIN32_IE    0x0500
+#endif
 #define WIN32_LEAN_AND_MEAN     // Windows ヘッダーから使用されていない部分を除外.
 
 #include <windows.h>
