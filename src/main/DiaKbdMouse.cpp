@@ -52,6 +52,7 @@ private:
     CTrayIcon   trayIcon_;
     TCHAR       szTitle_[MAX_LOADSTRING];       ///< タイトル バーのテキスト.
     TCHAR       szWindowClass_[MAX_LOADSTRING]; ///< メイン ウィンドウ クラス名.
+    wchar_t const* startupError_;               ///< 起動失敗時に表示するメッセージ.
     //TCHAR     szIniName_[0x4000];             ///< モジュール名.
     static CDiaKbdMouseApp* s_pSelf_;           ///< 自分自身の変数(インスタンス)へのポインタ.
 };
@@ -67,6 +68,7 @@ CDiaKbdMouseApp::CDiaKbdMouseApp()
     , hInstance_(0)
     , hIconSm_(0)
     , trayIcon_()
+    , startupError_(0)
 {
     std::memset(szTitle_      , 0, sizeof szTitle_);
     std::memset(szWindowClass_, 0, sizeof szWindowClass_);
@@ -82,22 +84,35 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
     HINSTANCE hInstance = ::GetModuleHandle(NULL);
 
     // リソースより名前文字列を取得.
-    ::LoadString(hInstance, IDS_APP_TITLE, szTitle_      , MAX_LOADSTRING);
-    ::LoadString(hInstance, IDS_APP_NAME , szWindowClass_, MAX_LOADSTRING);
+    if (::LoadString(hInstance, IDS_APP_TITLE, szTitle_, MAX_LOADSTRING) == 0
+        || ::LoadString(hInstance, IDS_APP_NAME, szWindowClass_, MAX_LOADSTRING) == 0
+    ) {
+        showMessageDialog(L"Failed to load application resources.");
+        return -1;
+    }
 
     // 多重起動防止.
-    ::CreateMutex(NULL, 1, szWindowClass_);
+    HANDLE hMutex = ::CreateMutex(NULL, 1, szWindowClass_);
+    if (hMutex == NULL) {
+        showMessageDialog(L"Failed to create the application mutex.");
+        return -1;
+    }
     if (::GetLastError() == ERROR_ALREADY_EXISTS) {
         LogPrintf("多重起動\n");
+        showMessageDialog(L"DiaKbdMouse is already running.");
         return -2;
     }
 
     // ウィンドウ クラスを登録.
-    registerClass(hInstance);
+    if (registerClass(hInstance) == 0) {
+        showMessageDialog(L"Failed to register the application window class.");
+        return -1;
+    }
 
     // アプリケーションの初期化.
     if (initInstance(hInstance/*, nCmdShow*/) == 0) {
         LogPrintf("起動時初期化で失敗\n");
+        showMessageDialog(startupError_ ? startupError_ : L"Failed to initialize DiaKbdMouse.");
         return -1;
     }
 
@@ -234,8 +249,8 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
             IDC_MENU
         );
     if (rc == 0) {      // トレイアイコンの作成に失敗したら終了.
-        ::DestroyWindow(hWnd);
-        return 0;
+        startupError_ = L"Failed to create the notification area icon.";
+        return -1;
     }
 
     // 定義ファイル読み込み.
@@ -243,13 +258,20 @@ LRESULT CDiaKbdMouseApp::wmCreate(HWND hWnd, WPARAM /*wParam*/, LPARAM /*lParam*
     tbl.clear();
     DWORD   dwKeyCode = getConfigData(tbl); // VK_RWIN; // VK_RMENU;
     if (dwKeyCode == 0) {   // 定義ファイルでエラーがあった場合.
-        ::DestroyWindow(hWnd);
-        return 0;
+        startupError_ = L"Failed to load the configuration file.";
+        return -1;
     }
-    DiaKbdMouseHook_install(dwKeyCode, tbl);
+    if (DiaKbdMouseHook_install(dwKeyCode, tbl) == 0) {
+        startupError_ = L"Failed to install the keyboard hook.";
+        return -1;
+    }
 
     // キーボードでマウス操作する処理のスレッドを起動.
-    CKbdMouseCtrl::create();
+    if (!CKbdMouseCtrl::create()) {
+        DiaKbdMouseHook_uninstall();
+        startupError_ = L"Failed to start the keyboard control thread.";
+        return -1;
+    }
 
     // ヒープメモリの調整.
     //setMinmumWorkingSetSize();

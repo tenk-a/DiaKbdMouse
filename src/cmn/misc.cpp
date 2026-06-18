@@ -388,6 +388,16 @@ std::string wcsToSys(wchar_t const* src)
     return std::string();
 }
 
+void showMessageDialog(wchar_t const* message)
+{
+    ::MessageBoxW(
+        NULL,
+        message ? message : L"",
+        L"DiaKbdMouse",
+        MB_OK | MB_ICONERROR | MB_TASKMODAL
+    );
+}
+
 std::wstring fpath_getLocalAppDataW()
 {
     DWORD size = ::GetEnvironmentVariableW(L"LOCALAPPDATA", 0, 0);
@@ -442,14 +452,55 @@ void LogPrintf(char const* fmt, ...)
  #endif
     va_end(args);
 
-    if (length < 0 || length >= BUF_SZ)
-        length = BUF_SZ;
-    buf[length] = '\0';
+    LogPuts(buf);
+}
 
+void LogPuts(char const* s)
+{
+    if (!s)
+        return;
     CCriticalSectionLock lock(s_criticalSection);
     if (s_logFp) {
-        fprintf(s_logFp, "%s", buf);
+        using namespace std;
+        fprintf(s_logFp, "%s", s);
         fflush(s_logFp);
     }
-    OutputDebugStringA( wcsToSys(utf8ToWcs(buf)).c_str() );
+    OutputDebugStringA( wcsToSys(utf8ToWcs(s)).c_str() );
+}
+
+void LogPrintf(wchar_t const* fmt, ...)
+{
+    using namespace std;
+    if (!fmt)
+        return;
+
+    enum { BUF_SZ = 4096 };
+    wchar_t buf[BUF_SZ + 1];
+    va_list args;
+    va_start(args, fmt);
+ #if defined(_MSC_VER)
+    int length = _vsnwprintf(buf, BUF_SZ, fmt, args);
+ #else
+    int length = vsnwprintf(buf, BUF_SZ, fmt, args);
+ #endif
+    va_end(args);
+
+    if (length < 0 || length >= BUF_SZ)
+        length = BUF_SZ;
+    buf[length] = 0;
+
+    LogPuts(buf);
+}
+
+void LogPuts(wchar_t const* ws)
+{
+    if (!ws)
+        return;
+    CCriticalSectionLock lock(s_criticalSection);
+    if (s_logFp) {
+        using namespace std;
+        fprintf(s_logFp, "%s", wcsToUtf8(ws).c_str() );
+        fflush(s_logFp);
+    }
+    OutputDebugStringA( wcsToSys(ws).c_str() );
 }

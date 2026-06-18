@@ -98,9 +98,15 @@ static inline std::string wcsToSys(std::wstring const& s) { return wcsToSys(s.c_
 
 void LogPrintfInit(std::string logpath);
 void LogPrintf(char const* fmt, ...);
+void LogPrintf(wchar_t const* fmt, ...);
+void LogPuts(char const* s);
+void LogPuts(wchar_t const* ws);
+
 
 std::wstring fpath_getLocalAppDataW();
 std::string  fpath_getLocalAppDataA();
+
+void showMessageDialog(wchar_t const* message);
 
 #endif
 

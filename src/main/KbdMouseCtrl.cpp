@@ -35,18 +35,26 @@ static const INPUT /*CKbdMouseCtrl::*/ s_input_mouseSendTbl_[] = {
 
 /** 作成.
  */
-void CKbdMouseCtrl::create()
+bool CKbdMouseCtrl::create()
 {
     ::timeBeginPeriod(1);
     DWORD       threadId;
     s_hThread_ = ::CreateThread(NULL, 4*1024, (LPTHREAD_START_ROUTINE)CKbdMouseCtrl::run, (void*)NULL, 0, &threadId);
+    if (s_hThread_ == NULL) {
+        ::timeEndPeriod(1);
+        return false;
+    }
+    return true;
 }
 
 /** 開放.
  */
 void CKbdMouseCtrl::release()
 {
+    if (s_hThread_ == NULL)
+        return;
     ::CloseHandle(s_hThread_);
+    s_hThread_ = NULL;
     ::Sleep(3*SLEEP_COUNT);
     ::timeEndPeriod(1);
 }

@@ -19,7 +19,7 @@ public:
     enum { HIS_NUM    = 12 };
 
     /// 作成.
-    static void     create();
+    static bool     create();
 
     /// 解除.
     static void     release();
