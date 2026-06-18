@@ -8,6 +8,6 @@ Appsキー同時押しでマウス操作やダイヤモンドカーソル風の�
 
 - `DiaKbdMouse-*-win64.zip`: Windows x64用
 - `DiaKbdMouse-*-win32.zip`: Windows 32bit用
-- `DiaKbdMouse-*-win32xp.zip`: Windows XP 32bit用（Watcom版）
+- `DiaKbdMouse-*-win32xp.zip`: Windows 2k 32bit用
 
 インストールや使い方、や設定ファイルの詳細は `DiaKbdMouse.htm` を参照してください。

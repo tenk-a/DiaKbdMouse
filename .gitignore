@@ -14,7 +14,8 @@ my_*
 err_*
 err.txt
 .vs
-build/cmake-*
+bld/cmake-*
+build
 dist
 inst
 

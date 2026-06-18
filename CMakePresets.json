@@ -11,7 +11,7 @@
       "displayName": "Visual Studio 2022 x64",
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
-      "binaryDir": "${sourceDir}/build/cmake-vc-x64",
+      "binaryDir": "${sourceDir}/bld/cmake-vc-x64",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win64"
       }
@@ -21,7 +21,7 @@
       "displayName": "Visual Studio 2022 Win32",
       "generator": "Visual Studio 17 2022",
       "architecture": "Win32",
-      "binaryDir": "${sourceDir}/build/cmake-vc-win32",
+      "binaryDir": "${sourceDir}/bld/cmake-vc-win32",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32"
       }
@@ -31,7 +31,7 @@
       "displayName": "Visual Studio 2026 x64",
       "generator": "Visual Studio 18 2026",
       "architecture": "x64",
-      "binaryDir": "${sourceDir}/build/cmake-vc145-x64",
+      "binaryDir": "${sourceDir}/bld/cmake-vc145-x64",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win64-vc145"
       }
@@ -41,7 +41,7 @@
       "displayName": "Visual Studio 2026 Win32",
       "generator": "Visual Studio 18 2026",
       "architecture": "Win32",
-      "binaryDir": "${sourceDir}/build/cmake-vc145-win32",
+      "binaryDir": "${sourceDir}/bld/cmake-vc145-win32",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32-vc145"
       }
@@ -50,7 +50,7 @@
       "name": "nmake",
       "displayName": "NMake Release",
       "generator": "NMake Makefiles",
-      "binaryDir": "${sourceDir}/build/cmake-nmake",
+      "binaryDir": "${sourceDir}/bld/cmake-nmake",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake",
         "CMAKE_BUILD_TYPE": "Release"
@@ -60,7 +60,7 @@
       "name": "nmake-xp",
       "displayName": "NMake Release XP Win32",
       "generator": "NMake Makefiles",
-      "binaryDir": "${sourceDir}/build/cmake-nmake-xp",
+      "binaryDir": "${sourceDir}/bld/cmake-nmake-xp",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake-xp",
         "CMAKE_BUILD_TYPE": "Release",
@@ -72,7 +72,7 @@
       "name": "msys2-ucrt64",
       "displayName": "MSYS2 UCRT64 Makefiles",
       "generator": "MinGW Makefiles",
-      "binaryDir": "${sourceDir}/build/cmake-msys2-ucrt64",
+      "binaryDir": "${sourceDir}/bld/cmake-msys2-ucrt64",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-msys2-ucrt64",
         "CMAKE_BUILD_TYPE": "Release"
@@ -85,7 +85,7 @@
       "name": "watcom",
       "displayName": "Watcom WMake",
       "generator": "Watcom WMake",
-      "binaryDir": "${sourceDir}/build/cmake-watcom",
+      "binaryDir": "${sourceDir}/bld/cmake-watcom",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32w2k",
         "CMAKE_BUILD_TYPE": "Release",
