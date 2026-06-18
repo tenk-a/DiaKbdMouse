@@ -236,7 +236,8 @@ LRESULT CALLBACK CDiaKbdMouseApp::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
         // トレイアイコンの終了.
         pSelf->trayIcon_.release();
         // メッセージループを終了させる.
-        ::PostQuitMessage(0);
+        if (hWnd == pSelf->hWnd_)   // wmCreate 成功時のみ Quit.
+            ::PostQuitMessage(0);
         return 0;
 
     default:

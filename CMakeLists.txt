@@ -31,6 +31,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib_${DIA_PLATFORM_NAME}
 if(MSVC)
     set(DIA_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "${DIA_MSVC_RUNTIME_LIBRARY}")
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "DiaKbdMouse")
     set(DIA_WINDOWS_SUBSYSTEM_VERSION "" CACHE STRING "Optional Windows subsystem version, for example 5.01 for Windows XP.")
     if(DIA_WINDOWS_SUBSYSTEM_VERSION)
         set(DIA_WINDOWS_SUBSYSTEM_OPTION "/SUBSYSTEM:WINDOWS,${DIA_WINDOWS_SUBSYSTEM_VERSION}")
@@ -150,7 +151,7 @@ if(MSVC)
 
     target_link_options(DiaKbdMouseHook PRIVATE
         ${DIA_WINDOWS_SUBSYSTEM_OPTION}
-        /ENTRY:DllMain
+        $<$<NOT:$<CONFIG:Debug>>:/ENTRY:DllMain>
         /NODEFAULTLIB:libc.lib
         /MERGE:.rdata=.text
         /SECTION:DIACURSO,RWS

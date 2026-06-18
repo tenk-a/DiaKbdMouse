@@ -426,6 +426,7 @@ static FILE*            s_logFp = NULL;
 
 void LogPrintfInit(std::string logpath)
 {
+    s_criticalSection.create();
     if (!logpath.empty()) {
         if (!file_exist(logpath.c_str())) {
             std::string logdir = fpath_getDirDelSep(logpath);
@@ -446,9 +447,9 @@ void LogPrintf(char const* fmt, ...)
     va_list args;
     va_start(args, fmt);
  #if defined(_MSC_VER)
-    int length = _vsnprintf(buf, BUF_SZ, fmt, args);
+    _vsnprintf(buf, BUF_SZ, fmt, args);
  #else
-    int length = vsnprintf(buf, BUF_SZ, fmt, args);
+    vsnprintf(buf, BUF_SZ, fmt, args);
  #endif
     va_end(args);
 
