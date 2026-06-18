@@ -1,7 +1,7 @@
 pushd %~dp0
 cd ..
-set tgt=vc-x64
+set tgt=vc%1-x64
 cmake --preset %tgt%
 cmake --build --preset %tgt%-install
-cmake --build --preset %tgt%-package
+if "%1"=="" cmake --build --preset %tgt%-package
 popd

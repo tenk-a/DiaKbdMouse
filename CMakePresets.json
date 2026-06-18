@@ -8,8 +8,8 @@
   "configurePresets": [
     {
       "name": "vc-x64",
-      "displayName": "Visual Studio 2026 x64",
-      "generator": "Visual Studio 18 2026",
+      "displayName": "Visual Studio 2022 x64",
+      "generator": "Visual Studio 17 2022",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/cmake-vc-x64",
       "cacheVariables": {
@@ -18,12 +18,32 @@
     },
     {
       "name": "vc-win32",
-      "displayName": "Visual Studio 2026 Win32",
-      "generator": "Visual Studio 18 2026",
+      "displayName": "Visual Studio 2022 Win32",
+      "generator": "Visual Studio 17 2022",
       "architecture": "Win32",
       "binaryDir": "${sourceDir}/build/cmake-vc-win32",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32"
+      }
+    },
+    {
+      "name": "vc145-x64",
+      "displayName": "Visual Studio 2026 x64",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/cmake-vc145-x64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win64-vc145"
+      }
+    },
+    {
+      "name": "vc145-win32",
+      "displayName": "Visual Studio 2026 Win32",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/build/cmake-vc145-win32",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win32-vc145"
       }
     },
     {
@@ -124,6 +144,42 @@
       "configuration": "Release",
       "targets": [
         "PACKAGE"
+      ]
+    },
+    {
+      "name": "vc145-x64-debug",
+      "configurePreset": "vc145-x64",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vc145-x64-release",
+      "configurePreset": "vc145-x64",
+      "configuration": "Release"
+    },
+    {
+      "name": "vc145-x64-install",
+      "configurePreset": "vc145-x64",
+      "configuration": "Release",
+      "targets": [
+        "INSTALL"
+      ]
+    },
+    {
+      "name": "vc145-win32-debug",
+      "configurePreset": "vc145-win32",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vc145-win32-release",
+      "configurePreset": "vc145-win32",
+      "configuration": "Release"
+    },
+    {
+      "name": "vc145-win32-install",
+      "configurePreset": "vc145-win32",
+      "configuration": "Release",
+      "targets": [
+        "INSTALL"
       ]
     },
     {
