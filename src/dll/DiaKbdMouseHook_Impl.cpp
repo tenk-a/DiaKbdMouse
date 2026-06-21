@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include <windows.h>
-#include <functional>
 #include "DiaKbdMouseHook_Impl.h"
 #include "DiaKbdMouseHook.h"
 #include "../cmn/DebugPrintf.h"

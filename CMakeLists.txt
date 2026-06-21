@@ -139,6 +139,12 @@ if(MSVC)
             /W4
             /wd4996
             /utf-8
+            $<$<NOT:$<CONFIG:Debug>>:/Gy>
+            $<$<NOT:$<CONFIG:Debug>>:/Gw>
+        )
+        target_link_options(${target} PRIVATE
+            $<$<NOT:$<CONFIG:Debug>>:/OPT:REF>
+            $<$<NOT:$<CONFIG:Debug>>:/OPT:ICF>
         )
     endforeach()
 
