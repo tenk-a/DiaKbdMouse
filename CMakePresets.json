@@ -8,8 +8,8 @@
   "configurePresets": [
     {
       "name": "vc-x64",
-      "displayName": "Visual Studio 2022 x64",
-      "generator": "Visual Studio 17 2022",
+      "displayName": "Visual Studio 2017 x64",
+      "generator": "Visual Studio 15 2017",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/bld/cmake-vc-x64",
       "cacheVariables": {
@@ -18,8 +18,8 @@
     },
     {
       "name": "vc-win32",
-      "displayName": "Visual Studio 2022 Win32",
-      "generator": "Visual Studio 17 2022",
+      "displayName": "Visual Studio 2017 Win32",
+      "generator": "Visual Studio 15 2017",
       "architecture": "Win32",
       "binaryDir": "${sourceDir}/bld/cmake-vc-win32",
       "cacheVariables": {
@@ -33,7 +33,7 @@
       "architecture": "x64",
       "binaryDir": "${sourceDir}/bld/cmake-vc145-x64",
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-win64-vc145"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-x64-vc145"
       }
     },
     {
@@ -53,6 +53,16 @@
       "binaryDir": "${sourceDir}/bld/cmake-nmake",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "nmake-x64",
+      "displayName": "NMake Release Win64",
+      "generator": "NMake Makefiles",
+      "binaryDir": "${sourceDir}/bld/cmake-nmake-x64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/dist/DiaKbdMouse-nmake-x64",
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
@@ -189,6 +199,17 @@
     {
       "name": "nmake-install",
       "configurePreset": "nmake",
+      "targets": [
+        "install"
+      ]
+    },
+    {
+      "name": "nmake-x64",
+      "configurePreset": "nmake-x64"
+    },
+    {
+      "name": "nmake-x64-install",
+      "configurePreset": "nmake-x64",
       "targets": [
         "install"
       ]
