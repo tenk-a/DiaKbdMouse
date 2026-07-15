@@ -34,6 +34,9 @@ public:
     /// マウス化するキー情報をボタン化したものを取得.
     static unsigned mouseButton();
 
+    /// 修飾キーの押下状態を解放.
+    static void releaseModifierKeys();
+
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wparam, LPARAM lparam);
 
 private:
@@ -42,9 +45,12 @@ private:
 
     static bool keyDownUp(bool sw, unsigned vkCode);
     static void sendConvKey(bool sw, unsigned uKey );
-    static void sendKey(int mode, unsigned uFlags, unsigned uVk );
+    static bool sendKey(int mode, unsigned uFlags, unsigned uVk );
     static void setInputParam(INPUT& rImput, unsigned uFlags, unsigned uVk );
+    static bool sendInputOne(INPUT& rInput);
     static bool isExtendedKey(unsigned uVk);
+    static void sendModifierKeyUpByVk();
+    static void sendModifierKeyUpByScanCode();
     static void setSentKeyDown(unsigned uVk, bool sw);
     static void releaseSentKeys();
 

@@ -11,6 +11,44 @@
 #include "DiaKbdMouseHook_Impl.h"
 #include "DiaKbdMouseHook.h"
 #include "../cmn/DebugPrintf.h"
+#include <stdarg.h>
+#include <stdio.h>
+
+// バグ調査用のログ出力.(毎打鍵でファイル出力).
+#if !defined(DKM_DEBUG_LOG) || DKM_DEBUG_LOG == 0
+#define dkmDbgPrintf(...)
+#else
+static void dkmDbgPrintf(char const* fmt, ...)
+{
+ #if DKM_DEBUG_LOG == 1
+    static FILE* s_fp = NULL;
+    if (!s_fp)
+        s_fp = fopen("dbg.log", "w");
+    if (s_fp) {
+        va_list args;
+        va_start(args, fmt);
+        vfprintf(s_fp, fmt, args);
+        va_end(args);
+        fflush(s_fp);
+    }
+ #elif DKM_DEBUG_LOG == 2
+    char buf[1024];
+    va_list args;
+    va_start(args, fmt);
+    wvsprintfA(buf, fmt, args);
+    va_end(args);
+    buf[sizeof(buf) - 1] = 0;
+    OutputDebugStringA(buf);
+ #else
+    (void)fmt;
+ #endif
+}
+#endif
+
+static int dkmKeyDownAsync(int vk)
+{
+    return (::GetAsyncKeyState(vk) & 0x8000) ? 1 : 0;
+}
 
 #if 0 && defined(_MSC_VER)  // 実行時の使用メモリを減らす.
 //#pragma comment(linker, "/opt:nowin98")
@@ -122,6 +160,76 @@ unsigned CDiaKbdMouseHook_Impl::mouseButton() {
 }
 
 
+/** 修飾キーの押下状態を解放.
+ */
+void CDiaKbdMouseHook_Impl::releaseModifierKeys()
+{
+    // フック設定中のみ内部状態をクリア. DLL_PROCESS_DETACH は uninstall() 後
+    // (s_criticalSection_ 解放済み)に呼ばれるため、そこでロックするとUBになる.
+    if (s_hHook_LL_) {
+        CCriticalSectionLock    lock(s_criticalSection_);
+        clearStat();
+    }
+    // Windows 側に残った論理修飾キー状態を解除する.
+    sendModifierKeyUpByVk();
+    sendModifierKeyUpByScanCode();
+}
+
+
+/** 修飾キーの KEYUP を仮想キー指定で送る. 汎用 VK_CONTROL 等も含める.
+ *  USB切替器やKVM後に左右キーだけでは論理状態が戻らない環境があるため.
+ */
+void CDiaKbdMouseHook_Impl::sendModifierKeyUpByVk()
+{
+    static unsigned const modifierKeys[] = {
+        VK_SHIFT,    VK_LSHIFT,   VK_RSHIFT,
+        VK_CONTROL,  VK_LCONTROL, VK_RCONTROL,
+        VK_MENU,     VK_LMENU,    VK_RMENU,
+        VK_LWIN,     VK_RWIN,
+    };
+    enum { modifierKeys_size = sizeof(modifierKeys)/sizeof(modifierKeys[0]) };
+
+    for (unsigned i = 0; i < modifierKeys_size; ++i) {
+        INPUT input;
+        setInputParam(input, KEYEVENTF_KEYUP, modifierKeys[i]);
+        sendInputOne(input);
+    }
+}
+
+
+/** 修飾キーの KEYUP をスキャンコード指定で送る.
+ *  一部のKVM/USB切替器では HID の再接続後に VK 指定の KEYUP だけでは
+ *  押下状態が解けないことがあるため, 物理キー位置に近い形式でも解除.
+ */
+void CDiaKbdMouseHook_Impl::sendModifierKeyUpByScanCode()
+{
+    struct SKey { WORD scan; DWORD flags; };
+    static SKey const keys[] = {
+        { 0x2a, 0 },                         // Left Shift
+        { 0x36, 0 },                         // Right Shift
+        { 0x1d, 0 },                         // Left Ctrl
+        { 0x1d, KEYEVENTF_EXTENDEDKEY },     // Right Ctrl
+        { 0x38, 0 },                         // Left Alt
+        { 0x38, KEYEVENTF_EXTENDEDKEY },     // Right Alt
+        { 0x5b, KEYEVENTF_EXTENDEDKEY },     // Left Win
+        { 0x5c, KEYEVENTF_EXTENDEDKEY },     // Right Win
+    };
+    enum { keys_size = sizeof(keys)/sizeof(keys[0]) };
+
+    for (unsigned i = 0; i < keys_size; ++i) {
+        INPUT input;
+        ZeroMemory(&input, sizeof(input));
+        input.type           = INPUT_KEYBOARD;
+        input.ki.wVk         = 0;
+        input.ki.wScan       = keys[i].scan;
+        input.ki.dwFlags     = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE | keys[i].flags;
+        input.ki.time        = 0;
+        input.ki.dwExtraInfo = DWORD(DiaKbdMouseHook_EXTRAINFO);
+        sendInputOne(input);
+    }
+}
+
+
 /// マウス向けボタンを設定.
 ///
 inline bool CDiaKbdMouseHook_Impl::setMouseButton(unsigned btn, bool sw)
@@ -141,7 +249,25 @@ LRESULT CALLBACK CDiaKbdMouseHook_Impl::LowLevelKeyboardProc(int nCode, WPARAM w
 {
     KBDLLHOOKSTRUCT*    pInfo = (KBDLLHOOKSTRUCT*)lparam;
 
-    // DEBUGPRINTF("* %02x %04x {%02x %02x %02x %d %08x}\n", nCode, wparam, pInfo->vkCode, pInfo->scanCode, pInfo->flags, pInfo->time, pInfo->dwExtraInfo );
+    if (nCode >= 0 && pInfo) {
+        dkmDbgPrintf(
+            "DKM LLK enter nc=%d wp=%04x vk=%02x scan=%02x flags=%02x extra=%p mode=%d ctrl=%d shift=%d asyncC=%d asyncLC=%d asyncRC=%d keyC=%04x keyLC=%04x keyRC=%04x\n",
+            nCode,
+            (unsigned)wparam,
+            (unsigned)pInfo->vkCode,
+            (unsigned)pInfo->scanCode,
+            (unsigned)pInfo->flags,
+            (void*)pInfo->dwExtraInfo,
+            s_bConvModeStat_ ? 1 : 0,
+            s_bCtrlStat_ ? 1 : 0,
+            s_bShiftStat_ ? 1 : 0,
+            dkmKeyDownAsync(VK_CONTROL),
+            dkmKeyDownAsync(VK_LCONTROL),
+            dkmKeyDownAsync(VK_RCONTROL),
+            (unsigned)::GetKeyState(VK_CONTROL),
+            (unsigned)::GetKeyState(VK_LCONTROL),
+            (unsigned)::GetKeyState(VK_RCONTROL));
+    }
 
     if (nCode >= 0 && pInfo->dwExtraInfo != DiaKbdMouseHook_EXTRAINFO) {    // 自身が生成したキーでないなら有効として.
         CCriticalSectionLock    lock(s_criticalSection_);
@@ -157,9 +283,21 @@ LRESULT CALLBACK CDiaKbdMouseHook_Impl::LowLevelKeyboardProc(int nCode, WPARAM w
             //[[fallthrough]];
         case WM_KEYUP:          // キーが放されたら.
         case WM_SYSKEYUP:       // off状態に.
-            // 所定のキーなら横取りして、情報を控え、他の動作に反応しないようにして返る.
-            if (keyDownUp( sw, pInfo->vkCode ))
-                return true;
+            {
+                // 所定のキーなら横取りして、情報を控え、他の動作に反応しないようにして返る.
+                bool eaten = keyDownUp( sw, pInfo->vkCode );
+                dkmDbgPrintf(
+                    "DKM LLK leave vk=%02x sw=%d eaten=%d mode=%d ctrl=%d shift=%d mouse=%08x\n",
+                    (unsigned)pInfo->vkCode,
+                    sw ? 1 : 0,
+                    eaten ? 1 : 0,
+                    s_bConvModeStat_ ? 1 : 0,
+                    s_bCtrlStat_ ? 1 : 0,
+                    s_bShiftStat_ ? 1 : 0,
+                    s_uMouseButton_);
+                if (eaten)
+                    return true;
+            }
             break;
 
         default:
@@ -174,7 +312,18 @@ LRESULT CALLBACK CDiaKbdMouseHook_Impl::LowLevelKeyboardProc(int nCode, WPARAM w
 ///
 bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
 {
-    // DEBUGPRINTF("* %02x %d\n", vkCode, sw );
+    dkmDbgPrintf(
+        "DKM keyDownUp enter vk=%02x sw=%d mode=%d ctrl=%d shift=%d two=%d sentVk=%d asyncC=%d asyncLC=%d asyncRC=%d\n",
+        vkCode,
+        sw ? 1 : 0,
+        s_bConvModeStat_ ? 1 : 0,
+        s_bCtrlStat_ ? 1 : 0,
+        s_bShiftStat_ ? 1 : 0,
+        s_bTwoStStatQ_ ? 1 : 0,
+        (vkCode < VK_NUM && s_bSentKeyDown_[vkCode]) ? 1 : 0,
+        dkmKeyDownAsync(VK_CONTROL),
+        dkmKeyDownAsync(VK_LCONTROL),
+        dkmKeyDownAsync(VK_RCONTROL));
 
  #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
     if (s_bExShift_) {  // 拡張シフト中は、カーソル移動のみ有効.
@@ -210,6 +359,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
       #endif
         {
             s_bConvModeStat_ = sw;
+            dkmDbgPrintf("DKM modekey vk=%02x sw=%d -> mode=%d\n", vkCode, sw ? 1 : 0, s_bConvModeStat_ ? 1 : 0);
 
             if (sw) {   // CapsLock もどきのフリをする.
              #if 0
@@ -226,11 +376,13 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_SHIFT || vkCode == VK_RSHIFT || vkCode == VK_LSHIFT)) {
         // Shiftキーの状態設定.
         s_bShiftStat_ = sw;
+        dkmDbgPrintf("DKM shiftstat vk=%02x sw=%d\n", vkCode, sw ? 1 : 0);
         //return true;
     } else
     if (/*s_bConvModeStat_ == 0 &&*/ (vkCode == VK_CONTROL || vkCode == VK_RCONTROL || vkCode == VK_LCONTROL)) {
         // Ctrlキーの状態設定.
         s_bCtrlStat_  = sw;
+        dkmDbgPrintf("DKM ctrlstat vk=%02x sw=%d\n", vkCode, sw ? 1 : 0);
         //return true;
     } else
     if (vkCode == 0xF0 || vkCode == 0xF2) {
@@ -238,6 +390,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
     } else {
         if (s_bConvModeStat_) {
             // この場でキーを変換してしまう.
+            dkmDbgPrintf("DKM conv vk=%02x sw=%d mode=%d ctrl=%d shift=%d\n", vkCode, sw ? 1 : 0, s_bConvModeStat_ ? 1 : 0, s_bCtrlStat_ ? 1 : 0, s_bShiftStat_ ? 1 : 0);
             sendConvKey(sw, vkCode);
             // モード切替キーが押されている間は、他のキーもWinのデフォルト動作をさせちゃ駄目.
             return true;
@@ -252,6 +405,7 @@ bool CDiaKbdMouseHook_Impl::keyDownUp(bool sw, unsigned vkCode)
 void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 {
     typedef CDiaKbdMouseHook_ConvKey    CConvKey;
+    dkmDbgPrintf("DKM sendConvKey enter key=%02x sw=%d two=%d diaMouse=%d\n", uKey, sw ? 1 : 0, s_bTwoStStatQ_ ? 1 : 0, s_bDiaMouse_ ? 1 : 0);
     if (uKey >= CDiaKbdMouseHook_Impl::VK_NUM) {
         assert(uKey < CDiaKbdMouseHook_Impl::VK_NUM);
         return;
@@ -269,18 +423,20 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
     case CConvKey::MD_CTRL:
     case CConvKey::MD_SHIFT:
     case CConvKey::MD_CTRLSHIFT:
-        if (s_bDiaMouse_) {     // 強制的にダイアモンドカーソルでマウスを動かす.
+        if (s_bDiaMouse_) {     // 強制的にキーでマウスを動かす.
             makeMouseButton(sw, rOne.u8VkCode_);
             break;
         }
         //[[fallthourgh]]
     case CConvKey::MD_DIRECT:
         if (sw) {               // キーDOWN
-            sendKey(rOne.u8Mode_, 0, rOne.u8VkCode_);
-            setSentKeyDown(rOne.u8VkCode_, true);
+            dkmDbgPrintf("DKM sendConvKey map key=%02x -> vk=%02x mode=%02x DOWN\n", uKey, rOne.u8VkCode_, rOne.u8Mode_);
+            if (sendKey(rOne.u8Mode_, 0, rOne.u8VkCode_))
+                setSentKeyDown(rOne.u8VkCode_, true);
         } else {                // キーUP
-            sendKey(rOne.u8Mode_, KEYEVENTF_KEYUP, rOne.u8VkCode_);
-            setSentKeyDown(rOne.u8VkCode_, false);
+            dkmDbgPrintf("DKM sendConvKey map key=%02x -> vk=%02x mode=%02x UP\n", uKey, rOne.u8VkCode_, rOne.u8Mode_);
+            if (sendKey(rOne.u8Mode_, KEYEVENTF_KEYUP, rOne.u8VkCode_))
+                setSentKeyDown(rOne.u8VkCode_, false);
             s_bTwoStStatQ_ = 0;
         }
         break;
@@ -306,7 +462,7 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 
     case CConvKey::MD_MOUSE:
         if (sw == 0 && rOne.u8VkCode_ == 0xff) {    // 手抜きでリリース時でチェック.
-            s_bDiaMouse_ = !s_bDiaMouse_;           // ダイアモンドカーソルでマウス移動するかどうかを切替.
+            s_bDiaMouse_ = !s_bDiaMouse_;           // キーでマウス移動するかどうかを切替.
         } else {
             unsigned vk = rOne.u8VkCode_;
             makeMouseButton(sw, vk);
@@ -323,6 +479,7 @@ void CDiaKbdMouseHook_Impl::sendConvKey(bool sw, unsigned uKey )
 ///
 void CDiaKbdMouseHook_Impl::clearStat()
 {
+    dkmDbgPrintf("DKM clearStat before mode=%d ctrl=%d shift=%d two=%d mouse=%08x\n", s_bConvModeStat_ ? 1 : 0, s_bCtrlStat_ ? 1 : 0, s_bShiftStat_ ? 1 : 0, s_bTwoStStatQ_ ? 1 : 0, s_uMouseButton_);
     releaseSentKeys();
     s_bConvModeStat_    = false;
     s_bTwoStStatQ_      = false;
@@ -358,7 +515,7 @@ void CDiaKbdMouseHook_Impl::clearExShift()
 
 /// SendInput
 ///
-void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
+bool CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 {
     typedef CDiaKbdMouseHook_ConvKey    CConvKey;
     bool bCtrl  = !s_bCtrlStat_ && (mode == CConvKey::MD_CTRL  || mode == CConvKey::MD_CTRLSHIFT);
@@ -375,6 +532,7 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
     if (bShift) // Shiftが押されたことにする.
         setInputParam( input[n++], 0, VK_LSHIFT  );
 
+    unsigned const keyIndex = n;
     setInputParam( input[n++], uFlags, uVk );
 
     if (bCtrl)  // CTRLが放されたことにする.
@@ -382,9 +540,28 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
     if (bShift) // Shiftが放されたことにする.
         setInputParam( input[n++], KEYEVENTF_KEYUP, VK_LSHIFT  );
 
-    ::SendInput(n, &input[0], sizeof(INPUT));
+    dkmDbgPrintf("DKM sendKey mode=%d flags=%04x vk=%02x bCtrl=%d bShift=%d n=%u\n", mode, uFlags, uVk, bCtrl ? 1 : 0, bShift ? 1 : 0, n);
+    UINT sent = ::SendInput(n, &input[0], sizeof(INPUT));
+    if (sent != n) {
+        DWORD error = ::GetLastError();
+        dkmDbgPrintf("DKM SendInput partial sent=%u/%u error=%lu\n", sent, n, (unsigned long)error);
+
+        // SendInput は部分成功を返し得る。修飾キーDOWNまでしか投入されなかった
+        // 場合でも押下状態を残さないよう、UPを単独の呼び出しで必ず再送する.
+        if (bShift) {
+            INPUT inputUp;
+            setInputParam(inputUp, KEYEVENTF_KEYUP, VK_LSHIFT);
+            sendInputOne(inputUp);
+        }
+        if (bCtrl) {
+            INPUT inputUp;
+            setInputParam(inputUp, KEYEVENTF_KEYUP, VK_LCONTROL);
+            sendInputOne(inputUp);
+        }
+    }
 
     //x DEBUGPRINTF("sendKey %#x %#x\n", uFlags, uVk);
+    return sent > keyIndex;
 }
 
 
@@ -392,12 +569,27 @@ void CDiaKbdMouseHook_Impl::sendKey(int mode, unsigned uFlags, unsigned uVk )
 ///
 void CDiaKbdMouseHook_Impl::setInputParam(INPUT& rInput, unsigned uFlags, unsigned uVk )
 {
+    ZeroMemory(&rInput, sizeof(rInput));
     rInput.type             = INPUT_KEYBOARD;
     rInput.ki.wVk           = WORD(uVk);
     rInput.ki.wScan         = WORD( ::MapVirtualKey(uVk, 0) );
     rInput.ki.time          = 0;
     rInput.ki.dwExtraInfo   = DWORD(DiaKbdMouseHook_EXTRAINFO);
     rInput.ki.dwFlags       = uFlags | (isExtendedKey(uVk) ? KEYEVENTF_EXTENDEDKEY : 0);
+}
+
+
+/// INPUTを1件だけ送信. 一括送信の部分成功で後続のKEYUPが欠落することを避ける.
+///
+bool CDiaKbdMouseHook_Impl::sendInputOne(INPUT& rInput)
+{
+    UINT sent = ::SendInput(1, &rInput, sizeof(INPUT));
+    if (sent != 1) {
+        DWORD error = ::GetLastError();
+        dkmDbgPrintf("DKM SendInput one failed error=%lu\n", (unsigned long)error);
+        return false;
+    }
+    return true;
 }
 
 
@@ -463,20 +655,16 @@ void CDiaKbdMouseHook_Impl::setSentKeyDown(unsigned uVk, bool sw)
 ///
 void CDiaKbdMouseHook_Impl::releaseSentKeys()
 {
-    INPUT       input[16];
-    unsigned    n = 0;
+    dkmDbgPrintf("DKM releaseSentKeys enter\n");
     for (unsigned i = 0; i < VK_NUM; ++i) {
         if (s_bSentKeyDown_[i]) {
-            setInputParam(input[n++], KEYEVENTF_KEYUP, i);
-            s_bSentKeyDown_[i] = false;
-            if (n == sizeof(input)/sizeof(input[0])) {
-                ::SendInput(n, &input[0], sizeof(INPUT));
-                n = 0;
-            }
+            INPUT input;
+            setInputParam(input, KEYEVENTF_KEYUP, i);
+            // 送信に失敗したキーは追跡状態を残し、次のclearStatで再試行する.
+            if (sendInputOne(input))
+                s_bSentKeyDown_[i] = false;
         }
     }
-    if (n)
-        ::SendInput(n, &input[0], sizeof(INPUT));
 }
 
 
@@ -498,8 +686,8 @@ bool CDiaKbdMouseHook_Impl::makeMouseButton( bool sw, unsigned uVk )
     case VK_XBUTTON2:   return setMouseButton(DIAKBDMOUSE_MOUSE_XBUTTON2    , sw);
     case VK_PRIOR:      return setMouseButton(DIAKBDMOUSE_MOUSE_WHEEL1      , sw);
     case VK_NEXT:       return setMouseButton(DIAKBDMOUSE_MOUSE_WHEEL2      , sw);
-//  case VK_LCONTROL:   return setMouseButton(DIAKBDMOUSE_MOUSE_SPEEDCHG    , sw);
-//  case VK_RCONTROL:   return setMouseButton(DIAKBDMOUSE_MOUSE_SPEEDCHG    , sw);
+    //case VK_LCONTROL: return setMouseButton(DIAKBDMOUSE_MOUSE_SPEEDCHG    , sw);
+    //case VK_RCONTROL: return setMouseButton(DIAKBDMOUSE_MOUSE_SPEEDCHG    , sw);
     default:
         ;
     }

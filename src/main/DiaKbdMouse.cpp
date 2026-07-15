@@ -8,12 +8,19 @@
 
 #include "stdafx.h"
 #include "DiaKbdMouse.h"
+#include <dbt.h>
 #include <cstdlib>
 #include <cstring>
 #include <string>
 #include <utility>
 #include "../cmn/misc.h"
 #include "../dll/DiaKbdMouseHook.h"
+
+namespace {
+    enum { TIMER_RELEASE_MODIFIER_KEYS    = 0xD1AC };
+    enum { MODIFIER_RELEASE_QUIET_MSEC    = 250 };
+    enum { MODIFIER_RELEASE_MAX_WAIT_MSEC = 2000 };
+}
 #include "KbdMouseCtrl.h"
 #include "TrayIcon.h"
 #include "ConfigFileReader.h"
@@ -38,7 +45,10 @@ private:
     void            showMessageDialogEJ(wchar_t const* en_msg, wchar_t const* jp_msg);
     LRESULT         wmCreate (HWND hWnd, WPARAM wParam, LPARAM lParam);
     LRESULT         wmCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+    LRESULT         wmDeviceChange(WPARAM wParam);
     LRESULT         wmUserTrayIcon(HWND hWnd, LPARAM lParam);
+    void            scheduleModifierRelease();
+    void            onModifierReleaseTimer();
     void            checkMenuItem(int id, bool checkSw /*, int dispSw*/);
 
     //static void     setMinmumWorkingSetSize();
@@ -47,16 +57,20 @@ private:
     enum { MAX_LOADSTRING   = 100         };
     enum { WM_USER_TRAYICON = WM_USER + 1 };
 
-    HWND        hWnd_;
-    HINSTANCE   hInstance_;                     ///< 現在のインターフェイス.
-    HICON       hIconSm_;
-    CTrayIcon   trayIcon_;
-    TCHAR       szTitle_[MAX_LOADSTRING];       ///< タイトル バーのテキスト.
-    TCHAR       szWindowClass_[MAX_LOADSTRING]; ///< メイン ウィンドウ クラス名.
-    wchar_t const* startupErrorEn_;             ///< 起動失敗時に表示する英語メッセージ.
-    wchar_t const* startupErrorJp_;             ///< 起動失敗時に表示する日本語メッセージ.
-    //TCHAR     szIniName_[0x4000];             ///< モジュール名.
-    static CDiaKbdMouseApp* s_pSelf_;           ///< 自分自身の変数(インスタンス)へのポインタ.
+    HWND            hWnd_;
+    HINSTANCE       hInstance_;                     ///< 現在のインターフェイス.
+    HICON           hIconSm_;
+    CTrayIcon       trayIcon_;
+    TCHAR           szTitle_[MAX_LOADSTRING];       ///< タイトル バーのテキスト.
+    TCHAR           szWindowClass_[MAX_LOADSTRING]; ///< メイン ウィンドウ クラス名.
+    wchar_t const*  startupErrorEn_;                ///< 起動失敗時に表示する英語メッセージ.
+    wchar_t const*  startupErrorJp_;                ///< 起動失敗時に表示する日本語メッセージ.
+    bool            modifierReleaseTimerActive_;
+    bool            modifierReleasedInBurst_;
+    DWORD           modifierReleaseFirstTick_;
+    DWORD           modifierReleaseLastTick_;
+    //TCHAR         szIniName_[0x4000];             ///< モジュール名.
+    static CDiaKbdMouseApp* s_pSelf_;               ///< 自分自身の変数(インスタンス)へのポインタ.
 };
 
 /// 自分自身へのポインタ.
@@ -72,6 +86,10 @@ CDiaKbdMouseApp::CDiaKbdMouseApp()
     , trayIcon_()
     , startupErrorEn_(0)
     , startupErrorJp_(0)
+    , modifierReleaseTimerActive_(false)
+    , modifierReleasedInBurst_(false)
+    , modifierReleaseFirstTick_(0)
+    , modifierReleaseLastTick_(0)
 {
     std::memset(szTitle_      , 0, sizeof szTitle_);
     std::memset(szWindowClass_, 0, sizeof szWindowClass_);
@@ -230,7 +248,33 @@ LRESULT CALLBACK CDiaKbdMouseApp::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
     case WM_USER_TRAYICON:  // トレイアイコンでクリックされたときの処理.
         return pSelf->wmUserTrayIcon(hWnd, lParam);
 
+    case WM_DEVICECHANGE:   // キーボード等の抜き差しで修飾キー状態が残らないようにする.
+        return pSelf->wmDeviceChange(wParam);
+
+    case WM_TIMER:
+        if (wParam == TIMER_RELEASE_MODIFIER_KEYS) {
+            pSelf->onModifierReleaseTimer();
+            return 0;
+        }
+        break;
+
+    case WM_POWERBROADCAST:
+        switch (wParam) {
+        case PBT_APMRESUMECRITICAL:
+        case PBT_APMRESUMESUSPEND:
+        case PBT_APMRESUMEAUTOMATIC:
+            // サスペンドや休止からの復帰では、停止中にKEYUPを取り逃ス場合がある模様.
+            pSelf->scheduleModifierRelease();
+            break;
+        default:
+            ;
+        }
+        return TRUE;
+
     case WM_DESTROY:
+        ::KillTimer(hWnd, TIMER_RELEASE_MODIFIER_KEYS);
+        pSelf->modifierReleaseTimerActive_ = false;
+        DiaKbdMouseHook_releaseModifierKeys();
         // キーボードでマウス操作する処理のスレッドを終了.
         CKbdMouseCtrl::release();
         // トレイアイコンの終了.
@@ -371,6 +415,71 @@ LRESULT CDiaKbdMouseApp::wmCommand(HWND hWnd, WPARAM wParam, LPARAM /*lParam*/)
         ;
     }
     return 1;
+}
+
+/// デバイス構成変更時に行う処理.
+///
+LRESULT CDiaKbdMouseApp::wmDeviceChange(WPARAM wParam)
+{
+    switch (wParam) {
+    case DBT_DEVICEARRIVAL:
+    case DBT_DEVICEREMOVECOMPLETE:
+    case DBT_DEVICEREMOVEPENDING:
+    case DBT_DEVNODES_CHANGED:
+    case DBT_CONFIGCHANGED:
+        LogPrintf("# DeviceChange 0x%x(%d)\n", (unsigned)wParam, (int)wParam);
+        scheduleModifierRelease();
+        break;
+    default:
+        break;
+    }
+    return TRUE;
+}
+
+
+/// デバイス変更等の後に修飾キーを解除するタイマーを開始.
+///
+void CDiaKbdMouseApp::scheduleModifierRelease()
+{
+    DWORD now = ::GetTickCount();
+    modifierReleaseLastTick_ = now;
+    if (!hWnd_ || modifierReleaseTimerActive_)
+        return;
+
+    modifierReleaseFirstTick_ = now;
+    modifierReleasedInBurst_ = false;
+    if (::SetTimer(hWnd_, TIMER_RELEASE_MODIFIER_KEYS, MODIFIER_RELEASE_QUIET_MSEC, NULL))
+        modifierReleaseTimerActive_ = true;
+}
+
+
+/// デバイス変更の連打をデバウンスしつつ、解除が永久に先送りされるのを防ぐ.
+///
+void CDiaKbdMouseApp::onModifierReleaseTimer()
+{
+    DWORD now       = ::GetTickCount();
+    DWORD quietMsec = now - modifierReleaseLastTick_;
+    DWORD waitMsec  = now - modifierReleaseFirstTick_;
+
+    // 通常は変更通知が静まってから解除. 
+    // 通知が止まらない環境でも2秒で一度だけ強制解除し,
+    // 同じ通知バースト中に繰り返しShiftを切らない.
+    if (!modifierReleasedInBurst_
+        && (quietMsec >= MODIFIER_RELEASE_QUIET_MSEC
+            || waitMsec >= MODIFIER_RELEASE_MAX_WAIT_MSEC)
+    ) {
+        LogPrintf("# ReleaseModifierKeys quiet=%lu wait=%lu%s\n",
+            (unsigned long)quietMsec,
+            (unsigned long)waitMsec,
+            quietMsec < MODIFIER_RELEASE_QUIET_MSEC ? " forced" : "");
+        DiaKbdMouseHook_releaseModifierKeys();
+        modifierReleasedInBurst_ = true;
+    }
+
+    if (quietMsec >= MODIFIER_RELEASE_QUIET_MSEC) {
+        ::KillTimer(hWnd_, TIMER_RELEASE_MODIFIER_KEYS);
+        modifierReleaseTimerActive_ = false;
+    }
 }
 
 /// メニュー項目にチェックマークをつけはずし.

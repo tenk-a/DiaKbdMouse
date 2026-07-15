@@ -29,6 +29,9 @@ HOOKDLL_API int      DiaKbdMouseHook_uninstall();
 /// パッド的にしたマウスボタン情報の取得.
 HOOKDLL_API unsigned DiaKbdMouseHook_mouseButton();
 
+/// 修飾キーの押下状態を解放.
+HOOKDLL_API void     DiaKbdMouseHook_releaseModifierKeys();
+
 /// マウス化するキーの情報.
 enum EDiaKbdMouse_Mouse {
     DIAKBDMOUSE_MOUSE_LEFT      = 0x0001,

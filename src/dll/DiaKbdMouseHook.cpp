@@ -22,10 +22,15 @@ BOOL APIENTRY DllMain(
         CDiaKbdMouseHook_Impl::init( HINSTANCE(hModule) );
         ::DisableThreadLibraryCalls(HMODULE(hModule));
         break;
-    case DLL_THREAD_ATTACH:     break;
-    case DLL_THREAD_DETACH:     break;
-    case DLL_PROCESS_DETACH:    break;
-    default:                    break;
+    case DLL_THREAD_ATTACH:
+         break;
+    case DLL_THREAD_DETACH:
+        break;
+    case DLL_PROCESS_DETACH:
+        CDiaKbdMouseHook_Impl::releaseModifierKeys();
+        break;
+    default:
+        break;
     }
     return TRUE;
 }
@@ -55,4 +60,12 @@ HOOKDLL_API int DiaKbdMouseHook_uninstall()
 HOOKDLL_API unsigned DiaKbdMouseHook_mouseButton()
 {
     return CDiaKbdMouseHook_Impl::mouseButton();
+}
+
+
+/** 修飾キーの押下状態を解放.
+ */
+HOOKDLL_API void DiaKbdMouseHook_releaseModifierKeys()
+{
+    CDiaKbdMouseHook_Impl::releaseModifierKeys();
 }
