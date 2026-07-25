@@ -21,6 +21,7 @@
 class CDiaKbdMouseHook_Impl {
 public:
     enum { VK_NUM = 256 };
+    enum { WATCHDOG_MOD_NUM = 8 };      ///< 監視する修飾キー数(L/R別 SHIFT,CTRL,ALT,WIN)
 
     /// 初期化.
     static void init(HINSTANCE hInst) { s_hInst_ = hInst; }
@@ -36,6 +37,9 @@ public:
 
     /// 修飾キーの押下状態を解放.
     static void releaseModifierKeys();
+
+    /// 修飾キー固着の監視・自動解除. 戻り値は解除したキーのビットマスク(DIAKBDMOUSE_WMOD_*).
+    static unsigned watchdog();
 
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wparam, LPARAM lparam);
 
@@ -53,6 +57,9 @@ private:
     static void sendModifierKeyUpByScanCode();
     static void setSentKeyDown(unsigned uVk, bool sw);
     static void releaseSentKeys();
+    static int  modifierIndexOfVk(unsigned uVk);
+    static void recordPhysModifier(unsigned uVk, bool sw);
+    static void initPhysModifierState();
 
     static bool makeMouseButton( bool sw, unsigned uVk );
     static bool setMouseButton(unsigned btn, bool sw);
@@ -78,6 +85,10 @@ private:
     static bool                 s_bCtrlStat_;       	///< CTRLが押されてるとき.
     static bool                 s_bDiaMouse_;       	///< ダイアモンドカーソルでマウスを動かす.
     static bool                 s_bSentKeyDown_[VK_NUM];///< SendInputで押したままのキー.
+    static bool                 s_bPhysModDown_[WATCHDOG_MOD_NUM];      ///< フックが確認した修飾キーの物理押下状態.
+    static DWORD                s_physModDownTick_[WATCHDOG_MOD_NUM];   ///< 物理押下を確認した時刻(GetTickCount).
+    static DWORD                s_orphanSinceTick_[WATCHDOG_MOD_NUM];   ///< 「論理押下だけ残っている」状態を検出した時刻.
+    static DWORD                s_watchdogLastTick_;                    ///< watchdog前回実行時刻.
   #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
     static bool                 s_bExShift_;        	///< カーソル移動での自動シフト押し.
   #endif

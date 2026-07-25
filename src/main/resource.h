@@ -14,6 +14,7 @@
 #define IDM_ABOUT                       109
 #define IDM_EXIT                        110
 #define IDM_HELP                        111
+#define IDM_RELEASE_MODIFIERS           112
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

@@ -84,6 +84,28 @@ bool        CDiaKbdMouseHook_Impl::s_bShiftStat_        = false;
 bool        CDiaKbdMouseHook_Impl::s_bCtrlStat_         = false;
 bool        CDiaKbdMouseHook_Impl::s_bSentKeyDown_[CDiaKbdMouseHook_Impl::VK_NUM];
 
+bool        CDiaKbdMouseHook_Impl::s_bPhysModDown_[CDiaKbdMouseHook_Impl::WATCHDOG_MOD_NUM];
+DWORD       CDiaKbdMouseHook_Impl::s_physModDownTick_[CDiaKbdMouseHook_Impl::WATCHDOG_MOD_NUM];
+DWORD       CDiaKbdMouseHook_Impl::s_orphanSinceTick_[CDiaKbdMouseHook_Impl::WATCHDOG_MOD_NUM];
+DWORD       CDiaKbdMouseHook_Impl::s_watchdogLastTick_ = 0;
+
+// 修飾キー固着監視のパラメータ. (コンパイルオプションで上書き可能)
+#ifndef DKM_WATCHDOG_POLL_MSEC
+#define DKM_WATCHDOG_POLL_MSEC      250     ///< 監視の実行間隔.
+#endif
+#ifndef DKM_WATCHDOG_ORPHAN_MSEC
+#define DKM_WATCHDOG_ORPHAN_MSEC    2000    ///< 論理押下だけが残った状態をこの時間見たら解除.
+#endif
+#ifndef DKM_WATCHDOG_LONGHOLD_MSEC
+#define DKM_WATCHDOG_LONGHOLD_MSEC  90000   ///< 物理押下がこの時間続いたら切替器のラッチを疑い解除. 0で無効.
+#endif
+
+/// watchdog が監視する修飾キー(L/R別). ビット順は DIAKBDMOUSE_WMOD_* と一致させること.
+static unsigned const s_watchdogModVkTbl_[CDiaKbdMouseHook_Impl::WATCHDOG_MOD_NUM] = {
+    VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL,
+    VK_LMENU,  VK_RMENU,  VK_LWIN,     VK_RWIN,
+};
+
 #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
 bool        CDiaKbdMouseHook_Impl::s_bExShift_          = false;
 #endif
@@ -97,6 +119,7 @@ bool CDiaKbdMouseHook_Impl::install(int keycode, CDiaKbdMouseHook_ConvKeyTbl con
         s_criticalSection_.create();
         clearStat();
         s_bDiaMouse_ = false;
+        initPhysModifierState();
         setModeKeyTbl(keycode, tbl);
         s_hHook_LL_  = ::SetWindowsHookEx(WH_KEYBOARD_LL, CDiaKbdMouseHook_Impl::LowLevelKeyboardProc, s_hInst_, 0);
         if (s_hHook_LL_ == NULL) {
@@ -230,6 +253,126 @@ void CDiaKbdMouseHook_Impl::sendModifierKeyUpByScanCode()
 }
 
 
+/// 監視対象の修飾キーなら 0～WATCHDOG_MOD_NUM-1 のインデックス、対象外なら -1.
+///
+int CDiaKbdMouseHook_Impl::modifierIndexOfVk(unsigned uVk)
+{
+    for (int i = 0; i < WATCHDOG_MOD_NUM; ++i) {
+        if (s_watchdogModVkTbl_[i] == uVk)
+            return i;
+    }
+    return -1;
+}
+
+
+/// フックが見た実イベントから修飾キーの物理押下状態を記録.
+/// ※ s_criticalSection_ ロック中に呼ぶこと.
+///
+void CDiaKbdMouseHook_Impl::recordPhysModifier(unsigned uVk, bool sw)
+{
+    int i = modifierIndexOfVk(uVk);
+    if (i < 0)
+        return;
+    if (s_bPhysModDown_[i] != sw) {
+        s_bPhysModDown_[i] = sw;
+        if (sw)
+            s_physModDownTick_[i] = ::GetTickCount();
+    }
+    s_orphanSinceTick_[i] = 0;  // 実イベントを確認できたので固着疑いをリセット.
+}
+
+
+/// 修飾キー監視状態の初期化. フック開始時点の論理状態を物理状態の初期値とみなす.
+/// (Shiftを押しながら起動した場合などに誤射しないため)
+///
+void CDiaKbdMouseHook_Impl::initPhysModifierState()
+{
+    DWORD now = ::GetTickCount();
+    for (int i = 0; i < WATCHDOG_MOD_NUM; ++i) {
+        s_bPhysModDown_[i]     = (::GetAsyncKeyState((int)s_watchdogModVkTbl_[i]) & 0x8000) != 0;
+        s_physModDownTick_[i]  = now;
+        s_orphanSinceTick_[i]  = 0;
+    }
+    s_watchdogLastTick_ = now;
+}
+
+
+/** 修飾キー固着の監視・自動解除. 別スレッドから定期的に呼ばれる.
+ *
+ *  検出する固着は2種類:
+ *  1. 孤児状態: GetAsyncKeyState は押下なのに、フックは物理押下を確認して
+ *     いない. (フックのタイムアウト素通りや他プロセスの注入残り等で
+ *     論理状態だけが残ったケース) → DKM_WATCHDOG_ORPHAN_MSEC 継続で解除.
+ *  2. 超長押し: 物理押下のまま異常に長時間経過. USB切替器/KVMの
+ *     キーボードエミュレーションが修飾ビットをラッチしたまま KEYUP を
+ *     送ってこないケース(この場合ユーザーがShiftを押し直しても
+ *     ビット変化が起きずイベント自体が来ない)を想定.
+ *     → DKM_WATCHDOG_LONGHOLD_MSEC 継続で解除. 本当に押し続けていた場合は
+ *       次の実イベント(押し直しやリピート)で状態が復元されるので実害は軽微.
+ *
+ *  戻り値: 解除したキーの DIAKBDMOUSE_WMOD_* ビットマスク.
+ */
+unsigned CDiaKbdMouseHook_Impl::watchdog()
+{
+    if (s_hHook_LL_ == 0)   // フック無効中(解放後のCriticalSection使用を避ける)は何もしない.
+        return 0;
+
+    CCriticalSectionLock    lock(s_criticalSection_);
+
+    DWORD now = ::GetTickCount();
+    if (now - s_watchdogLastTick_ < DKM_WATCHDOG_POLL_MSEC)
+        return 0;
+    s_watchdogLastTick_ = now;
+
+    unsigned releasedMask = 0;
+    for (int i = 0; i < WATCHDOG_MOD_NUM; ++i) {
+        unsigned vk = s_watchdogModVkTbl_[i];
+        bool asyncDown = (::GetAsyncKeyState((int)vk) & 0x8000) != 0;
+        if (!asyncDown) {
+            s_orphanSinceTick_[i] = 0;
+            continue;
+        }
+        if (vk < VK_NUM && s_bSentKeyDown_[vk]) {
+            // 変換で自前注入して押下維持中のキーは固着ではない(解放はreleaseSentKeys側の担当).
+            s_orphanSinceTick_[i] = 0;
+            continue;
+        }
+     #ifdef DIAKBDMOUSEHOOK_USE_EX_SHIFT
+        if (s_bExShift_ && vk == VK_LSHIFT) {   // 拡張シフトで意図的に押下維持中.
+            s_orphanSinceTick_[i] = 0;
+            continue;
+        }
+     #endif
+        if (s_bPhysModDown_[i]) {
+            s_orphanSinceTick_[i] = 0;
+         #if DKM_WATCHDOG_LONGHOLD_MSEC > 0
+            if (now - s_physModDownTick_[i] >= DKM_WATCHDOG_LONGHOLD_MSEC) {
+                dkmDbgPrintf("DKM watchdog longhold release vk=%02x\n", vk);
+                INPUT input;
+                setInputParam(input, KEYEVENTF_KEYUP, vk);
+                if (sendInputOne(input)) {
+                    releasedMask |= 1u << i;
+                    s_physModDownTick_[i] = now;    // 実押下継続なら次の実イベントで復元される.
+                }
+            }
+         #endif
+        } else {
+            if (s_orphanSinceTick_[i] == 0) {
+                s_orphanSinceTick_[i] = now ? now : 1;
+            } else if (now - s_orphanSinceTick_[i] >= DKM_WATCHDOG_ORPHAN_MSEC) {
+                dkmDbgPrintf("DKM watchdog orphan release vk=%02x\n", vk);
+                INPUT input;
+                setInputParam(input, KEYEVENTF_KEYUP, vk);
+                if (sendInputOne(input))
+                    releasedMask |= 1u << i;
+                s_orphanSinceTick_[i] = 0;
+            }
+        }
+    }
+    return releasedMask;
+}
+
+
 /// マウス向けボタンを設定.
 ///
 inline bool CDiaKbdMouseHook_Impl::setMouseButton(unsigned btn, bool sw)
@@ -275,6 +418,12 @@ LRESULT CALLBACK CDiaKbdMouseHook_Impl::LowLevelKeyboardProc(int nCode, WPARAM w
         if (s_bConvModeStat_ == 0) {    // 拡張シフトは、APPSが押されている間のみ有効.
             clearStat();
         }
+        // watchdog用: フックまで届いた修飾キーイベントを「物理押下の真値」として記録.
+        // (食べる/食べないに関わらず記録する. 自身の注入分はdwExtraInfoで除外済み)
+        if (wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN)
+            recordPhysModifier(pInfo->vkCode, true);
+        else if (wparam == WM_KEYUP || wparam == WM_SYSKEYUP)
+            recordPhysModifier(pInfo->vkCode, false);
         bool sw = false;
         switch (wparam) {
         case WM_KEYDOWN:        // キーが押されたら.

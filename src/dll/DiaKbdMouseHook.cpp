@@ -69,3 +69,11 @@ HOOKDLL_API void DiaKbdMouseHook_releaseModifierKeys()
 {
     CDiaKbdMouseHook_Impl::releaseModifierKeys();
 }
+
+
+/** 修飾キー固着の監視・自動解除.
+ */
+HOOKDLL_API unsigned DiaKbdMouseHook_watchdog()
+{
+    return CDiaKbdMouseHook_Impl::watchdog();
+}

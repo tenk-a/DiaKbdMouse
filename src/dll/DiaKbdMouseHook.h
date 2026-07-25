@@ -32,6 +32,24 @@ HOOKDLL_API unsigned DiaKbdMouseHook_mouseButton();
 /// 修飾キーの押下状態を解放.
 HOOKDLL_API void     DiaKbdMouseHook_releaseModifierKeys();
 
+/// 修飾キー固着の監視. 定期的に呼ぶこと(内部で実行間隔を調整).
+/// 「論理状態は押下なのにフックが物理押下を確認していない」修飾キーへ
+/// KEYUPを注入して自動解除する. 戻り値は解除したキーのビットマスク
+/// (DIAKBDMOUSE_WMOD_*). 0なら何もしていない.
+HOOKDLL_API unsigned DiaKbdMouseHook_watchdog();
+
+/// DiaKbdMouseHook_watchdog() の戻り値ビット.
+enum EDiaKbdMouse_WatchdogMod {
+    DIAKBDMOUSE_WMOD_LSHIFT = 0x01,
+    DIAKBDMOUSE_WMOD_RSHIFT = 0x02,
+    DIAKBDMOUSE_WMOD_LCTRL  = 0x04,
+    DIAKBDMOUSE_WMOD_RCTRL  = 0x08,
+    DIAKBDMOUSE_WMOD_LALT   = 0x10,
+    DIAKBDMOUSE_WMOD_RALT   = 0x20,
+    DIAKBDMOUSE_WMOD_LWIN   = 0x40,
+    DIAKBDMOUSE_WMOD_RWIN   = 0x80,
+};
+
 /// マウス化するキーの情報.
 enum EDiaKbdMouse_Mouse {
     DIAKBDMOUSE_MOUSE_LEFT      = 0x0001,

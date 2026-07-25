@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "../dll/DiaKbdMouseHook.h"
+#include "../cmn/misc.h"
 #include "KbdMouseCtrl.h"
 
 HANDLE          CKbdMouseCtrl::s_hThread_       = 0;
@@ -91,6 +92,13 @@ void CKbdMouseCtrl::ctrl()
 
     // マウスボタンの処理.
     sendMouseButton(uTrig, uRel);
+
+    // 修飾キー固着の監視・自動解除. (実行間隔はDLL側で調整される)
+    unsigned released = DiaKbdMouseHook_watchdog();
+    if (released) {
+        LogPrintf("# ModifierWatchdog auto-released mask=0x%02x"
+                  " (bit0:LS 1:RS 2:LC 3:RC 4:LA 5:RA 6:LW 7:RW)\n", released);
+    }
 }
 
 /// マウス移動.

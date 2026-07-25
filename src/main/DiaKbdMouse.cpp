@@ -173,7 +173,13 @@ int CDiaKbdMouseApp::winMain(HINSTANCE /*hInstance0*/, HINSTANCE /*hPrevInstance
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
         }
-        ::Sleep(33);        // 適当に寝とく.
+        //Sleep(33);
+        // Sleep 禁止. GetMessage 側ブロックで空ループ無なので不要.
+        // WH_KEYBOARD_LL の callback は、このスレッドのメッセージ処理経由なので,
+        // 1メッセージ毎に Sleep すると、連打時処理滞留,
+        // LowLevelHooksTimeout(既定数百ms)超過で,
+        // イベントがフック素通り(モードキーUPの取り逃し→モード固着)したり,
+        // OSに黙ってフックを外されたりする.
     }
 
     // DLL終了.
@@ -407,6 +413,11 @@ LRESULT CDiaKbdMouseApp::wmCommand(HWND hWnd, WPARAM wParam, LPARAM /*lParam*/)
         ::DialogBox(hInstance_, (LPCTSTR) IDD_ABOUTBOX, hWnd, (DLGPROC) dlgProcAbout);
         return 0;
 
+    case IDM_RELEASE_MODIFIERS: // 修飾キー固着時の手動レスキュー.
+        LogPrintf("# Manual ReleaseModifierKeys from tray menu\n");
+        DiaKbdMouseHook_releaseModifierKeys();
+        return 0;
+
     case IDM_EXIT:
         ::DestroyWindow(hWnd);
         return 0;
@@ -461,7 +472,7 @@ void CDiaKbdMouseApp::onModifierReleaseTimer()
     DWORD quietMsec = now - modifierReleaseLastTick_;
     DWORD waitMsec  = now - modifierReleaseFirstTick_;
 
-    // 通常は変更通知が静まってから解除. 
+    // 通常は変更通知が静まってから解除.
     // 通知が止まらない環境でも2秒で一度だけ強制解除し,
     // 同じ通知バースト中に繰り返しShiftを切らない.
     if (!modifierReleasedInBurst_
